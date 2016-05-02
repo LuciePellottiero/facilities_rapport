@@ -2,7 +2,6 @@ package documentHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
