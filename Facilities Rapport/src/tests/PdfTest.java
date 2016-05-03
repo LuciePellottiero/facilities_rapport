@@ -7,7 +7,7 @@ import documentHandler.CreateReportDocument;
 
 /**
  * Cette class permet de tester certaines parties de l'application
- * @author Lucie PELLOTEIRRO
+ * @author Lucie PELLOTTEIRO
  *
  */
 public class PdfTest {

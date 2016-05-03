@@ -6,7 +6,7 @@ import com.itextpdf.text.Document;
 
 /**
  * Cette interface decrit les strategies d'edition de document
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public interface IWriteStrategie {
@@ -19,5 +19,5 @@ public interface IWriteStrategie {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est geree
 	 */
-	public boolean writeDocument (Map<String, Object> datas, String reportPathName, Document document) throws Exception;
+	public boolean writeDocument (Map<String, Object> datas, Document document) throws Exception;
 }

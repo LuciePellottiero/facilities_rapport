@@ -13,7 +13,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * Cette classe devait permettre l'utilisation de template mais a ete abandonne car on a besoin de creer certains elements dynamiquements
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public class DocumentStamper {

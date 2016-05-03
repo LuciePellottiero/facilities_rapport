@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * Contient les fonctions utiles pour la gestion des fichiers
- * @author tmedard
+ * @author Lucie PELLOTTIERO
  *
  */
 public class FileUtilities {

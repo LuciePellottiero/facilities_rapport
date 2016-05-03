@@ -1,6 +1,6 @@
 /**
  * Ce package contient toutes la class utiles
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 package utilities;

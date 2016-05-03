@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 
 /**
  * Cette classe est la strategie d'edition de document par defaut
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public class DefaultWriteStrategie implements IWriteStrategie{
@@ -18,7 +17,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	 * Fonction d'edition de document
 	 */
 	@Override
-	public boolean writeDocument(Map<String, Object> datas, String reportPathName, Document document)
+	public boolean writeDocument(Map<String, Object> datas, Document document)
 			throws Exception {
 		// On ouvre le document a la modification
 		document.open();
@@ -38,15 +37,10 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 		para2.setSpacingBefore(50);
 		paragraphs.add(para2);
 		
-		try {
-			// On ajoute chaque Paragraphe au document
-			for (Paragraph para : paragraphs) {
-				document.add(para);
-			}	
-		} 
-		catch (DocumentException e) {
-			e.printStackTrace();
-		}
+		// On ajoute chaque Paragraphe au document
+		for (Paragraph para : paragraphs) {
+			document.add(para);
+		}	
 		
 		// A la fin, on ferme tous les flux
 		document.close();
