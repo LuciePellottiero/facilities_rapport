@@ -27,6 +27,7 @@ public interface IWriteStrategie {
 	 * @param datas Les donnees fournies
 	 * @param reportPathName Le nom du document rapport
 	 * @param document l'objet document a editer
+	 * @param writer Le PdfWriter qui permettra de mettre des Objet (tel des JFreeChart)
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est geree
 	 */
