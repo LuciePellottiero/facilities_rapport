@@ -2,6 +2,7 @@ package documentHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
@@ -14,7 +15,7 @@ import utilities.FileUtilities;
 
 /**
  * Ceci est la classe permettant de creer les rapports
- * @author Lucie PELLOTTIRRO
+ * @author Lucie PELLOTTIERRO
  *
  */
 public class CreateReportDocument {
@@ -26,10 +27,11 @@ public class CreateReportDocument {
 	
 	/**
 	 * Cette fonction permet de creer le document PDF du rapport a l'emplacement par defaut
+	 * @param datas La liste des donnees indexee par leur type (voir les constantes dans IWriteStrategie)
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */
-	public static boolean createPdf (Map<String, Object> datas) throws Exception{
+	public static boolean createPdf (Map<Integer, Collection<Object>> datas) throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		File pdfReport = FileUtilities.getResource(defaultPdfReportsPathName);
 		// Puis on creer le fichier a l'emplacement precise precedamment
@@ -45,7 +47,7 @@ public class CreateReportDocument {
 		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
 		
 		// On effectue l'édition du PDF par la strategie
-		boolean result = writeStrategie.writeDocument(datas, document);
+		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
 		
 		// On oublie pas de fermer tous les flux
 		pdfWriter.close();
@@ -61,7 +63,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */
-	public static boolean createtPdf (Map<String, Object> datas, String reportPathName, int writeStrategieNumber) throws Exception{
+	public static boolean createtPdf (Map<Integer, Collection<Object>> datas, String reportPathName, int writeStrategieNumber) throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		File pdfReport = FileUtilities.getResource(reportPathName);
 		// Puis on creer le fichier a l'emplacement precise precedamment
@@ -77,7 +79,7 @@ public class CreateReportDocument {
 		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(writeStrategieNumber);
 		
 		// On effectue l'edition du PDF par défaut
-		boolean result = writeStrategie.writeDocument(datas, document);
+		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
 		
 		// On oublie pas de fermer tous les flux
 		pdfWriter.close();

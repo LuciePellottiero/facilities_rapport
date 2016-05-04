@@ -2,9 +2,16 @@
 <classpath>
 	<classpathentry kind="src" path="Facilities Rapport/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="librairies/itextpdf-5.5.9-javadoc.jar"/>
-	<classpathentry kind="lib" path="librairies/itextpdf-5.5.9.jar"/>
+	<classpathentry kind="lib" path="librairies/itextpdf-5.5.9.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Facilities%20Rapport/librairies/itextpdf-5.5.9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="librairies/jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="librairies/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="librairies/jfreechart-1.0.19.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Facilities%20Rapport/librairies/jfreechart-1.0.19-fx-javadocs.zip!/jfreechart-1.0.19-fx-javadocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

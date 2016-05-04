@@ -1,8 +1,10 @@
 package documentHandler.writeStrategies;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Cette interface decrit les strategies d'edition de document
@@ -12,6 +14,15 @@ import com.itextpdf.text.Document;
 public interface IWriteStrategie {
 	
 	/**
+	 * Un type de donnée possible
+	 */
+	public static final Integer DATA_TYPE_STRING     = 0;
+	/**
+	 * Un type de donnée possible
+	 */
+	public static final Integer DATA_TYPE_JFREECHART = 1;
+	
+	/**
 	 * Fonction qui permet de lancer l'edition d'un document a partir des donnees fournies
 	 * @param datas Les donnees fournies
 	 * @param reportPathName Le nom du document rapport
@@ -19,5 +30,5 @@ public interface IWriteStrategie {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est geree
 	 */
-	public boolean writeDocument (Map<String, Object> datas, Document document) throws Exception;
+	public boolean writeDocument (Map<Integer, Collection<Object>> datas, Document document, PdfWriter writer) throws Exception;
 }

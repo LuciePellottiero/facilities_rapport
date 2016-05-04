@@ -1,9 +1,12 @@
 package tests;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import documentHandler.CreateReportDocument;
+import documentHandler.writeStrategies.IWriteStrategie;
 
 /**
  * Cette class permet de tester certaines parties de l'application
@@ -18,10 +21,28 @@ public class PdfTest {
 	 */
 	public static void main(String[] args) {
 		
-		Map<String, Object> datas = new HashMap<String, Object>();
+		// On prepare les donnees
+		Map<Integer, Collection<Object>> datas = new HashMap<Integer, Collection<Object>>();
 		
-		datas.put("Forname", "Lucie");
-		datas.put("Name", "PELLOTIERRO");
+		// La liste des String a ajouter
+		Collection<Object> strings = new ArrayList<Object>();
+		
+		// On ajoute autant de String que necessaire
+		// (attention, un nombre de donnee minimum peut etre attendu)
+		strings.add("Lucie");
+		strings.add("PELLOTIERRO");
+		
+		// On ajoute les String en utilisant l'attribut pour préciser le type de donnée
+		datas.put(IWriteStrategie.DATA_TYPE_STRING, strings);
+		
+		// On prepare la liste de diagramme
+		Collection<Object> graphics = new ArrayList<Object>();
+		
+		// On ajoute un diagramme (attention, ceci n'est qu'un exemple)
+		graphics.add(GraphTest.generateBarChart());
+		
+		// On ajoute aux donnees la liste des diagrammes
+		datas.put(IWriteStrategie.DATA_TYPE_JFREECHART, graphics);
 		
 		// L'utilisation du DocumentStamper a ete abandonnee
 		/*
@@ -39,6 +60,7 @@ public class PdfTest {
 		
 		
 		try {
+			// Finallement on creer le document
 			CreateReportDocument.createPdf(datas);
 			System.out.println("Rapport termine");
 		} 

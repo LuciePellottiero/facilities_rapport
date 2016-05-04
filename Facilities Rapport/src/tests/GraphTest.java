@@ -9,7 +9,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import com.itextpdf.awt.DefaultFontMapper;
+import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
@@ -81,9 +81,7 @@ public class GraphTest {
             PdfContentByte contentByte = writer.getDirectContent();
             PdfTemplate template = contentByte.createTemplate(width, height);
             
-			@SuppressWarnings("deprecation")
-			Graphics2D graphics2d = template.createGraphics(width, height,
-                    new DefaultFontMapper());
+			Graphics2D graphics2d = new PdfGraphics2D(template, width, height);
             
             java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, width,
                     height);
