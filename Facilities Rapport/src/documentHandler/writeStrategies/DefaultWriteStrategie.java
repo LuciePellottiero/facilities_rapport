@@ -106,6 +106,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 		Paragraph para3 = new Paragraph();
 		para3.add("Exemple de diagramme : ");
 		para3.setSpacingBefore(50);
+		para3.setSpacingAfter(25);
 		// On l'ajoute
 		document.add(para3);
 		
