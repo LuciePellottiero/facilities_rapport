@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -35,6 +38,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
+
+import dataHandler.DefaultDataHandler;
+import dataHandler.IDataHandler;
+import documentHandler.CreateReportDocument;
 
 public class Formulaire extends JFrame{
 	
@@ -763,6 +770,9 @@ public class Formulaire extends JFrame{
 	    c.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(valideForm, c); //ajout du bouton de validation
 	    
+	    // Lien vers ce formulaire pour l'affichage de fenetre d'ingormation
+	    Formulaire mainFrame = this;
+	    
 		//action declenchee par le bouton de validation du formulaire
 	    valideForm.addActionListener(new ActionListener() {
 	    	
@@ -898,6 +908,135 @@ public class Formulaire extends JFrame{
 		    	
 		    	fw.println ("\r\n"); //retour ligne
 		    	fw.close();
+		    	
+// Ecriture du PDF
+		    	
+		    	/**Debut check des input**/
+				// Check Redacteur
+		    	if (textFieldNom.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textAreaAdr.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldTelRedac.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldEmail.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldNomCA.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	
+		    	// Check client
+		    	if (textFieldNomSite.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldCode.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldCodePostal.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldVille.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldTelCl.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	if (textFieldEmailCl.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+
+				/**Fin check des input**/
+				
+				// On prepare les donnees
+		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
+				
+				// On ajoute autant de String que necessaire
+				// Partie redacteur
+				
+		    	IDataHandler redacteurPart = new DefaultDataHandler("Rédacteur");
+		    	
+				// Ajout des titres
+		    	redacteurPart.addString(textFieldNom.getText(), titreRedacteur.getText()); //titre redacteur
+		    	redacteurPart.addString(textAreaAdr.getText(), nom.getText());            // nom :
+		    	redacteurPart.addString(textFieldTelRedac.getText(), adr.getText());            // adresse : 
+		    	redacteurPart.addString(textFieldEmail.getText(), tel.getText());            // telephone : 
+				redacteurPart.addString(textFieldNomCA.getText(), email.getText());          // email : 
+				redacteurPart.addString(textFieldNomCA.getText(), nomCA.getText());          // nom du chage d'affaire
+				
+				datas.add(redacteurPart);
+				// Partie client
+				/*strings.add(titreClient.getText()); 		//ecriture du titre de la partie du formulare 	
+				strings.add(textFieldNomSite.getText()); 	//ecriture des donnees nomSite
+				strings.add(textFieldCode.getText()); 	 	//ecriture des donnees code
+				strings.add(textAreaAdrCl.getText());   	//ecriture des donnees adrCl
+				strings.add(textFieldCodePostal.getText()); //ecriture des donnees codePostal
+				strings.add(textFieldVille.getText());  	//ecriture des donnees ville
+				strings.add(textFieldTelCl.getText());   	//ecriture des donnees telCl
+				strings.add(textFieldEmailCl.getText());  	//ecriture des donnees emailCl
+				*/
+				// On ajoute les titres
+				//datas.put(0, titles);
+				
+				// On ajoute les donnees en utilisant l'attribut pour prÃ©ciser le type de donnÃ©e
+				//datas.put(IWriteStrategie.DATA_TYPE_STRING, strings);
+				
+				// On prepare la liste de diagramme
+				//Collection<Object> graphics = new ArrayList<Object>();
+				
+				// On ajoute un diagramme (attention, ceci n'est qu'un exemple)
+				//graphics.add(GraphTest.generateBarChart());
+				
+				// On ajoute aux donnees la liste des diagrammes
+				//datas.put(IWriteStrategie.DATA_TYPE_JFREECHART, graphics);
+				
+				try {
+					// Finallement on creer le document
+					CreateReportDocument.createPdf(datas);
+					JOptionPane.showMessageDialog(mainFrame, "Rapport généré", "Rapport généré", 
+							JOptionPane.INFORMATION_MESSAGE);
+				} 
+				catch (Exception e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(mainFrame, e.getMessage(), "Error", 
+							JOptionPane.WARNING_MESSAGE);
+				}
 		    	
 		    }
 		});

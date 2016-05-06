@@ -1,19 +1,18 @@
 package documentHandler.writeStrategies;
 
-import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jfree.chart.JFreeChart;
-
-import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import dataHandler.IDataHandler;
 
 /**
  * Cette classe est la strategie d'edition de document par defaut
@@ -21,7 +20,6 @@ import com.itextpdf.text.pdf.PdfWriter;
  *
  */
 public class DefaultWriteStrategie implements IWriteStrategie{
-
 	/**
 	 * Chaque type de donnee requise
 	 */
@@ -37,70 +35,96 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	 */
 	private final static int[] EACH_DATA_TYPE_NUMBER = {2, 1}; 
 	
-	
 	/**
 	 * Fonction d'edition de document
 	 */
 	@Override
-	public boolean writeDocument(Map<Integer, Collection<Object>> datas, Document document, PdfWriter writer)
+	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer)
 			throws Exception {
-		
-		/******Check des donnees*****/
-		if (datas.size() < EACH_DATA_TYPE_REQUIRED.length) {
-			throw new Exception ("Not enough data types, " + EACH_DATA_TYPE_REQUIRED.length + " waited");
-		}
-		
-		// Pour iterer sur les donnees qui sont dans une map, on recupere un Iterator du type d'entree de la map
-        Iterator<Entry<Integer, Collection<Object>>> iterator = datas.entrySet().iterator();
-        
-        // Permet d'avoir un indice
-        int counter = 0;
-        // Tant que l'on a une element suivant
-		while (iterator.hasNext()) {
-			//On prend l'element suivant
-			Entry<Integer, Collection<Object>> data = iterator.next();
-			
-			// On verifie que l'on a le bon type de donnee (en tous cas, le bon type annonce)
-			if (data.getKey() != EACH_DATA_TYPE_REQUIRED[counter]) {
-				String exceptionMsg = "Unnexpected data type, number " + counter + ", " + 
-						EACH_DATA_TYPE_REQUIRED_STRING[counter] + " required verify your data order : \n";
-				
-				for (String typeStr : EACH_DATA_TYPE_REQUIRED_STRING) {
-					exceptionMsg += typeStr + " ";
-				}
-				throw new Exception (exceptionMsg);
-			}		
-			// On verifie que l'on a bien assez de donnees pour chaque type de donnees.
-			else if (data.getValue().size() < EACH_DATA_TYPE_NUMBER[counter]) {
-				throw new Exception ("Not enough data for the type number " + counter);
-			}
-			
-			++counter;
-		}
-		/******Fin check des donnees*****/
 		
 		// On ouvre le document a la modification
 		document.open();
 		
-		// On creer un Iterator pour les string
-		Iterator<Object> stringsIterator = datas.get(EACH_DATA_TYPE_REQUIRED[0]).iterator();
+		// Creation de la font par defaut
+        BaseFont basefont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
+		// Creation de la font concrete
+        Font baseConcreteFont = new Font (basefont, 12, Font.NORMAL);
+        
+		// On creer un Iterator pour les donnees
+		Iterator<IDataHandler> datasIterator = datas.iterator();
 		
+		while (datasIterator.hasNext()) {
+			
+			IDataHandler currentDataPart = datasIterator.next();
+			Iterator<Collection<Object>> currentPartIter = currentDataPart.getDataStorage().iterator();
+			
+			Iterator<Object> datasTypeIter = currentPartIter.next().iterator();
+			Iterator<Object> datasIter     = currentPartIter.next().iterator();
+			
+			// On creer un paragraphe
+			Paragraph para = new Paragraph();
+			
+			para.add(new Phrase(currentDataPart.getPartTitle(), baseConcreteFont));
+			para.add(Chunk.NEWLINE);
+			
+			while (datasTypeIter.hasNext()) {
+			
+				switch ((int)datasTypeIter.next()) {
+					case IDataHandler.DATA_TYPE_STRING:
+						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+						break;
+					default:
+						throw new Exception ("data type not handled");
+				}
+				
+				para.add(Chunk.NEWLINE);
+			}
+			
+			// On ajout le paragraphe au document
+			document.add(para);
+		}
+		
+		// Auquel on ajoute des Phrase
+		/*paraRedacteur.add(new Phrase((String)stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom       : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("adresse   : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("téléphone : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Email     : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom du chargé d'affaire    : " + stringsIterator.next(), baseConcreteFont));
+		*/
 		// On creer un paragraphe
-		Paragraph para1 = new Paragraph();
+		//Paragraph para1 = new Paragraph();
 		// Auquel on ajoute des Phrases
-		para1.add("Pr�nom " + stringsIterator.next());
-		para1.setSpacingBefore(50);
+		//para1.add("Pr�nom " + stringsIterator.next());
+		//para1.setSpacingBefore(50);
 		// On ajout le paragraphe au document
-		document.add(para1);
+		//document.add(para1);
 		
-		// On refait la même chose
-		Paragraph para2 = new Paragraph();
-		para2.add("Nom " + stringsIterator.next());
-		para2.setSpacingBefore(10);
-		document.add(para2);
+		/*Paragraph paraClient = new Paragraph();
+		paraClient.add(new Phrase((String)stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Code : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
+		paraRedacteur.add(Chunk.NEWLINE);
+		paraRedacteur.add(new Phrase("Nom su site : " + stringsIterator.next(), baseConcreteFont));
 		
 		// On creer un Iterator pour les JFreeChart
-		Iterator<Object> JFreeChartIterator = datas.get(EACH_DATA_TYPE_REQUIRED[1]).iterator();
+		Iterator<Object> JFreeChartIterator = datas.get(EACH_DATA_TYPE_REQUIRED[2]).iterator();
 		
 		// Ceci est le paragraphe precedent le graphique
 		Paragraph para3 = new Paragraph();
@@ -137,9 +161,11 @@ public class DefaultWriteStrategie implements IWriteStrategie{
         // a l'emplacement Y correspondant a la coordonnee verticale du dernier document.add() - la hauteur du diagramme
         // En effet, Y = 0 correspond au pied du document ( (0,0) = en bas au milieu du document)
         contentByte.addTemplate(template, 0, writer.getVerticalPosition(false) - height);    
+		*/
 		
 		// A la fin, on ferme tous les flux
 		document.close();
+		writer.close();
 
 		return true;
 	}

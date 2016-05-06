@@ -2,11 +2,9 @@ package tests;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
+import dataHandler.DefaultDataHandler;
+import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
-import documentHandler.writeStrategies.IWriteStrategie;
 
 /**
  * Cette class permet de tester certaines parties de l'application
@@ -21,8 +19,17 @@ public class PdfTest {
 	 */
 	public static void main(String[] args) {
 		
+		Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
+		
+		IDataHandler redacteurPart = new DefaultDataHandler("Rédacteur");
+		
+		redacteurPart.addString("Lucie", "prénom : ");
+		redacteurPart.addString("PELLOTTIERO", "nom : ");
+		
+		datas.add(redacteurPart);
+		
 		// On prepare les donnees
-		Map<Integer, Collection<Object>> datas = new HashMap<Integer, Collection<Object>>();
+		/*Map<Integer, Collection<Object>> datas = new HashMap<Integer, Collection<Object>>();
 		
 		// La liste des String a ajouter
 		Collection<Object> strings = new ArrayList<Object>();
@@ -43,7 +50,7 @@ public class PdfTest {
 		
 		// On ajoute aux donnees la liste des diagrammes
 		datas.put(IWriteStrategie.DATA_TYPE_JFREECHART, graphics);
-		
+		*/
 		// L'utilisation du DocumentStamper a ete abandonnee
 		/*
 		try {

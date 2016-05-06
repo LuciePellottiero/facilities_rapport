@@ -1,10 +1,10 @@
 package documentHandler.writeStrategies;
 
 import java.util.Collection;
-import java.util.Map;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import dataHandler.IDataHandler;
 
 /**
  * Cette interface decrit les strategies d'edition de document
@@ -31,5 +31,5 @@ public interface IWriteStrategie {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est geree
 	 */
-	public boolean writeDocument (Map<Integer, Collection<Object>> datas, Document document, PdfWriter writer) throws Exception;
+	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer) throws Exception;
 }

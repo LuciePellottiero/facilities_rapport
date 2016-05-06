@@ -3,12 +3,11 @@ package documentHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
-import java.util.Map;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import dataHandler.IDataHandler;
 import documentHandler.writeStrategieFactory.WriteStrategieFactory;
 import documentHandler.writeStrategies.IWriteStrategie;
 import utilities.FileUtilities;
@@ -31,7 +30,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */
-	public static boolean createPdf (Map<Integer, Collection<Object>> datas) throws Exception{
+	public static boolean createPdf (Collection<IDataHandler> datas) throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		File pdfReport = FileUtilities.getResource(defaultPdfReportsPathName);
 		// Puis on creer le fichier a l'emplacement precise precedamment
@@ -63,7 +62,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */
-	public static boolean createtPdf (Map<Integer, Collection<Object>> datas, String reportPathName, int writeStrategieNumber) throws Exception{
+	public static boolean createtPdf (Collection<IDataHandler> datas, String reportPathName, int writeStrategieNumber) throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		File pdfReport = FileUtilities.getResource(reportPathName);
 		// Puis on creer le fichier a l'emplacement precise precedamment
