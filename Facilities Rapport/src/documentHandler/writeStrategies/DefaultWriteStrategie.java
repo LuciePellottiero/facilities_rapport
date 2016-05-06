@@ -23,17 +23,17 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class DefaultWriteStrategie implements IWriteStrategie{
 
 	/**
-	 * Chaque type de donnée requise
+	 * Chaque type de donnee requise
 	 */
 	private final static Integer[] EACH_DATA_TYPE_REQUIRED = {DATA_TYPE_STRING, DATA_TYPE_JFREECHART};
 	
 	/**
-	 * Chaque type de donnée requise mais sous forme de string pour l'affichage d'exception
+	 * Chaque type de donnee requise mais sous forme de string pour l'affichage d'exception
 	 */
 	private final static String[] EACH_DATA_TYPE_REQUIRED_STRING = {"String", "JFreeChart"};
 	
 	/**
-	 * Pour chaque type de donnée attendu, le nombre de donnée attendu
+	 * Pour chaque type de donnee attendue, le nombre de donnees attendues
 	 */
 	private final static int[] EACH_DATA_TYPE_NUMBER = {2, 1}; 
 	
@@ -45,7 +45,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	public boolean writeDocument(Map<Integer, Collection<Object>> datas, Document document, PdfWriter writer)
 			throws Exception {
 		
-		/******Check des données*****/
+		/******Check des donnees*****/
 		if (datas.size() < EACH_DATA_TYPE_REQUIRED.length) {
 			throw new Exception ("Not enough data types, " + EACH_DATA_TYPE_REQUIRED.length + " waited");
 		}
@@ -70,7 +70,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 				}
 				throw new Exception (exceptionMsg);
 			}		
-			// On vérifie que l'on a bien assez de données pour chaque type de données.
+			// On verifie que l'on a bien assez de donnees pour chaque type de donnees.
 			else if (data.getValue().size() < EACH_DATA_TYPE_NUMBER[counter]) {
 				throw new Exception ("Not enough data for the type number " + counter);
 			}
@@ -87,8 +87,8 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 		
 		// On creer un paragraphe
 		Paragraph para1 = new Paragraph();
-		// Auquel on ajoute des Phrase
-		para1.add("Prénom " + stringsIterator.next());
+		// Auquel on ajoute des Phrases
+		para1.add("Pr�nom " + stringsIterator.next());
 		para1.setSpacingBefore(50);
 		// On ajout le paragraphe au document
 		document.add(para1);

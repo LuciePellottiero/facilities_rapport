@@ -16,8 +16,8 @@ import documentHandler.writeStrategies.IWriteStrategie;
 public class PdfTest {
 
 	/**
-	 * Le main a executer pour tester. Pour l'instant les arguments sont innutiles
-	 * @param args Innutiles pour l'instant
+	 * Le main a executer pour tester. Pour l'instant les arguments sont inutiles
+	 * @param args Inutiles pour l'instant
 	 */
 	public static void main(String[] args) {
 		
@@ -28,11 +28,11 @@ public class PdfTest {
 		Collection<Object> strings = new ArrayList<Object>();
 		
 		// On ajoute autant de String que necessaire
-		// (attention, un nombre de donnee minimum peut etre attendu)
+		// (attention, un nombre de donnees minimum peut etre attendu)
 		strings.add("Lucie");
-		strings.add("PELLOTIERRO");
+		strings.add("PELLOTTIERO");
 		
-		// On ajoute les String en utilisant l'attribut pour préciser le type de donnée
+		// On ajoute les String en utilisant l'attribut pour preciser le type de donnee
 		datas.put(IWriteStrategie.DATA_TYPE_STRING, strings);
 		
 		// On prepare la liste de diagramme
@@ -60,7 +60,7 @@ public class PdfTest {
 		
 		
 		try {
-			// Finallement on creer le document
+			// Finalement on cree le document
 			CreateReportDocument.createPdf(datas);
 			System.out.println("Rapport termine");
 		} 

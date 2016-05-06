@@ -14,11 +14,11 @@ import com.itextpdf.text.pdf.PdfWriter;
 public interface IWriteStrategie {
 	
 	/**
-	 * Un type de donnée possible
+	 * Un type de donnee possible
 	 */
 	public static final Integer DATA_TYPE_STRING     = 0;
 	/**
-	 * Un type de donnée possible
+	 * Un type de donnee possible
 	 */
 	public static final Integer DATA_TYPE_JFREECHART = 1;
 	

@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -83,8 +84,10 @@ public class Formulaire extends JFrame{
 		titreRedacteur.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRedacteur
 		c.gridx = 0;
 		c.gridy = 0;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreRedacteur, c); //ajout du titreRedacteur dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//nom
 		JLabel nom = new JLabel("Nom : "); //creation du label nom
 		c.gridy = 1;
@@ -158,8 +161,10 @@ public class Formulaire extends JFrame{
 		titreClient.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreClient
 		c.gridx = 0;
 		c.gridy = 7;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 		conteneurPrincipal.add(titreClient, c); //ajout du titreClient dans le panel conteneurPrincpal
 		
+		c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//nom
 		JLabel nomSite = new JLabel("Nom du site : "); //creation du label nomSite
 		c.gridy = 8;
@@ -273,8 +278,10 @@ public class Formulaire extends JFrame{
 		titreRapport.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRapport
 		c.gridx = 0;
 		c.gridy = 17;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreRapport, c); //ajout du titreRapport dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//rapport d'activite
 	    JLabel rapportActivite = new JLabel("Rapport d'activté : "); ////creation du label rapportActivite
 		c.gridy = 18;
@@ -331,8 +338,10 @@ public class Formulaire extends JFrame{
 		titreBP.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
 		c.gridx = 0;
 		c.gridy = 21;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreBP, c); //ajout du titreBP dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//mois
 	    JLabel moisBP = new JLabel("mois : ");
 		c.gridy = 22;
@@ -373,12 +382,14 @@ public class Formulaire extends JFrame{
 	    JLabel commentaireBP = new JLabel("Commentaire : "); //creation du label commentaireBP
 		c.gridx = 0;
 		c.gridy = 25;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBP, c); //ajout du label commentaireBP
 	    JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
 	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
 		c.gridy = 26;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComBP, c); //ajout de la scrollPane scrollPaneComBP
 	    
 	    
@@ -386,21 +397,22 @@ public class Formulaire extends JFrame{
 	    
 	    JLabel titreBPDomaine = new JLabel("Bons préventifs par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreBPDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0;
-		c.gridy = 27;
-		c.gridwidth = 1;
+		c.gridx = 0; //position horizontale
+		c.gridy = 27; //position verticale
+		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreBPDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
 	    String[] listeDomaines = {"Clos et ouvert", "Aménagement intérieur", "Ascenseur, monte-charge", "CVC", "Plomberie sanitaire",
 	    						  "Electricité CFO", "Sûreté", "Sécurité détection incendie", "Aménagements extérieurs", "Centrale énergie",
 	    						  "Cont, réglementaire"}; //liste des differents domaines
 	    int nbDomaines = listeDomaines.length; //taille de la liste des domaines
-	    int positionyDomaine = 28; //position verticale de depart
+	    int positionyDomaine = 28; //position verticale de depart de la boucle
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 	    for(int i = 0; i < nbDomaines; i++){
 	    	domaine = new JCheckBox(listeDomaines[i]);
-	    	domaine.setMnemonic(KeyEvent.VK_C);
-	    	c.gridx = 0;
-			c.gridy = positionyDomaine + i;
-			c.gridwidth = 1;
+	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	c.gridx = 0; //position horizontale
+			c.gridy = positionyDomaine + i; //position de l'element a la position verticale de depart + i
 			conteneurPrincipal.add(domaine, c); //ajout de la checkbox domaine
 			try{
 				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
@@ -408,8 +420,8 @@ public class Formulaire extends JFrame{
 		    }catch(ParseException e){
 				e.printStackTrace(); //exception
 			}
-		    c.gridx = 1;
-			c.gridwidth = GridBagConstraints.REMAINDER;
+		    c.gridx = 1; //position horizontale
+			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
 			conteneurPrincipal.add(textFieldPourcent, c); //ajout de la zone de texte Pourcent1
 	    }
 	  
@@ -418,12 +430,14 @@ public class Formulaire extends JFrame{
 		c.gridx = 0;
 		c.gridy = 39;
 		c.gridwidth = 1;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBPDomaine, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaireBPDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComBPDomaine = new JScrollPane(textAreaCommentaireBPDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaCommentaireBPDomaine); //attribution de la zone de texte au label emailCl
 		c.gridy = 40;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComBPDomaine, c); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
@@ -432,8 +446,10 @@ public class Formulaire extends JFrame{
 		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
 		c.gridy = 41;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, c); //ajout du titreRapportr dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//titre
 	    JLabel titre = new JLabel("Titre : ");
 		c.gridy = 42;
@@ -467,16 +483,24 @@ public class Formulaire extends JFrame{
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin
 		
+		JButton ajoutElement = new JButton("Ajouter un élément");
+		c.gridx = 1;
+		c.gridy = 44;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutElement, c); //ajout du bouton ajoutElement
+		
 		//commentaire
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = 44;
+		c.gridy = 45;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaire, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
 	    commentaire.setLabelFor(textAreaCommentaire); //attribution de la zone de texte au label emailCl
-		c.gridy = 45;
+		c.gridy = 46;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneCom, c); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire demandes d'intervention----------------------------------------------------------*/
@@ -484,12 +508,14 @@ public class Formulaire extends JFrame{
 		JLabel titreDI = new JLabel("Demandes d'intervention"); //titre de la parte rapport du formulaire
 		titreDI.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = 46;
+		c.gridy = 47;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, c); //ajout du titreRapportr dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//mois
 	    JLabel moisDI = new JLabel("Mois : ");
-		c.gridy = 47;
+		c.gridy = 48;
 		conteneurPrincipal.add(moisDI, c); //ajout du label
 		comboBoxMoisDI = new JComboBox(choixMois);
 		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
@@ -501,7 +527,7 @@ public class Formulaire extends JFrame{
 	    //nombre d'interventions
 	    JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label dateDebut
 	    c.gridx = 0;
-		c.gridy = 48;
+		c.gridy = 49;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nbIntervention, c); //ajout du label nbBPOuverts
 	    JTextField textFieldNbIntervention = new JTextField(2); //initialisation de la zone de texte textFieldNbBPOuverts
@@ -513,13 +539,15 @@ public class Formulaire extends JFrame{
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = 49;
+		c.gridy = 50;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDI, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaireDI = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComDI = new JScrollPane(textAreaCommentaireDI);
 	    commentaireDI.setLabelFor(textAreaCommentaireDI); //attribution de la zone de texte au label emailCl
-		c.gridy = 50;
+		c.gridy = 51;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDI, c); //ajout de la zone de texte emailCl
 	    
 	    
@@ -527,13 +555,16 @@ public class Formulaire extends JFrame{
 	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par état"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = 51;
+		c.gridy = 52;
 		c.gridwidth = 1;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDIEtat, c); //ajout du titreBPDomaine dans conteneurPrincipal
+	    
 	    String[] listeEtats = {"Attente de lecture avant exécution", "Attente de lecture par validateur",
 	    						"Attente de réalisation", "En cours de réalisation", "Réalisation partielle"}; //liste des etats
 	    int nbEtats = listeEtats.length; //nombre d'etats
-	    int positionyEtat = 52; //poston verticale de depart
+	    int positionyEtat = 53; //poston verticale de depart
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 	    for(int i = 0; i < nbEtats; i++){
 	    	etat = new JCheckBox(listeEtats[i]); //creation d'une checkbox pour chaque etat possible
 		    c.gridx = 0;
@@ -549,14 +580,16 @@ public class Formulaire extends JFrame{
 		//commentaire DI par etat
 	    JLabel commentaireDIEtat = new JLabel("Commentaire : "); //creation du label commentaireDIEtat
 		c.gridx = 0;
-		c.gridy = 57;
+		c.gridy = 58;
 		c.gridwidth = 1;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDIEtat, c); //ajout du label commentaireDIEtat
 	    JTextArea textAreaCommentaireDIEtat = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireDIEtat
 	    JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
 	    commentaireDIEtat.setLabelFor(textAreaCommentaireDIEtat); //attribution de la zone de texte textAreaCommentaireDIEtat au label commentaireDIEtat
-		c.gridy = 58;
+		c.gridy = 59;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDIEtat, c); //ajout de scrollPaneComDIEtat
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
@@ -564,12 +597,14 @@ public class Formulaire extends JFrame{
 		JLabel titreArboLibre2 = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
 		titreArboLibre2.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = 59;
+		c.gridy = 60;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre2, c); //ajout du titreRapportr dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		//titre
 	    JLabel titre2 = new JLabel("Titre : ");
-		c.gridy = 60;
+		c.gridy = 61;
 		conteneurPrincipal.add(titre2, c); //ajout du label 
 		JTextField textFieldTitre2 = new JTextField(15); //creation de la zone de texte nomSite de taille 15
 		titre2.setLabelFor(textFieldTitre2); //attribution de la zone de texte au label nomSite
@@ -580,7 +615,7 @@ public class Formulaire extends JFrame{
 	    //element
 	    JLabel element2 = new JLabel("Elément : "); //creation du label dateDebut
 		c.gridx = 0;
-		c.gridy = 61;
+		c.gridy = 62;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(element2, c); //ajout du label nbBPOuverts
 	    JTextField textFieldElement2 = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
@@ -603,13 +638,15 @@ public class Formulaire extends JFrame{
 		//commentaire
 	    JLabel commentaire2 = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = 62;
+		c.gridy = 63;
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(commentaire2, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaire2 = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneCom2 = new JScrollPane(textAreaCommentaire2);
 	    commentaire2.setLabelFor(textAreaCommentaire2); //attribution de la zone de texte au label emailCl
-		c.gridy = 63;
+		c.gridy = 64;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		 c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneCom2, c); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
@@ -617,12 +654,14 @@ public class Formulaire extends JFrame{
 		JLabel titreCompteurs = new JLabel("Compteurs"); //titre de la parte rapport du formulaire
 		titreCompteurs.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = 64;
+		c.gridy = 65;
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreCompteurs, c); //ajout du titreRapportr dans conteneurPrincipal
 		
+	    c.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 	    //type de compteur
 	    JLabel typeCompteur = new JLabel("Type du compteur : ");
-		c.gridy = 65;
+		c.gridy = 66;
 		conteneurPrincipal.add(typeCompteur, c); //ajout du label 
 		String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //dfferents choix de la duree du rapport d'activite
 		comboBoxTypeCompteur = new JComboBox(choixTypeCompteur);
@@ -635,7 +674,7 @@ public class Formulaire extends JFrame{
 		//mois
 	    JLabel moisCompteur = new JLabel("Mois : ");
 	    c.gridx = 0;
-		c.gridy = 66;
+		c.gridy = 67;
 		conteneurPrincipal.add(moisCompteur, c); //ajout du label
 		comboBoxMoisCompteur = new JComboBox(choixMois);
 		comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
@@ -647,7 +686,7 @@ public class Formulaire extends JFrame{
 		//consommation
 	    JLabel consommation = new JLabel("Consommation : ");
 	    c.gridx = 0;
-		c.gridy = 67;
+		c.gridy = 68;
 		c.gridwidth = 1;
 		conteneurPrincipal.add(consommation, c); //ajout du label 
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte nomSite de taille 15
@@ -664,22 +703,25 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(comboBoxUnite, c); //ajout de la zone de texte adr
 		
 		//commentaire
+		 c.insets = new Insets(10, 0, 0, 0); //marges autour de l'element
 	    JLabel commentaireCompteur = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = 68;
+		c.gridy = 69;
 	    conteneurPrincipal.add(commentaireCompteur, c); //ajout du label emailCl
 	    JTextArea textAreaComCompteur = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComCompteur = new JScrollPane(textAreaComCompteur);
 	    commentaireCompteur.setLabelFor(textAreaComCompteur); //attribution de la zone de texte au label emailCl
-		c.gridy = 69;
+	    c.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
+		c.gridy = 70;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(scrollPaneComCompteur, c); //ajout de la zone de texte emailCl
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
-		JButton valideForm = new JButton("Valider"); //bouton de validation du formulaire 
-	    c.gridy = 70;
-	    c.gridwidth = 1;
+		JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
+	    c.gridy = 71;
+	    c.gridwidth = GridBagConstraints.REMAINDER;
+	    c.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(valideForm, c); //ajout du bouton de validation de la partie client
 	    
 		//action declenchee par le bouton de validation du formulaire
@@ -797,7 +839,7 @@ public class Formulaire extends JFrame{
 		    	fw.println(commentaireDI.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireDI
 		    	//partie domaines d'intervention par etat
 		    	System.out.println(titreDIEtat.getText()); 													//ecriture du titre de la partie du formulaire
-		    	System.out.println (commentaireDIEtat.getText() + textAreaCommentaireDIEtat.getText()); 	//affichage console des données commentaireBPDomaine
+		    	System.out.println (commentaireDIEtat.getText() + textAreaCommentaireDIEtat.getText()); 	//ecriture des données commentaireBPDomaine
 		    	domaine.addItemListener(new ItemListener() {
 		            public void itemStateChanged(ItemEvent e) {         
 		            	System.out.println(domaine.getText() + (e.getStateChange()==1? " " : textFieldPourcent.getText()));
@@ -830,6 +872,7 @@ public class Formulaire extends JFrame{
 	    conteneur.add(conteneurPrincipal, BorderLayout.CENTER); //ajout du conteneur principal contenant tous les champs formulaires au centre du conteuneur
 	    
 	    JScrollPane scrollPanePrincipale = new JScrollPane(conteneur); //scrollPane principale sur le conteneur
+	    scrollPanePrincipale.getVerticalScrollBar().setUnitIncrement(16); //vitesse de scroll
 	    
 	    fenetre.add(titreFacilitiesRapport, BorderLayout.NORTH); //ajout du titre en haut de la fenetre 
 	    fenetre.add(scrollPanePrincipale, BorderLayout.CENTER); //ajout de la scrollPane principale (et du conteneur) au centre de la fenetre

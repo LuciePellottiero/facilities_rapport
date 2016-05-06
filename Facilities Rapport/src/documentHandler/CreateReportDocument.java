@@ -46,10 +46,10 @@ public class CreateReportDocument {
 		// On cree la strategie que l'on va utiliser pour creer le document
 		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
 		
-		// On effectue l'édition du PDF par la strategie
+		// On effectue l'edition du PDF par la strategie
 		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
 		
-		// On oublie pas de fermer tous les flux
+		// On n'oublie pas de fermer tous les flux
 		pdfWriter.close();
 		
 		//On renvoie le resultat
@@ -59,7 +59,7 @@ public class CreateReportDocument {
 	/**
 	 * Cette fonction permet de creer le document PDF du rapport a l'emplacement specifie
 	 * @param filePathName L'emplacement dans lequel doit etre creer le template
-	 * @param writeStrategieNumber La strategie d'edition choisi (voir WriteStrategieFactory pour la liste).
+	 * @param writeStrategieNumber La strategie d'edition choisie (voir WriteStrategieFactory pour la liste).
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */

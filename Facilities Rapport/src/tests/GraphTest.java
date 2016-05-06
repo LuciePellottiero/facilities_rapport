@@ -16,14 +16,14 @@ import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * Cette class teste la génération de graph dans les PDF
+ * Cette class teste la generation de graphe dans les PDF
  * @author Lucie PELLOTTIERO
  *
  */
 public class GraphTest {
 	
 	/**
-	 * Permet de générer un exemple de graphe camembert
+	 * Permet de generer un exemple de graphe camembert
 	 * @return Un JFreeChart sous forme de camembert
 	 */
 	public static JFreeChart generatePieChart() {
@@ -43,7 +43,7 @@ public class GraphTest {
     }
  
 	/**
-	 * Permet de générer un exemple de graphe en bares
+	 * Permet de generer un exemple de graphe en bares
 	 * @return Un JFreeChart sous forme de bares
 	 */
     public static JFreeChart generateBarChart() {
@@ -63,11 +63,11 @@ public class GraphTest {
     }
     
     /**
-     * Permet de créer un PDF et d'y insérer un graphe
-     * @param chart Le JFreeChart à déssiner
-     * @param width La largeur du JFreeChart à déssiner
-     * @param height La hauteur du JFreeChart à déssiner
-     * @param fileName Le nom (donc le chemin) que doit prendre le fichier à générer
+     * Permet de creer un PDF et d'y inserer un graphe
+     * @param chart Le JFreeChart a�dessiner
+     * @param width La largeur du JFreeChart a dessiner
+     * @param height La hauteur du JFreeChart a dessiner
+     * @param fileName Le nom (donc le chemin) que doit prendre le fichier a generer
      */
     public static void writeChartToPDF(JFreeChart chart, int width, int height, String fileName) {
         PdfWriter writer = null;
@@ -99,8 +99,8 @@ public class GraphTest {
     }
 
     /**
-     * Permet de créer 2 PDF avec chaqun un graphe différent mais avec les mêmes données
-     * @param args Innutilisé
+     * Permet de creer 2 PDF avec chaqun un graphe different mais avec les memes donnees
+     * @param args Inutilises
      */
 	public static void main(String[] args) {
 		writeChartToPDF(generateBarChart(), 500, 400, "barchart.pdf");
