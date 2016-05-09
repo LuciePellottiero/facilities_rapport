@@ -1,6 +1,7 @@
 package documentHandler.writeStrategies;
 
 import java.util.Collection;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 
