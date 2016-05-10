@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -77,10 +78,7 @@ public class Formulaire extends JFrame{
 	 * Declaration de la comboBox des durée de rapport
 	 */
 	private JComboBox<String>   comboBoxRapport;
-	/**
-	 * Declaration de la comboBox des mois pour les BP
-	 */
-	private JComboBox<String>   comboBoxMoisBP;
+
 	/**
 	 * Declaration de la Collection<JFormattedTextField> des Pourcents date fin remplis dans le try
 	 */
@@ -105,6 +103,17 @@ public class Formulaire extends JFrame{
 	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
 	 */
 	private Collection<JCheckBox> domainesBP;
+	
+	/**
+	 * JLabel pour chaque mois de bon preventif
+	 */
+    private JLabel preventivVoucherMonthJLabel;
+    
+	/**
+	 * liste differents choix de la duree du rapport d'activite
+	 */
+	private final String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
+			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
 	private int positionCounter;
 	private int positionMoisBP;
@@ -132,8 +141,8 @@ public class Formulaire extends JFrame{
 		
 		JPanel conteneur = new JPanel();
 		JPanel conteneurPrincipal = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;   
+		GridBagConstraints constraint = new GridBagConstraints();
+		constraint.fill = GridBagConstraints.BOTH;   
 		
 		positionCounter = 0;
 		
@@ -141,42 +150,42 @@ public class Formulaire extends JFrame{
 	    
 		JLabel titreRedacteur = new JLabel("Redacteur"); //titre de la partie redacteur du formulaire
 		titreRedacteur.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRedacteur
-		c.gridx = 0;
-		c.gridy = positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreRedacteur, c); //ajout du titreRedacteur dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreRedacteur, constraint); //ajout du titreRedacteur dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//nom
 		JLabel nom = new JLabel("Nom : "); //creation du label nom
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(nom, c); //ajout du label
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(nom, constraint); //ajout du label
 		JTextField textFieldNom = new JTextField(15); //creation de la zone de texte adr de taille 15
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		nom.setLabelFor(textFieldNom); //attribution de la zone de texte au label adr
-		conteneurPrincipal.add(textFieldNom, c); //ajout de la zone de texte adr
+		conteneurPrincipal.add(textFieldNom, constraint); //ajout de la zone de texte adr
 		
 		//adresse 
 		JLabel adr = new JLabel("Adresse : "); //creation du label adr
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(adr, c); //ajout du label adr
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(adr, constraint); //ajout du label adr
 	    JTextArea textAreaAdr = new JTextArea(3, 15); //creation de la zone de texte adr de taille 3 en hauteur et 15 en largeur
 	    JScrollPane scrollPaneAdr = new JScrollPane(textAreaAdr);
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    adr.setLabelFor(textAreaAdr); //attribution de la zone de texte au label adr
-	    conteneurPrincipal.add(scrollPaneAdr, c); //ajout de la zone de texte adr
+	    conteneurPrincipal.add(scrollPaneAdr, constraint); //ajout de la zone de texte adr
 	    
 	    //telephone
 	    JLabel tel = new JLabel("Téléphone : "); //creation du label tel
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(tel, c); //ajout du label tel
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(tel, constraint); //ajout du label tel
 	    try{
 			MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
@@ -184,33 +193,33 @@ public class Formulaire extends JFrame{
 			e.printStackTrace(); //exception
 		}
 	    tel.setLabelFor(textFieldTelRedac); //attribution de la zone de texte au label tel
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTelRedac, c); //ajout de la zone de texte tel
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldTelRedac, constraint); //ajout de la zone de texte tel
 	   
 	    //email
 	    JLabel email = new JLabel("Email : "); //creation du label email
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(email, c); //ajout du label nom
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(email, constraint); //ajout du label nom
 	    JTextField textFieldEmail = new JTextField(15); //creation de la zone de texte email de taille 15
 	    email.setLabelFor(textFieldEmail); //attribution de la zone de texte au label email
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(textFieldEmail, c); //ajout de la zone de texte email au panel redacteur 
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    conteneurPrincipal.add(textFieldEmail, constraint); //ajout de la zone de texte email au panel redacteur 
 	    
 	    //nom charge d'affaire
 	    JLabel nomCA = new JLabel("Nom du chargé d'affaire : "); //creation du label nomCA
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(nomCA, c); //ajout du label nomCA au panel redacteur
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(nomCA, constraint); //ajout du label nomCA au panel redacteur
 	    JTextField textFieldNomCA = new JTextField(15); //creation de la zone de texte nomCA de taille 15
 	    nomCA.setLabelFor(textFieldNomCA); //attribution de la zone de texte au label nomCA
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(textFieldNomCA, c); //ajout de la zone de texte nomCA
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    conteneurPrincipal.add(textFieldNomCA, constraint); //ajout de la zone de texte nomCA
 	
         
 		/*-------------------------------------------formulaire client-------------------------------------------------*/
@@ -218,54 +227,54 @@ public class Formulaire extends JFrame{
 		
 		JLabel titreClient = new JLabel("Client"); //titre de la partie client du formulaire
 		titreClient.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreClient
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-		conteneurPrincipal.add(titreClient, c); //ajout du titreClient dans le panel conteneurPrincpal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		conteneurPrincipal.add(titreClient, constraint); //ajout du titreClient dans le panel conteneurPrincpal
 		
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//nom
 		JLabel nomSite = new JLabel("Nom du site : "); //creation du label nomSite
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(nomSite, c); //ajout du label nomSite
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(nomSite, constraint); //ajout du label nomSite
 		JTextField textFieldNomSite = new JTextField(15); //creation de la zone de texte nomSite de taille 15
 		nomSite.setLabelFor(textFieldNomSite); //attribution de la zone de texte au label nomSite
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNomSite, c); //ajout de la zone de texte nomSite
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldNomSite, constraint); //ajout de la zone de texte nomSite
 		
 		//code
 	    JLabel code = new JLabel("Code : "); //creation du label code
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(code, c); //ajout du label code
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(code, constraint); //ajout du label code
 	    JTextField textFieldCode = new JTextField(15); //création de la zone de texte code
 	    code.setLabelFor(textFieldCode); //attribution de la zone de texte au label code
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldCode, c); //ajout de la zone de texte code
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldCode, constraint); //ajout de la zone de texte code
 		
 		//adresse client
 		JLabel adrCl = new JLabel("Adresse : "); //creation du label adrCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(adrCl, c); //ajout du label adrCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(adrCl, constraint); //ajout du label adrCl
 	    JTextArea textAreaAdrCl = new JTextArea(3, 15); //creation de la zone de texte adrCl de taille 3 en hauteur et 15 en largeur
 	    JScrollPane scrollPaneAdrCl = new JScrollPane(textAreaAdrCl);
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    adrCl.setLabelFor(textAreaAdrCl); //attribution de la zone de texte au label adrCl
-	    conteneurPrincipal.add(scrollPaneAdrCl, c); //ajout de la zone de texte adrCl
+	    conteneurPrincipal.add(scrollPaneAdrCl, constraint); //ajout de la zone de texte adrCl
 	    
 	    //code postal
 	    JLabel codePostal = new JLabel("Code postal : "); //creation du label codePostal
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(codePostal, c); //ajout du label codePostal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(codePostal, constraint); //ajout du label codePostal
 	    try{
 			MaskFormatter maskCodePostal  = new MaskFormatter("## ###"); //masque pour le format du code postal
 			textFieldCodePostal = new JFormattedTextField(maskCodePostal); //initialisation de la zone de texte codePostal formattee par le masque
@@ -273,40 +282,40 @@ public class Formulaire extends JFrame{
 			e.printStackTrace(); //exception
 		}
 	    codePostal.setLabelFor(textFieldCodePostal); //attribution de la zone de texte au label codePostal
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldCodePostal, c); //ajout de la zone de texte codePostal
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldCodePostal, constraint); //ajout de la zone de texte codePostal
 		
 		//ville
 		JLabel ville = new JLabel("Ville : "); //creation du label ville
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(ville, c); //ajout du label ville
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(ville, constraint); //ajout du label ville
 		JTextField textFieldVille = new JTextField(15); //creation de la zone de texte ville de taille 15
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		ville.setLabelFor(textFieldVille); //attribution de la zone de texte au label ville
-		conteneurPrincipal.add(textFieldVille, c); //ajout de la zone de texte ville
+		conteneurPrincipal.add(textFieldVille, constraint); //ajout de la zone de texte ville
 		
 		//nom du client
 	    JLabel nomClient = new JLabel("Nom du client : "); //creation du label nomCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(nomClient, c); //ajout du label nomCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(nomClient, constraint); //ajout du label nomCl
 	    JTextField textFieldNomClient = new JTextField(15); //creation de la zone de texte nomCl de taille 15
 	    nomClient.setLabelFor(textFieldNomClient); //attribution de la zone de texte au label nomCl
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(textFieldNomClient, c); //ajout de la zone de texte nomCl 
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    conteneurPrincipal.add(textFieldNomClient, constraint); //ajout de la zone de texte nomCl 
 	    
 	    //telephone client
 	    JLabel telCl = new JLabel("Téléphone : "); //creation du label telCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(telCl, c); //ajout du label telCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(telCl, constraint); //ajout du label telCl
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
@@ -314,52 +323,52 @@ public class Formulaire extends JFrame{
 			e.printStackTrace(); //exception
 		}
 	    telCl.setLabelFor(textFieldTelCl); //attribution de la zone de texte au label telCl
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTelCl, c); //ajout de la zone de texte telCl
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldTelCl, constraint); //ajout de la zone de texte telCl
 	   
 	    //email client
 	    JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(emailCl, c); //ajout du label emailCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(emailCl, constraint); //ajout du label emailCl
 	    JTextField textFieldEmailCl = new JTextField(15); //creation de la zone de texte emailCl de taille 15
 	    emailCl.setLabelFor(textFieldEmailCl); //attribution de la zone de texte au label emailCl
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(textFieldEmailCl, c); //ajout de la zone de texte emailCl
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    conteneurPrincipal.add(textFieldEmailCl, constraint); //ajout de la zone de texte emailCl
 	    
 		
 		/*----------------------------------------------formulaire rapport----------------------------------------------------------*/
 	    
 		JLabel titreRapport = new JLabel("Rapport"); //titre de la partie rapport du formulaire
 		titreRapport.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRapport
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreRapport, c); //ajout du titreRapport dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreRapport, constraint); //ajout du titreRapport dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//rapport d'activite
 	    JLabel rapportActivite = new JLabel("Rapport d'activité : "); ////creation du label rapportActivite
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.RELATIVE;
-		conteneurPrincipal.add(rapportActivite, c); //ajout du label rapportActivite
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+		conteneurPrincipal.add(rapportActivite, constraint); //ajout du label rapportActivite
 		String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
 		comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		rapportActivite.setLabelFor(comboBoxRapport); //attribution de la comboBox comboBoxRapport au label rapportActivite
-		conteneurPrincipal.add(comboBoxRapport, c); //ajout de la comboBox comboBoxRapport
+		conteneurPrincipal.add(comboBoxRapport, constraint); //ajout de la comboBox comboBoxRapport
 	    
 	    //date debut
 	    JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(dateDebut, c); //ajout du label dateDebut
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+	    conteneurPrincipal.add(dateDebut, constraint); //ajout du label dateDebut
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateDebut = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateDebut formattee par le masque maskDate
@@ -367,16 +376,16 @@ public class Formulaire extends JFrame{
 			e.printStackTrace(); //exception
 		}
 	    dateDebut.setLabelFor(textFieldDateDebut); //attribution de la zone de texte textFieldDateDebut au label dateDebut
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldDateDebut, c); //ajout de la zone de texte textFieldDateDebut
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldDateDebut, constraint); //ajout de la zone de texte textFieldDateDebut
 		
 		//date fin
 	    JLabel dateFin = new JLabel("Date de fin : "); //creation du label dateFin
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(dateFin, c); //ajout du label dateFin
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+	    conteneurPrincipal.add(dateFin, constraint); //ajout du label dateFin
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateFin = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateFin formattee par le masque maskDate
@@ -384,9 +393,9 @@ public class Formulaire extends JFrame{
 			e.printStackTrace(); //exception
 		}
 	    dateFin.setLabelFor(textFieldDateFin); //attribution de la zone de texte textFieldDateFin au label dateFin
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldDateFin, c); //ajout de la zone de texte textFieldDateFin
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldDateFin, constraint); //ajout de la zone de texte textFieldDateFin
 		
 		
 		
@@ -395,137 +404,54 @@ public class Formulaire extends JFrame{
 	    
 		JLabel titreBP = new JLabel("Bons préventifs"); //titre de la partie bons preventifs du formulaire
 		titreBP.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreBP, c); //ajout du titreBP dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//mois
-	    JLabel moisBP = new JLabel("Mois : ");
-	    c.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
-		String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-		comboBoxMoisBP = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
-		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		moisBP.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-		conteneurPrincipal.add(comboBoxMoisBP, c); //ajout de la zone de texte comboBox comboBoxMoisBP
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 		
-	    //nombre BP ouverts
-	    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
-	    c.gridx = 0;
-	    c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(nbBPOuverts, c); //ajout du label nbBPOuverts
-	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
-	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNbBPOuverts, c); //ajout de la zone de texte textFieldNbBPOuverts
-		
-		//nombre BP fermes
-	    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(nbBPFermes, c); //ajout du label nbBPFermes
-	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
-	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNbBPFermes, c); //ajout de la zone de texte textFieldNbBPFermes
-		
-		//bouton d'ajout de mois pour les BP
-		positionMoisBP = ++positionCounter;
-		
-		JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
-		c.gridx = 1;
-		positionCounter = ++positionCounter + 100;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisBP, c); //ajout du bouton ajoutElement
-		
-		ajoutMoisBP.addActionListener(new ActionListener() {
-			    	
-			public void actionPerformed(ActionEvent arg0) {	
-				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
-				
-				//mois
-			    JLabel moisBP = new JLabel("Mois : ");
-			    c.gridx = 0;
-			    c.gridy = ++positionMoisBP;
-				conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
-				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-				comboBoxMoisBP = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
-				comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				moisBP.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-				conteneurPrincipal.add(comboBoxMoisBP, c); //ajout de la zone de texte comboBox comboBoxMoisBP
-				
-				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-				
-			    //nombre BP ouverts
-			    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
-			    c.gridx = 0;
-			    c.gridy = ++positionMoisBP;
-				c.gridwidth = 1;
-			    conteneurPrincipal.add(nbBPOuverts, c); //ajout du label nbBPOuverts
-			    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
-			    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNbBPOuverts, c); //ajout de la zone de texte textFieldNbBPOuverts
-				
-				//nombre BP fermes
-			    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
-				c.gridx = 0;
-				c.gridy = ++positionMoisBP;
-				c.gridwidth = 1;
-			    conteneurPrincipal.add(nbBPFermes, c); //ajout du label nbBPFermes
-			    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
-			    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNbBPFermes, c); //ajout de la zone de texte textFieldNbBPFermes
-				
-				fenetre.revalidate();
-			}
-		});
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    
+	    preventivVoucherMonthJLabel = new JLabel("Mois : ");
+	    
+	    Collection<JComboBox<String>> preventivesVouchersMonths      = new ArrayList<JComboBox<String>>();
+	    Collection<JTextField>        nbPreventivesVouchersOpened    = new ArrayList<JTextField>();
+	    Collection<JTextField>        nbPreventivesVouchersCloseed   = new ArrayList<JTextField>();
+
+	    // Creation du mois
+	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois);
 		
 		//commentaire BP
 	    JLabel commentaireBP = new JLabel("Commentaire : "); //creation du label commentaireBP
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireBP, c); //ajout du label commentaireBP
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireBP, constraint); //ajout du label commentaireBP
 	    JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
 	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
 	    ++positionCounter;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneComBP, c); //ajout de la scrollPane scrollPaneComBP
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
 	    
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
 	    
 	    JLabel titreBPDomaine = new JLabel("Bons préventifs par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreBPDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0; //position horizontale
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreBPDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
+		constraint.gridx = 0; //position horizontale
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreBPDomaine, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    String[] listeDomaines = {"Clos et ouvert", "Aménagement intérieur", "Ascenseur, monte-charge", "CVC", "Plomberie sanitaire",
 	    						  "Electricité CFO", "Sûreté", "Sécurité détection incendie", "Aménagements extérieurs", "Centrale énergie",
 	    						  "Cont, réglementaire"}; //liste des differents domaines
 	    int nbDomaines = listeDomaines.length; //taille de la liste des domaines
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
 	    textFieldPourcentsBP = new ArrayList<JFormattedTextField>();
 	    domainesBP           = new ArrayList<JCheckBox>();
@@ -557,111 +483,111 @@ public class Formulaire extends JFrame{
 				}
 			});
 			
-			c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-	    	c.gridx = 0; //position horizontale
-			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
-			conteneurPrincipal.add(currentDomain, c); //ajout de la checkbox domaine
+			constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	constraint.gridx = 0; //position horizontale
+			constraint.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
+			conteneurPrincipal.add(currentDomain, constraint); //ajout de la checkbox domaine
 			
-		    c.gridx = 1; //position horizontale
-			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
-			conteneurPrincipal.add(currentTextFieldPourcent, c); //ajout de la zone de texte Pourcent1
+		    constraint.gridx = 1; //position horizontale
+			constraint.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
+			conteneurPrincipal.add(currentTextFieldPourcent, constraint); //ajout de la zone de texte Pourcent1
 	    }
 	  
 		//commentaire BP par domaine
 	    JLabel commentaireBPDomaine = new JLabel("Commentaire : "); //creation du label emailCl
-		c.gridx = 0;
+		constraint.gridx = 0;
 		positionCounter = positionCounter + 11;
-		c.gridy = positionCounter;
-		c.gridwidth = 1;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireBPDomaine, c); //ajout du label emailCl
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = 1;
+		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireBPDomaine, constraint); //ajout du label emailCl
 	    JTextArea textAreaCommentaireBPDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComBPDomaine = new JScrollPane(textAreaCommentaireBPDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaCommentaireBPDomaine); //attribution de la zone de texte au label emailCl
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneComBPDomaine, c); //ajout de la zone de texte emailCl
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComBPDomaine, constraint); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
 		JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
 		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre, c); //ajout du titreRapportr dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//titre
 	    JLabel titre = new JLabel("Titre : ");
-	    c.gridy = ++positionCounter;
-		conteneurPrincipal.add(titre, c); //ajout du label 
+	    constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(titre, constraint); //ajout du label 
 		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte nomSite de taille 15
 		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte au label nomSite
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTitre, c); //ajout de la zone de texte nomSite
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldTitre, constraint); //ajout de la zone de texte nomSite
 		
 	    //element
 	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(element, c); //ajout du label nbBPOuverts
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(element, constraint); //ajout du label nbBPOuverts
 	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
 	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
-		c.gridx = 1;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(textFieldElement, c); //ajout de la zone de texte textFieldNbBPOuverts
+		constraint.gridx = 1;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre
 	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-		c.gridx = 2;
-		c.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(nombre, c); //ajout du label dateDebut
+		constraint.gridx = 2;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+	    conteneurPrincipal.add(nombre, constraint); //ajout du label dateDebut
 	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-		c.gridx = 3;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin
+		constraint.gridx = 3;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
 
 		//bouton d'ajout d'element
 		positionElement = ++positionCounter;
 		
 		JButton ajoutElement = new JButton("+ Ajouter un élément");
-		c.gridx = 1;
+		constraint.gridx = 1;
 		positionCounter = positionCounter + 100;
-		c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutElement, c); //ajout du bouton ajoutElement
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutElement, constraint); //ajout du bouton ajoutElement
 		
 		ajoutElement.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
-		    	c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		    	constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		    	//element
 			    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-				c.gridx = 0;
-				c.gridy = ++positionElement;
-				c.gridwidth = 1;
-			    conteneurPrincipal.add(element, c); //ajout du label nbBPOuverts
+				constraint.gridx = 0;
+				constraint.gridy = ++positionElement;
+				constraint.gridwidth = 1;
+			    conteneurPrincipal.add(element, constraint); //ajout du label nbBPOuverts
 			    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
 			    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
-				c.gridx = 1;
-				c.gridwidth = 1;
-				conteneurPrincipal.add(textFieldElement, c); //ajout de la zone de texte textFieldNbBPOuverts
+				constraint.gridx = 1;
+				constraint.gridwidth = 1;
+				conteneurPrincipal.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 				
 				//nombre
 			    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-				c.gridx = 2;
-				c.gridwidth = GridBagConstraints.RELATIVE;
-			    conteneurPrincipal.add(nombre, c); //ajout du label dateDebut
+				constraint.gridx = 2;
+				constraint.gridwidth = GridBagConstraints.RELATIVE;
+			    conteneurPrincipal.add(nombre, constraint); //ajout du label dateDebut
 			    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 			    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-				c.gridx = 3;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin	
+				constraint.gridx = 3;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin	
 				
 				fenetre.revalidate();
 		    }
@@ -670,101 +596,101 @@ public class Formulaire extends JFrame{
 		
 		//commentaire
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaire, c); //ajout du label emailCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaire, constraint); //ajout du label emailCl
 	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
 	    commentaire.setLabelFor(textAreaCommentaire); //attribution de la zone de texte au label emailCl
 	    ++positionCounter;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneCom, c); //ajout de la zone de texte emailCl
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
-	  	c.gridx = 0;
-	  	c.gridy = ++positionCounter;
-	  	c.gridwidth = 1;
-	  	conteneurPrincipal.add(ajoutArboLibre, c); //ajout du bouton ajoutArboLibre
+	  	constraint.gridx = 0;
+	  	constraint.gridy = ++positionCounter;
+	  	constraint.gridwidth = 1;
+	  	conteneurPrincipal.add(ajoutArboLibre, constraint); //ajout du bouton ajoutArboLibre
 	
 	    
 	    /*----------------------------------------------formulaire demandes d'intervention----------------------------------------------------------*/
 	    
 		JLabel titreDI = new JLabel("Demandes d'intervention"); //titre de la parte rapport du formulaire
 		titreDI.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreDI, c); //ajout du titreRapportr dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreDI, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//mois
 	    JLabel moisDI = new JLabel("Mois : ");
-	    c.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisDI, c); //ajout du label
+	    constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(moisDI, constraint); //ajout du label
 		comboBoxMoisDI = new JComboBox<String>(choixMois);
 		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		moisDI.setLabelFor(comboBoxMoisDI); //attribution de la zone de texte au label adr
-		conteneurPrincipal.add(comboBoxMoisDI, c); //ajout de la zone de texte adr
+		conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte adr
 		
 	    //nombre d'interventions
 	    JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label dateDebut
-	    c.gridx = 0;
-	    c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(nbIntervention, c); //ajout du label nbBPOuverts
+	    constraint.gridx = 0;
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
 	    JTextField textFieldNbIntervention = new JTextField(2); //initialisation de la zone de texte textFieldNbBPOuverts
 	    nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNbIntervention, c); //ajout de la zone de texte textFieldNbBPOuverts
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//bouton d'ajout de mois pour les BP
 		positionMoisDI = ++positionCounter;
 				
 		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
-		c.gridx = 1;
+		constraint.gridx = 1;
 		positionCounter = ++positionCounter + 100;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisDI, c); //ajout du bouton ajoutElement
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
 			public void actionPerformed(ActionEvent arg0) {	
-				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+				constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
 						
 				//mois
 				JLabel moisDI = new JLabel("Mois : ");
-				c.gridx = 0;
-				c.gridy = ++positionMoisDI;
-				conteneurPrincipal.add(moisDI, c); //ajout du label moisBP
+				constraint.gridx = 0;
+				constraint.gridy = ++positionMoisDI;
+				conteneurPrincipal.add(moisDI, constraint); //ajout du label moisBP
 				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
 				comboBoxMoisDI = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				moisBP.setLabelFor(comboBoxMoisDI); //attribution de la comboBox comboBoxMoisBP au label moisBP
-				conteneurPrincipal.add(comboBoxMoisDI, c); //ajout de la zone de texte comboBox comboBoxMoisBP
+				constraint.gridx = 1;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				moisDI.setLabelFor(comboBoxMoisDI); //attribution de la comboBox comboBoxMoisBP au label moisBP
+				conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 						
-				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 						
 				//nombre d'interventions
 				JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
-				c.gridx = 0;
-				c.gridy = ++positionMoisDI;
-				c.gridwidth = 1;
-				conteneurPrincipal.add(nbIntervention, c); //ajout du label nbBPOuverts
+				constraint.gridx = 0;
+				constraint.gridy = ++positionMoisDI;
+				constraint.gridwidth = 1;
+				conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
 				JTextField textFieldNbIntervention = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNbIntervention, c); //ajout de la zone de texte textFieldNbBPOuverts
+				constraint.gridx = 1;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 						
 				fenetre.revalidate();
 			}
@@ -772,32 +698,32 @@ public class Formulaire extends JFrame{
 		
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireDI, c); //ajout du label emailCl
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireDI, constraint); //ajout du label emailCl
 	    JTextArea textAreaCommentaireDI = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComDI = new JScrollPane(textAreaCommentaireDI);
 	    commentaireDI.setLabelFor(textAreaCommentaireDI); //attribution de la zone de texte au label emailCl
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneComDI, c); //ajout de la zone de texte emailCl
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComDI, constraint); //ajout de la zone de texte emailCl
 	    
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
 	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreDIEtat, c); //ajout du titreBPDomaine dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreDIEtat, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    String[] listeEtats = {"Attente de lecture avant exécution", "Attente de lecture par validateur",
 	    						"Attente de réalisation", "En cours de réalisation", "Réalisation partielle"}; //liste des etats
 	    int nbEtats = listeEtats.length; //nombre d'etats
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
 	    // Toutes les JCheckBox d'etat
 	    Collection<JCheckBox> states    = new ArrayList<JCheckBox>();
@@ -823,14 +749,14 @@ public class Formulaire extends JFrame{
 			states.add(etat);
 			nbStates.add(textFieldNbEtat);
 			
-			c.gridx = 0;
-			c.gridy = ++positionCounter + i; 
-			c.gridwidth = 1;
-		    conteneurPrincipal.add(etat, c); //ajout de la checkbox etat
+			constraint.gridx = 0;
+			constraint.gridy = ++positionCounter + i; 
+			constraint.gridwidth = 1;
+		    conteneurPrincipal.add(etat, constraint); //ajout de la checkbox etat
 		    
-		    c.gridx = 1;
-			c.gridwidth = GridBagConstraints.REMAINDER;
-			conteneurPrincipal.add(textFieldNbEtat, c); //ajout de la zone de texte textFieldNbEtat
+		    constraint.gridx = 1;
+			constraint.gridwidth = GridBagConstraints.REMAINDER;
+			conteneurPrincipal.add(textFieldNbEtat, constraint); //ajout de la zone de texte textFieldNbEtat
 	    }
 	    
 		//commentaire DI par etat
@@ -840,30 +766,30 @@ public class Formulaire extends JFrame{
 	    JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
 	    commentaireDIEtat.setLabelFor(textAreaCommentaireDIEtat); //attribution de la zone de texte textAreaCommentaireDIEtat au label commentaireDIEtat
 	    	   
-		c.gridx = 0;
+		constraint.gridx = 0;
 		positionCounter += 5;
-		c.gridy = positionCounter;
-		c.gridwidth = 1;
-		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireDIEtat, c); //ajout du label commentaireDIEtat    
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = 1;
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireDIEtat, constraint); //ajout du label commentaireDIEtat    
 	    
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneComDIEtat, c); //ajout de scrollPaneComDIEtat
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComDIEtat, constraint); //ajout de scrollPaneComDIEtat
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par domaine------------------------------------------------*/
 	    
 	    JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		
-	    c.gridx = 0; //position horizontale
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreDIDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
+	    constraint.gridx = 0; //position horizontale
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreDIDomaine, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
 	    Collection<JCheckBox>  interventionDomains = new ArrayList<JCheckBox>();
 	    Collection<JFormattedTextField> interventionPourcents = new ArrayList<JFormattedTextField>();
@@ -895,14 +821,14 @@ public class Formulaire extends JFrame{
 			interventionDomains.add(diDomaine);
 			interventionPourcents.add(textFieldPourcentDI);
 			
-			c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-	    	c.gridx = 0; //position horizontale
-			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
-			conteneurPrincipal.add(diDomaine, c); //ajout de la checkbox domaine
+			constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	constraint.gridx = 0; //position horizontale
+			constraint.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
+			conteneurPrincipal.add(diDomaine, constraint); //ajout de la checkbox domaine
 			
-		    c.gridx = 1; //position horizontale
-			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
-			conteneurPrincipal.add(textFieldPourcentDI, c); //ajout de la zone de texte Pourcent1
+		    constraint.gridx = 1; //position horizontale
+			constraint.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
+			conteneurPrincipal.add(textFieldPourcentDI, constraint); //ajout de la zone de texte Pourcent1
 	    }
 	  
 		//commentaire BP par domaine
@@ -912,99 +838,99 @@ public class Formulaire extends JFrame{
 	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
 	    
-		c.gridx = 0;
+		constraint.gridx = 0;
 		positionCounter = positionCounter + 11;
-		c.gridy = positionCounter;
-		c.gridwidth = 1;
-		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireDIDomaine, c); //ajout du label emailCl
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = 1;
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireDIDomaine, constraint); //ajout du label emailCl
 
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneComDIDomaine, c); //ajout de la zone de texte emailCl
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComDIDomaine, constraint); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
 		JLabel titreArboLibre2 = new JLabel("Arborescence libre"); //titre de la partie arborescence libre 2 du formulaire
 		titreArboLibre2.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreArboLibre2
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre2, c); //ajout du titreArboLibre2 dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreArboLibre2, constraint); //ajout du titreArboLibre2 dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//titre
 	    JLabel titre2 = new JLabel("Titre : "); //creation du label titre2
-	    c.gridy = ++positionCounter;
-		conteneurPrincipal.add(titre2, c); //ajout du label titre2
+	    constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(titre2, constraint); //ajout du label titre2
 		JTextField textFieldTitre2 = new JTextField(15); //creation de la zone de texte textFieldTitre2 de taille 15
 		titre2.setLabelFor(textFieldTitre2); //attribution de la zone de texte textFieldTitre2 au label titre2
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTitre2, c); //ajout de la zone de texte textFieldTitre2
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldTitre2, constraint); //ajout de la zone de texte textFieldTitre2
 		
 	    //element
 	    JLabel element2 = new JLabel("Elément : "); //creation du label element2
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-	    conteneurPrincipal.add(element2, c); //ajout du label element2
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    conteneurPrincipal.add(element2, constraint); //ajout du label element2
 	    JTextField textFieldElement2 = new JTextField(15); //creation de la zone de texte textFieldElement2
 	    element2.setLabelFor(textFieldElement2); //attribution de la zone de texte textFieldElement2 au label element2
-		c.gridx = 1;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(textFieldElement2, c); //ajout de la zone de texte textFieldElement2
+		constraint.gridx = 1;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(textFieldElement2, constraint); //ajout de la zone de texte textFieldElement2
 		
 		//nombre
 	    JLabel nombre2 = new JLabel("Nombre  : "); //creation du label nombre2
-		c.gridx = 2;
-		c.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(nombre2, c); //ajout du label nombre2
+		constraint.gridx = 2;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+	    conteneurPrincipal.add(nombre2, constraint); //ajout du label nombre2
 	    JTextField textFieldNombre2 = new JTextField(2); //creation de la zone de texte textFieldNombre2
 	    nombre2.setLabelFor(textFieldNombre2); //attribution de la zone de texte textFieldNombre2 au label nombre2
-		c.gridx = 3;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNombre2, c); //ajout de la zone de texte textFieldNombre2
+		constraint.gridx = 3;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(textFieldNombre2, constraint); //ajout de la zone de texte textFieldNombre2
 		
 		//bouton d'ajout d'element
 		positionElement2 = ++positionCounter;
 		
 		JButton ajoutElement2 = new JButton("+ Ajouter un élément");
-		c.gridx = 1;
+		constraint.gridx = 1;
 		positionCounter = positionCounter + 100;
-		c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutElement2, c); //ajout du bouton ajoutElement
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutElement2, constraint); //ajout du bouton ajoutElement
 		
 		ajoutElement2.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
 		    	
-		    	c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		    	constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		    	
 		    	//element
 			    JLabel element2 = new JLabel("Elément : "); //creation du label dateDebut
-				c.gridx = 0;
-				c.gridy = ++positionElement2;
-				c.gridwidth = 1;
-			    conteneurPrincipal.add(element2, c); //ajout du label nbBPOuverts
+				constraint.gridx = 0;
+				constraint.gridy = ++positionElement2;
+				constraint.gridwidth = 1;
+			    conteneurPrincipal.add(element2, constraint); //ajout du label nbBPOuverts
 			    JTextField textFieldElement2 = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
 			    element.setLabelFor(textFieldElement2); //attribution de la zone de texte au label nbBPOuverts
-				c.gridx = 1;
-				c.gridwidth = 1;
-				conteneurPrincipal.add(textFieldElement2, c); //ajout de la zone de texte textFieldNbBPOuverts
+				constraint.gridx = 1;
+				constraint.gridwidth = 1;
+				conteneurPrincipal.add(textFieldElement2, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 				
 				//nombre
 			    JLabel nombre2 = new JLabel("Nombre : "); //creation du label dateDebut
-				c.gridx = 2;
-				c.gridwidth = GridBagConstraints.RELATIVE;
-			    conteneurPrincipal.add(nombre2, c); //ajout du label dateDebut
+				constraint.gridx = 2;
+				constraint.gridwidth = GridBagConstraints.RELATIVE;
+			    conteneurPrincipal.add(nombre2, constraint); //ajout du label dateDebut
 			    JTextField textFieldNombre2 = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 			    nombre2.setLabelFor(textFieldNombre2); //attribution de la zone de texte au label dateFin
-				c.gridx = 3;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNombre2, c); //ajout de la zone de texte dateFin	
+				constraint.gridx = 3;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNombre2, constraint); //ajout de la zone de texte dateFin	
 				
 				fenetre.revalidate();
 		    }
@@ -1012,152 +938,152 @@ public class Formulaire extends JFrame{
 		
 		//commentaire
 	    JLabel commentaire2 = new JLabel("Commentaire : "); //creation du label commentaire2
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaire2, c); //ajout du label commentaire2
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaire2, constraint); //ajout du label commentaire2
 	    JTextArea textAreaCommentaire2 = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaire2
 	    JScrollPane scrollPaneCom2 = new JScrollPane(textAreaCommentaire2);
 	    commentaire2.setLabelFor(textAreaCommentaire2); //attribution de la zone de texte textAreaCommentaire2 au label commentaire2
 	    ++positionCounter;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneCom2, c); //ajout de la scrollPaneCom2
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneCom2, constraint); //ajout de la scrollPaneCom2
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
-	  	c.gridx = 0;
-	  	c.gridy = ++positionCounter;
-	  	c.gridwidth = 1;
-	  	conteneurPrincipal.add(ajoutArboLibre2, c); //ajout du bouton ajoutArboLibre
+	  	constraint.gridx = 0;
+	  	constraint.gridy = ++positionCounter;
+	  	constraint.gridwidth = 1;
+	  	conteneurPrincipal.add(ajoutArboLibre2, constraint); //ajout du bouton ajoutArboLibre
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
 	    
 		JLabel titreCompteurs = new JLabel("Compteurs"); //titre de la partie compteurs du formulaire
 		titreCompteurs.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreCompteurs, c); //ajout du titreCompteurs dans conteneurPrincipal
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreCompteurs, constraint); //ajout du titreCompteurs dans conteneurPrincipal
 		
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
 	    //type de compteur
 	    JLabel typeCompteur = new JLabel("Type du compteur : "); //creation du label typeCompteur
-		c.gridy = ++positionCounter;
-		conteneurPrincipal.add(typeCompteur, c); //ajout du label 
+		constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(typeCompteur, constraint); //ajout du label 
 		String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //differents choix de type de compteur
 		comboBoxTypeCompteur = new JComboBox<String>(choixTypeCompteur);
 		comboBoxTypeCompteur.setPreferredSize(new Dimension(100, 20));
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		typeCompteur.setLabelFor(comboBoxTypeCompteur); //attribution de la zone de texte comboBoxTypeCompteur au label typeCompteur
-		conteneurPrincipal.add(comboBoxTypeCompteur, c); //ajout de la zone de texte comboBoxTypeCompteur
+		conteneurPrincipal.add(comboBoxTypeCompteur, constraint); //ajout de la zone de texte comboBoxTypeCompteur
 		
 		//mois
 	    JLabel moisCompteur = new JLabel("Mois : ");
-	    c.gridx = 0;
-	    c.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
+	    constraint.gridx = 0;
+	    constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
 		comboBoxMoisCompteur = new JComboBox<String>(choixMois);
 		comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-		c.gridx = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-		conteneurPrincipal.add(comboBoxMoisCompteur, c); //ajout de la comboBoxMoisCompteur
+		conteneurPrincipal.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
 		
 		//consommation
 	    JLabel consommation = new JLabel("Consommation : ");
-	    c.gridx = 0;
-	    c.gridy = ++positionCounter;
-		c.gridwidth = 1;
-		conteneurPrincipal.add(consommation, c); //ajout du label consommation
+	    constraint.gridx = 0;
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(consommation, constraint); //ajout du label consommation
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
 		consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
-		c.gridx = 1;
-		conteneurPrincipal.add(textFieldConsommation, c); //ajout de la zone de texte textFieldConsommation
+		constraint.gridx = 1;
+		conteneurPrincipal.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
 		
 		//unite
 	    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
 	    comboBoxUnite = new JComboBox<String>(choixUnite);
 	    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
-		c.gridx = 2;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
+		constraint.gridx = 2;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(comboBoxUnite, constraint); //ajout de la comboBoxUnite
 		
 		//bouton d'ajout de mois pour le compteur
 		positionMoisCompteur = ++positionCounter;
 		
 		JButton ajoutMoisCompteur = new JButton("+ Ajouter un mois");
-		c.gridx = 1;
+		constraint.gridx = 1;
 		positionCounter = ++positionCounter + 100;
-		c.gridy = positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisCompteur, c); //ajout du bouton ajoutMoisCompteur
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisCompteur, constraint); //ajout du bouton ajoutMoisCompteur
 	
 		ajoutMoisCompteur.addActionListener(new ActionListener() {
 			    	
 			public void actionPerformed(ActionEvent arg0) {	
-				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+				constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
 				
 				//mois
 			    JLabel moisCompteur = new JLabel("Mois : ");
-			    c.gridx = 0;
-			    c.gridy = ++positionMoisCompteur;
-				conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
+			    constraint.gridx = 0;
+			    constraint.gridy = ++positionMoisCompteur;
+				conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
 				comboBoxMoisCompteur = new JComboBox<String>(choixMois);
 				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
+				constraint.gridx = 1;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-				conteneurPrincipal.add(comboBoxMoisCompteur, c); //ajout de la comboBoxMoisCompteur
+				conteneurPrincipal.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
 				
-				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 				
 				//consommation
 			    JLabel consommation = new JLabel("Consommation : ");
-			    c.gridx = 0;
-			    c.gridy = ++positionMoisCompteur;
-				c.gridwidth = 1;
-				conteneurPrincipal.add(consommation, c); //ajout du label consommation
+			    constraint.gridx = 0;
+			    constraint.gridy = ++positionMoisCompteur;
+				constraint.gridwidth = 1;
+				conteneurPrincipal.add(consommation, constraint); //ajout du label consommation
 				JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
 				consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
-				c.gridx = 1;
-				conteneurPrincipal.add(textFieldConsommation, c); //ajout de la zone de texte textFieldConsommation
+				constraint.gridx = 1;
+				conteneurPrincipal.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
 				
 				//unite
 			    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
 			    comboBoxUnite = new JComboBox<String>(choixUnite);
 			    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
-				c.gridx = 2;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
+				constraint.gridx = 2;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(comboBoxUnite, constraint); //ajout de la comboBoxUnite
 				
 				fenetre.revalidate();
 			}
 		});
 		
 		//commentaire
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    JLabel commentaireCompteur = new JLabel("Commentaire : "); //creation du label commentaireCompteur
-		c.gridx = 0;
-		c.gridy = ++positionCounter;
-	    conteneurPrincipal.add(commentaireCompteur, c); //ajout du label commentaireCompteur
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+	    conteneurPrincipal.add(commentaireCompteur, constraint); //ajout du label commentaireCompteur
 	    JTextArea textAreaComCompteur = new JTextArea(4, 15); //creation de la zone de texte textAreaComCompteur
 	    JScrollPane scrollPaneComCompteur = new JScrollPane(textAreaComCompteur);
 	    commentaireCompteur.setLabelFor(textAreaComCompteur); //attribution de la zone de texte au label commentaireCompteur
-	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    c.gridy = ++positionCounter;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(scrollPaneComCompteur, c); //ajout de la scrollPaneComCompteur
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    conteneurPrincipal.add(scrollPaneComCompteur, constraint); //ajout de la scrollPaneComCompteur
 	    
 	    //bouton d'ajout de compteur
 	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
-	  	c.gridx = 0;
-	  	c.gridy = ++positionCounter;
-	  	c.gridwidth = 1;
-	  	conteneurPrincipal.add(ajoutCompteur, c); //ajout du bouton ajoutCompteur
+	  	constraint.gridx = 0;
+	  	constraint.gridy = ++positionCounter;
+	  	constraint.gridwidth = 1;
+	  	conteneurPrincipal.add(ajoutCompteur, constraint); //ajout du bouton ajoutCompteur
 	  	
 	  	
 		
@@ -1166,10 +1092,10 @@ public class Formulaire extends JFrame{
 		JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
 		positionCounter = positionCounter + 100;
-		c.gridy = positionCounter;
-	    c.gridwidth = GridBagConstraints.REMAINDER;
-	    c.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
-	    conteneurPrincipal.add(valideForm, c); //ajout du bouton de validation
+		constraint.gridy = positionCounter;
+	    constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    constraint.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
+	    conteneurPrincipal.add(valideForm, constraint); //ajout du bouton de validation
 	    
 		//action declenchee par le bouton de validation du formulaire
 	    valideForm.addActionListener(new ActionListener() {
@@ -1199,11 +1125,11 @@ public class Formulaire extends JFrame{
 		    	System.out.println(dateFin.getText() + textFieldDateFin.getText()); 							//affichage console des données adr
 		    	//partie bons preventifs
 		    	System.out.println(titreBP.getText()); 												//affichage console du titre de la partie du formulaire
-		    	System.out.println(moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString()); //affichage console des données mois
+		    	/*System.out.println(moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString()); //affichage console des données mois
 		    	System.out.println(nbBPOuverts.getText() + textFieldNbBPOuverts.getText()); 		//affichage console des données nbBPOuverts
 		    	System.out.println(nbBPFermes.getText() + textFieldNbBPFermes.getText()); 			//affichage console des données nbBPFermes
 		    	System.out.println(commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//affichage console des données commentaireBP
-		    	//partie bons preventifs par domaine
+		    	*///partie bons preventifs par domaine
 		    	System.out.println(titreBPDomaine.getText()); //affichage console du titre de la partie du formulaire
 
 		    	System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
@@ -1268,10 +1194,10 @@ public class Formulaire extends JFrame{
 		    	fw.println (dateFin.getText() + textFieldDateFin.getText()); 							//ecriture console des données dateFin
 		    	//partie bons preventifs
 			    fw.println (titreBP.getText()); 												//ecriture du titre de la partie du formulaire
-		    	fw.println (moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString());	//ecriture des données moisBP
+		    	/*fw.println (moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString());	//ecriture des données moisBP
 		    	fw.println (nbBPOuverts.getText() + textFieldNbBPOuverts.getText()); 			//ecriture des données nbBPOuverts
 		    	fw.println (nbBPFermes.getText() + textFieldNbBPFermes.getText()); 				//ecriture des données nbBPFermes
-		    	fw.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireBP
+		    	*/fw.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireBP
 		    	//partie bons preventifs par domaine
 			    fw.println (titreBPDomaine.getText()); 										//ecriture du titre de la partie du formulaire
 		    	fw.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//ecriture des données commentaireBPDomaine
@@ -1283,7 +1209,7 @@ public class Formulaire extends JFrame{
 		    	fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
 		    	//partie domaines d'intervention
 		    	fw.println(titreDI.getText()); 												//ecriture du titre de la partie du formulaire
-		    	fw.println(moisDI.getText() + comboBoxMoisBP.getSelectedItem().toString()); //ecriture des données moisDI
+		    	//fw.println(moisDI.getText() + comboBoxMoisBP.getSelectedItem().toString()); //ecriture des données moisDI
 		    	fw.println(nbIntervention.getText() + textFieldNbIntervention.getText()); 	//ecriture des données nbIntervention
 		    	fw.println(commentaireDI.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireDI
 		    	//partie domaines d'intervention par etat
@@ -1472,9 +1398,9 @@ public class Formulaire extends JFrame{
 
 		    	/*-----------------Partie Bons preventifs-----------------*/
 		    	
-		    	/*IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
+		    	IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
 
-				preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), moisBP.getText());
+				preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventivVoucherMonthJLabel.getText());
 				
 		    	if (textFieldNbBPOuverts.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
@@ -1906,5 +1832,67 @@ public class Formulaire extends JFrame{
 	    this.setVisible(true);  //visibilite
 	    
 	 }	
+	
+	private void createPreventiveVoucherMonth (GridBagConstraints constraint, JComponent mainContainer, final String[] monthsList) {
+	    
+	    constraint.gridy = ++positionCounter;
+		mainContainer.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
+			
+		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(monthsList); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
+		
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		preventivVoucherMonthJLabel.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
+		mainContainer.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+		
+	    //nombre BP ouverts
+	    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
+	    constraint.gridx = 0;
+	    constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    mainContainer.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
+	    
+	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
+	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
+		
+	    constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+		
+		//nombre BP fermes
+	    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
+		
+	    constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+	    
+		mainContainer.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
+	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
+		
+	    constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
+		
+		//bouton d'ajout de mois pour les BP
+		positionMoisBP = ++positionCounter;
+		
+		JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
+		
+		positionCounter = ++positionCounter + 100;
+		constraint.gridx = 1;
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
+		
+		ajoutMoisBP.addActionListener(new ActionListener() {
+			    	
+			public void actionPerformed(ActionEvent arg0) {
+				createPreventiveVoucherMonth(constraint, mainContainer, monthsList);
+				mainContainer.revalidate();
+			}
+		});
+	}
 
 }
