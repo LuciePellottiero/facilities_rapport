@@ -106,13 +106,6 @@ public class Formulaire extends JFrame{
 	 */
 	private Collection<JCheckBox> domainesBP;
 	
-	private JCheckBox etat;
-	private JCheckBox diDomaine;
-	/**
-	 * declaration du textFieldPourcent1 date fin initialise dans le try
-	 */
-	private JFormattedTextField textFieldPourcentDI;
-	
 	private int positionCounter;
 	private int positionMoisBP;
 	private int positionElement;
@@ -122,6 +115,8 @@ public class Formulaire extends JFrame{
 	
 	
 	public Formulaire() throws IOException{
+	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
+	    Formulaire mainFrame = this;
 		
 		JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
@@ -539,22 +534,34 @@ public class Formulaire extends JFrame{
 	    	
 	    	JCheckBox currentDomain = new JCheckBox(listeDomaines[i]);
 	    	domainesBP.add(currentDomain);
-	    	
-	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-	    	c.gridx = 0; //position horizontale
-			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
-			conteneurPrincipal.add(currentDomain, c); //ajout de la checkbox domaine
 			
-			JFormattedTextField currentTextFieldPourcent = null;
-			
+	    	MaskFormatter maskPourcent = null;
 			try{
-				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
-				currentTextFieldPourcent = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
-				textFieldPourcentsBP.add(currentTextFieldPourcent);
+				maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
 		    }
 			catch(ParseException e){
 				e.printStackTrace(); //exception
 			}
+			
+			final JFormattedTextField currentTextFieldPourcent = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+			textFieldPourcentsBP.add(currentTextFieldPourcent);
+			
+			currentTextFieldPourcent.setEnabled(false);
+			
+			currentDomain.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					currentTextFieldPourcent.setEnabled(currentDomain.isSelected());
+					fenetre.revalidate();
+				}
+			});
+			
+			c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	c.gridx = 0; //position horizontale
+			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
+			conteneurPrincipal.add(currentDomain, c); //ajout de la checkbox domaine
+			
 		    c.gridx = 1; //position horizontale
 			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
 			conteneurPrincipal.add(currentTextFieldPourcent, c); //ajout de la zone de texte Pourcent1
@@ -798,31 +805,48 @@ public class Formulaire extends JFrame{
 	    Collection<JTextField> nbStates = new ArrayList<JTextField>();
 	    
 	    for(int i = 0; i < nbEtats; i++){
-	    	etat = new JCheckBox(listeEtats[i]); //creation d'une checkbox pour chaque etat possible
-		    c.gridx = 0;
-			c.gridy = ++positionCounter + i; 
-			c.gridwidth = 1;
-		    conteneurPrincipal.add(etat, c); //ajout de la checkbox etat
+		    
 			JTextField textFieldNbEtat = new JTextField(15); //initialisation de la zone de texte textFieldNbEtat
-		    c.gridx = 1;
-			c.gridwidth = GridBagConstraints.REMAINDER;
-			conteneurPrincipal.add(textFieldNbEtat, c); //ajout de la zone de texte textFieldNbEtat
+			textFieldNbEtat.setEnabled(false);
+			
+			JCheckBox etat = new JCheckBox(listeEtats[i]); //creation d'une checkbox pour chaque etat possible
+			
+			etat.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textFieldNbEtat.setEnabled(etat.isSelected());
+					mainFrame.revalidate();
+				}
+			} );
 			
 			states.add(etat);
 			nbStates.add(textFieldNbEtat);
+			
+			c.gridx = 0;
+			c.gridy = ++positionCounter + i; 
+			c.gridwidth = 1;
+		    conteneurPrincipal.add(etat, c); //ajout de la checkbox etat
+		    
+		    c.gridx = 1;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			conteneurPrincipal.add(textFieldNbEtat, c); //ajout de la zone de texte textFieldNbEtat
 	    }
 	    
 		//commentaire DI par etat
 	    JLabel commentaireDIEtat = new JLabel("Commentaire : "); //creation du label commentaireDIEtat
-		c.gridx = 0;
-		positionCounter = positionCounter + 5;
-		c.gridy = positionCounter;
-		c.gridwidth = 1;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaireDIEtat, c); //ajout du label commentaireDIEtat
+	    
 	    JTextArea textAreaCommentaireDIEtat = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireDIEtat
 	    JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
 	    commentaireDIEtat.setLabelFor(textAreaCommentaireDIEtat); //attribution de la zone de texte textAreaCommentaireDIEtat au label commentaireDIEtat
+	    	   
+		c.gridx = 0;
+		positionCounter += 5;
+		c.gridy = positionCounter;
+		c.gridwidth = 1;
+		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireDIEtat, c); //ajout du label commentaireDIEtat    
+	    
 	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
@@ -832,25 +856,50 @@ public class Formulaire extends JFrame{
 	    
 	    JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		c.gridx = 0; //position horizontale
+		
+	    c.gridx = 0; //position horizontale
 		c.gridy = ++positionCounter;
 		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDIDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    
+	    Collection<JCheckBox>  interventionDomains = new ArrayList<JCheckBox>();
+	    Collection<JFormattedTextField> interventionPourcents = new ArrayList<JFormattedTextField>();
+	    
 	    for(int i = 0; i < nbDomaines; i++){
-	    	diDomaine = new JCheckBox(listeDomaines[i]);
-	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	JCheckBox diDomaine = new JCheckBox(listeDomaines[i]);
+	    	
+	    	MaskFormatter maskPourcent = null;
+			
+	    	try{
+				maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
+		    }
+			catch(ParseException e){
+				e.printStackTrace(); //exception
+			}
+			
+			JFormattedTextField textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+			textFieldPourcentDI.setEnabled(false);
+			
+			diDomaine.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textFieldPourcentDI.setEnabled(diDomaine.isSelected());
+					mainFrame.revalidate();
+				}
+			});
+			
+			interventionDomains.add(diDomaine);
+			interventionPourcents.add(textFieldPourcentDI);
+			
+			c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 	    	c.gridx = 0; //position horizontale
 			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
 			conteneurPrincipal.add(diDomaine, c); //ajout de la checkbox domaine
-			try{
-				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
-				textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
-		    }catch(ParseException e){
-				e.printStackTrace(); //exception
-			}
+			
 		    c.gridx = 1; //position horizontale
 			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
 			conteneurPrincipal.add(textFieldPourcentDI, c); //ajout de la zone de texte Pourcent1
@@ -858,15 +907,18 @@ public class Formulaire extends JFrame{
 	  
 		//commentaire BP par domaine
 	    JLabel commentaireDIDomaine = new JLabel("Commentaire : "); //creation du label emailCl
+	    
+	    JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
+	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
+	    
 		c.gridx = 0;
 		positionCounter = positionCounter + 11;
 		c.gridy = positionCounter;
 		c.gridwidth = 1;
-		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDIDomaine, c); //ajout du label emailCl
-	    JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
-	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
+
 	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
@@ -1118,9 +1170,6 @@ public class Formulaire extends JFrame{
 	    c.gridwidth = GridBagConstraints.REMAINDER;
 	    c.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(valideForm, c); //ajout du bouton de validation
-	    
-	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
-	    Formulaire mainFrame = this;
 	    
 		//action declenchee par le bouton de validation du formulaire
 	    valideForm.addActionListener(new ActionListener() {
@@ -1703,6 +1752,118 @@ public class Formulaire extends JFrame{
 					}
 		    		
 		    		datas.add(stateInterventionDemand);
+		    	}
+		    	
+		    	/*-----------------Partie demande d'intervention par domaine-----------------*/
+		    	
+		    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
+		    	
+		    	// On obtient l'iterator des domaines
+		    	Iterator<JCheckBox> interventionDomainsIter = interventionDomains.iterator();
+		    	
+		    	// On obtient l'iterator des pourcentages correspondant
+		    	Iterator<JFormattedTextField> interventionPourcentsIter = interventionPourcents.iterator();
+		    	
+		    	DefaultPieDataset interventionPieChartDatas = new DefaultPieDataset();
+		    	
+		    	pourcentages = new HashMap<String, Double>();
+		    	total = new Double (0f);
+		    	
+		    	continueAbove100 = false;
+		    	
+		    	// On itere sur les domaines
+		    	while (interventionDomainsIter.hasNext()) {
+		    		// On obtient le JCheckBox courrant
+		    		JCheckBox currentDomain = interventionDomainsIter.next();
+		    		
+		    		// On obtient le JFormattedTextField courant correspondant
+		    		JFormattedTextField currentPourcent = interventionPourcentsIter.next();
+		    		
+		    		// Si la case est coché 
+		    		if (currentDomain.isSelected()) {
+		    			
+		    			// Mais le pourcentage n'est pas renseigné
+		    			if (currentPourcent.getText().equals("  .  %")) {
+			    			JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
+				    				" doit être remplis si la case a été cochée", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		return;
+		    			}
+		    			else {		    				
+		    				domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+		    				
+		    				double currentPourcentage = 0;
+		    				
+		    				try {
+		    					currentPourcentage = Double.parseDouble(currentPourcent.getText().substring(0, 5));
+		    				}
+		    				catch (NumberFormatException e) {
+		    					JOptionPane.showMessageDialog(mainFrame, 
+					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
+					    				" n'est pas un nombre valide", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		return;
+		    				}
+		    				
+		    				total += currentPourcentage;
+		    				
+		    				if (total > 100 && !continueAbove100) {
+		    					int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont supérieurs"
+		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
+		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+		    							"Erreur", JOptionPane.YES_NO_OPTION);
+		    					if(dialogResult == JOptionPane.NO_OPTION){
+		    						return;
+		    					}
+		    					else {
+		    						continueAbove100 = true;
+		    					}
+		    				}
+		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
+		    			}
+		    		}
+		    	}		
+		    	
+		    	if (!domainInterventionDemand.isEmpty()) {
+		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
+		    		
+		    		if (total < 100) {
+		    			int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont inférieurs"
+    							+ " à 100% (" + total + "%).\n "
+    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
+    							"Erreur", JOptionPane.YES_NO_OPTION);
+    					if(dialogResult == JOptionPane.NO_OPTION){
+    						return;
+    					}
+		    		}
+		    		
+		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+		    		
+		    		while (mapIter.hasNext()) {
+		    			Map.Entry<String, Double> currentEntry = mapIter.next();
+		    			
+		    			double currentRelativePourcentage = currentEntry.getValue() / total;
+		    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+		    					currentRelativePourcentage);
+		    		}
+		    		
+		    		try {
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreDIDomaine.getText(), interventionPieChartDatas);
+						
+						domainInterventionDemand.addJFreeChart(pieChart);
+		    		} 
+		    		catch (Exception e) {
+		    			e.printStackTrace();
+						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie " +
+								titreDIDomaine.getText() + ": \n"
+								+ e.getMessage(), "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+		    		
+		    		datas.add(domainInterventionDemand);
 		    	}
 		    	
 				try {
