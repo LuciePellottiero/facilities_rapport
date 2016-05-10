@@ -31,8 +31,10 @@ public class DefaultDataHandler implements IDataHandler {
 	}
 
 	@Override
-	public void addJFreeChart(JFreeChart chartToAdd, String title, Collection<Object> datas){
+	public void addJFreeChart(JFreeChart chartToAdd){
 
+		dataTypes.add(DATA_TYPE_JFREECHART);
+		datas.add(chartToAdd);
 	}
 
 	@Override
@@ -43,5 +45,10 @@ public class DefaultDataHandler implements IDataHandler {
 	@Override
 	public Collection<Collection<Object>> getDataStorage() {
 		return dataStorage;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return (dataTypes.isEmpty() && datas.isEmpty());
 	}
 }

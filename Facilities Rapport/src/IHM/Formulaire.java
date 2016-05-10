@@ -1,7 +1,6 @@
 package IHM;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,9 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +17,10 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,42 +30,90 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import utilities.OperationUtilities;
+import utilities.chartGenerator.DefaultChartGenerator;
+import utilities.chartGenerator.IChartGenerator;
 
 public class Formulaire extends JFrame{
 	
-	private JFormattedTextField textFieldTelRedac = new JFormattedTextField(); 	  //declaration du textField telephone initialise dans le try
-	private JFormattedTextField textFieldCodePostal = new JFormattedTextField();  //declaration du textField code postal initialise dans le try
-	private JFormattedTextField textFieldTelCl = new JFormattedTextField(); 	  //declaration du textField telephone client initialise dans le try
-	private JFormattedTextField textFieldDateDebut = new JFormattedTextField();   //declaration du textField date debut initialise dans le try
-	private JFormattedTextField textFieldDateFin = new JFormattedTextField();     //declaration du textField date fin initialise dans le try
-	private JComboBox<String> comboBoxRapport = new JComboBox<String>();  		  //declaration de la comboBox des durée de rapport
-	private JComboBox<String> comboBoxMoisBP = new JComboBox<String>(); 		  //declaration de la comboBox des mois pour les BP
-	private JFormattedTextField textFieldPourcentBP = new JFormattedTextField();    //declaration du textFieldPourcent1 date fin initialise dans le try
-	private JComboBox<String> comboBoxMoisDI = new JComboBox<String>(); 		  //declaration de la comboBox des mois pour les DI
-	private JComboBox<String> comboBoxTypeCompteur = new JComboBox<String>(); 	  //declaration de la comboBox des types de compteur
-	private JComboBox<String> comboBoxMoisCompteur = new JComboBox<String>(); 	  //declaration de la comboBox des mois pour les compteur
-	private JComboBox<String> comboBoxUnite = new JComboBox<String>(); 	  		  //declaration de la comboBox des unites
-	private JCheckBox bpDomaine = new JCheckBox();
-	private JCheckBox etat = new JCheckBox();
-	private JCheckBox diDomaine = new JCheckBox();
-	private JFormattedTextField textFieldPourcentDI = new JFormattedTextField();    //declaration du textFieldPourcent1 date fin initialise dans le try
+	/**
+	 * Truc utilise par JFrame
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	private File f = new File ("rapport.txt"); //creation d'un rapport au format txt
-	private PrintWriter fw = new PrintWriter (new BufferedWriter (new FileWriter (f)));
+	/**
+	 * Declaration du textField telephone initialise dans le try
+	 */
+	private JFormattedTextField textFieldTelRedac; 	  
+	/**
+	 * Declaration du textField code postal initialise dans le try
+	 */
+	private JFormattedTextField textFieldCodePostal;  
+	/**
+	 * Declaration du textField telephone client initialise dans le try
+	 */
+	private JFormattedTextField textFieldTelCl;
+	/**
+	 * Declaration du textField date debut initialise dans le try
+	 */
+	private JFormattedTextField textFieldDateDebut;
+	/**
+	 * Declaration du textField date fin initialise dans le try
+	 */
+	private JFormattedTextField textFieldDateFin;
+	/**
+	 * Declaration de la comboBox des durée de rapport
+	 */
+	private JComboBox<String>   comboBoxRapport;
+	/**
+	 * Declaration de la comboBox des mois pour les BP
+	 */
+	private JComboBox<String>   comboBoxMoisBP;
+	/**
+	 * Declaration de la Collection<JFormattedTextField> des Pourcents date fin remplis dans le try
+	 */
+	private Collection<JFormattedTextField> textFieldPourcentsBP;
+	/**
+	 * Declaration de la comboBox des mois pour les DI
+	 */
+	private JComboBox<String>   comboBoxMoisDI;
+	/**
+	 * Declaration de la comboBox des types de compteur
+	 */
+	private JComboBox<String>   comboBoxTypeCompteur;
+	/**
+	 * Declaration de la comboBox des mois pour les compteur
+	 */
+	private JComboBox<String>   comboBoxMoisCompteur;
+	/**
+	 * Declaration de la comboBox des unites
+	 */
+	private JComboBox<String>   comboBoxUnite;
+	/**
+	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
+	 */
+	private Collection<JCheckBox> domainesBP;
 	
-	private int compteur = 0;
+	private JCheckBox etat;
+	private JCheckBox diDomaine;
+	/**
+	 * declaration du textFieldPourcent1 date fin initialise dans le try
+	 */
+	private JFormattedTextField textFieldPourcentDI;
+	
+	private int positionCounter;
 	private int positionMoisBP;
 	private int positionElement;
 	private int positionMoisDI;
@@ -92,20 +140,21 @@ public class Formulaire extends JFrame{
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;   
 		
-	    
+		positionCounter = 0;
+		
 		/*-----------------------------------------formulaire redacteur--------------------------------------------*/
 	    
 		JLabel titreRedacteur = new JLabel("Redacteur"); //titre de la partie redacteur du formulaire
 		titreRedacteur.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRedacteur
 		c.gridx = 0;
-		c.gridy = compteur;
+		c.gridy = positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreRedacteur, c); //ajout du titreRedacteur dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//nom
 		JLabel nom = new JLabel("Nom : "); //creation du label nom
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 		conteneurPrincipal.add(nom, c); //ajout du label
 		JTextField textFieldNom = new JTextField(15); //creation de la zone de texte adr de taille 15
@@ -117,7 +166,7 @@ public class Formulaire extends JFrame{
 		//adresse 
 		JLabel adr = new JLabel("Adresse : "); //creation du label adr
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(adr, c); //ajout du label adr
 	    JTextArea textAreaAdr = new JTextArea(3, 15); //creation de la zone de texte adr de taille 3 en hauteur et 15 en largeur
@@ -130,7 +179,7 @@ public class Formulaire extends JFrame{
 	    //telephone
 	    JLabel tel = new JLabel("Téléphone : "); //creation du label tel
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(tel, c); //ajout du label tel
 	    try{
@@ -147,7 +196,7 @@ public class Formulaire extends JFrame{
 	    //email
 	    JLabel email = new JLabel("Email : "); //creation du label email
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(email, c); //ajout du label nom
 	    JTextField textFieldEmail = new JTextField(15); //creation de la zone de texte email de taille 15
@@ -159,7 +208,7 @@ public class Formulaire extends JFrame{
 	    //nom charge d'affaire
 	    JLabel nomCA = new JLabel("Nom du chargé d'affaire : "); //creation du label nomCA
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nomCA, c); //ajout du label nomCA au panel redacteur
 	    JTextField textFieldNomCA = new JTextField(15); //creation de la zone de texte nomCA de taille 15
@@ -175,14 +224,14 @@ public class Formulaire extends JFrame{
 		JLabel titreClient = new JLabel("Client"); //titre de la partie client du formulaire
 		titreClient.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreClient
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 		conteneurPrincipal.add(titreClient, c); //ajout du titreClient dans le panel conteneurPrincpal
 		
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//nom
 		JLabel nomSite = new JLabel("Nom du site : "); //creation du label nomSite
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 		conteneurPrincipal.add(nomSite, c); //ajout du label nomSite
 		JTextField textFieldNomSite = new JTextField(15); //creation de la zone de texte nomSite de taille 15
@@ -194,7 +243,7 @@ public class Formulaire extends JFrame{
 		//code
 	    JLabel code = new JLabel("Code : "); //creation du label code
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(code, c); //ajout du label code
 	    JTextField textFieldCode = new JTextField(15); //création de la zone de texte code
@@ -206,7 +255,7 @@ public class Formulaire extends JFrame{
 		//adresse client
 		JLabel adrCl = new JLabel("Adresse : "); //creation du label adrCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(adrCl, c); //ajout du label adrCl
 	    JTextArea textAreaAdrCl = new JTextArea(3, 15); //creation de la zone de texte adrCl de taille 3 en hauteur et 15 en largeur
@@ -219,7 +268,7 @@ public class Formulaire extends JFrame{
 	    //code postal
 	    JLabel codePostal = new JLabel("Code postal : "); //creation du label codePostal
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(codePostal, c); //ajout du label codePostal
 	    try{
@@ -236,7 +285,7 @@ public class Formulaire extends JFrame{
 		//ville
 		JLabel ville = new JLabel("Ville : "); //creation du label ville
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 		conteneurPrincipal.add(ville, c); //ajout du label ville
 		JTextField textFieldVille = new JTextField(15); //creation de la zone de texte ville de taille 15
@@ -248,7 +297,7 @@ public class Formulaire extends JFrame{
 		//nom du client
 	    JLabel nomClient = new JLabel("Nom du client : "); //creation du label nomCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nomClient, c); //ajout du label nomCl
 	    JTextField textFieldNomClient = new JTextField(15); //creation de la zone de texte nomCl de taille 15
@@ -260,7 +309,7 @@ public class Formulaire extends JFrame{
 	    //telephone client
 	    JLabel telCl = new JLabel("Téléphone : "); //creation du label telCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(telCl, c); //ajout du label telCl
 	    try{
@@ -277,7 +326,7 @@ public class Formulaire extends JFrame{
 	    //email client
 	    JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(emailCl, c); //ajout du label emailCl
 	    JTextField textFieldEmailCl = new JTextField(15); //creation de la zone de texte emailCl de taille 15
@@ -292,18 +341,18 @@ public class Formulaire extends JFrame{
 		JLabel titreRapport = new JLabel("Rapport"); //titre de la partie rapport du formulaire
 		titreRapport.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRapport
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreRapport, c); //ajout du titreRapport dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//rapport d'activite
 	    JLabel rapportActivite = new JLabel("Rapport d'activité : "); ////creation du label rapportActivite
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.RELATIVE;
 		conteneurPrincipal.add(rapportActivite, c); //ajout du label rapportActivite
 		String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
-		comboBoxRapport = new JComboBox(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
+		comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -313,7 +362,7 @@ public class Formulaire extends JFrame{
 	    //date debut
 	    JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateDebut, c); //ajout du label dateDebut
 	    try{
@@ -330,7 +379,7 @@ public class Formulaire extends JFrame{
 		//date fin
 	    JLabel dateFin = new JLabel("Date de fin : "); //creation du label dateFin
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateFin, c); //ajout du label dateFin
 	    try{
@@ -352,17 +401,17 @@ public class Formulaire extends JFrame{
 		JLabel titreBP = new JLabel("Bons préventifs"); //titre de la partie bons preventifs du formulaire
 		titreBP.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreBP, c); //ajout du titreBP dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//mois
 	    JLabel moisBP = new JLabel("Mois : ");
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
 		String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-		comboBoxMoisBP = new JComboBox(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+		comboBoxMoisBP = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -372,7 +421,7 @@ public class Formulaire extends JFrame{
 	    //nombre BP ouverts
 	    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
 	    c.gridx = 0;
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nbBPOuverts, c); //ajout du label nbBPOuverts
 	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
@@ -384,7 +433,7 @@ public class Formulaire extends JFrame{
 		//nombre BP fermes
 	    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nbBPFermes, c); //ajout du label nbBPFermes
 	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
@@ -394,12 +443,12 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNbBPFermes, c); //ajout de la zone de texte textFieldNbBPFermes
 		
 		//bouton d'ajout de mois pour les BP
-		positionMoisBP = ++compteur;
+		positionMoisBP = ++positionCounter;
 		
 		JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
 		c.gridx = 1;
-		compteur = ++compteur + 100;
-		c.gridy = compteur;
+		positionCounter = ++positionCounter + 100;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutMoisBP, c); //ajout du bouton ajoutElement
 		
@@ -414,7 +463,7 @@ public class Formulaire extends JFrame{
 			    c.gridy = ++positionMoisBP;
 				conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
 				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-				comboBoxMoisBP = new JComboBox(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				comboBoxMoisBP = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 				comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 				c.gridx = 1;
 				c.gridwidth = GridBagConstraints.REMAINDER;
@@ -454,14 +503,14 @@ public class Formulaire extends JFrame{
 		//commentaire BP
 	    JLabel commentaireBP = new JLabel("Commentaire : "); //creation du label commentaireBP
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBP, c); //ajout du label commentaireBP
 	    JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
 	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
-	    ++compteur;
-		c.gridy = compteur;
+	    ++positionCounter;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComBP, c); //ajout de la scrollPane scrollPaneComBP
@@ -472,7 +521,7 @@ public class Formulaire extends JFrame{
 	    JLabel titreBPDomaine = new JLabel("Bons préventifs par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreBPDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0; //position horizontale
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreBPDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
@@ -482,35 +531,47 @@ public class Formulaire extends JFrame{
 	    						  "Cont, réglementaire"}; //liste des differents domaines
 	    int nbDomaines = listeDomaines.length; //taille de la liste des domaines
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    
+	    textFieldPourcentsBP = new ArrayList<JFormattedTextField>();
+	    domainesBP           = new ArrayList<JCheckBox>();
+	    
 	    for(int i = 0; i < nbDomaines; i++){
-	    	bpDomaine = new JCheckBox(listeDomaines[i]);
+	    	
+	    	JCheckBox currentDomain = new JCheckBox(listeDomaines[i]);
+	    	domainesBP.add(currentDomain);
+	    	
 	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 	    	c.gridx = 0; //position horizontale
-			c.gridy = ++compteur + i; //position de l'element a la position verticale de depart + i
-			conteneurPrincipal.add(bpDomaine, c); //ajout de la checkbox domaine
+			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
+			conteneurPrincipal.add(currentDomain, c); //ajout de la checkbox domaine
+			
+			JFormattedTextField currentTextFieldPourcent = null;
+			
 			try{
 				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
-				textFieldPourcentBP = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
-		    }catch(ParseException e){
+				currentTextFieldPourcent = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+				textFieldPourcentsBP.add(currentTextFieldPourcent);
+		    }
+			catch(ParseException e){
 				e.printStackTrace(); //exception
 			}
 		    c.gridx = 1; //position horizontale
 			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
-			conteneurPrincipal.add(textFieldPourcentBP, c); //ajout de la zone de texte Pourcent1
+			conteneurPrincipal.add(currentTextFieldPourcent, c); //ajout de la zone de texte Pourcent1
 	    }
 	  
 		//commentaire BP par domaine
 	    JLabel commentaireBPDomaine = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		compteur = compteur + 11;
-		c.gridy = compteur;
+		positionCounter = positionCounter + 11;
+		c.gridy = positionCounter;
 		c.gridwidth = 1;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBPDomaine, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaireBPDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComBPDomaine = new JScrollPane(textAreaCommentaireBPDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaCommentaireBPDomaine); //attribution de la zone de texte au label emailCl
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComBPDomaine, c); //ajout de la zone de texte emailCl
@@ -520,14 +581,14 @@ public class Formulaire extends JFrame{
 		JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
 		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, c); //ajout du titreRapportr dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//titre
 	    JLabel titre = new JLabel("Titre : ");
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		conteneurPrincipal.add(titre, c); //ajout du label 
 		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte nomSite de taille 15
 		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte au label nomSite
@@ -538,7 +599,7 @@ public class Formulaire extends JFrame{
 	    //element
 	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(element, c); //ajout du label nbBPOuverts
 	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
@@ -559,12 +620,12 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin
 
 		//bouton d'ajout d'element
-		positionElement = ++compteur;
+		positionElement = ++positionCounter;
 		
 		JButton ajoutElement = new JButton("+ Ajouter un élément");
 		c.gridx = 1;
-		compteur = compteur + 100;
-		c.gridy = ++compteur;
+		positionCounter = positionCounter + 100;
+		c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutElement, c); //ajout du bouton ajoutElement
 		
@@ -603,14 +664,14 @@ public class Formulaire extends JFrame{
 		//commentaire
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaire, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
 	    commentaire.setLabelFor(textAreaCommentaire); //attribution de la zone de texte au label emailCl
-	    ++compteur;
-		c.gridy = compteur;
+	    ++positionCounter;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneCom, c); //ajout de la zone de texte emailCl
@@ -618,7 +679,7 @@ public class Formulaire extends JFrame{
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
 	  	c.gridx = 0;
-	  	c.gridy = ++compteur;
+	  	c.gridy = ++positionCounter;
 	  	c.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutArboLibre, c); //ajout du bouton ajoutArboLibre
 	
@@ -628,16 +689,16 @@ public class Formulaire extends JFrame{
 		JLabel titreDI = new JLabel("Demandes d'intervention"); //titre de la parte rapport du formulaire
 		titreDI.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, c); //ajout du titreRapportr dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//mois
 	    JLabel moisDI = new JLabel("Mois : ");
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		conteneurPrincipal.add(moisDI, c); //ajout du label
-		comboBoxMoisDI = new JComboBox(choixMois);
+		comboBoxMoisDI = new JComboBox<String>(choixMois);
 		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -647,7 +708,7 @@ public class Formulaire extends JFrame{
 	    //nombre d'interventions
 	    JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label dateDebut
 	    c.gridx = 0;
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(nbIntervention, c); //ajout du label nbBPOuverts
 	    JTextField textFieldNbIntervention = new JTextField(2); //initialisation de la zone de texte textFieldNbBPOuverts
@@ -657,12 +718,12 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNbIntervention, c); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//bouton d'ajout de mois pour les BP
-		positionMoisDI = ++compteur;
+		positionMoisDI = ++positionCounter;
 				
 		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
 		c.gridx = 1;
-		compteur = ++compteur + 100;
-		c.gridy = compteur;
+		positionCounter = ++positionCounter + 100;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutMoisDI, c); //ajout du bouton ajoutElement
 				
@@ -677,7 +738,7 @@ public class Formulaire extends JFrame{
 				c.gridy = ++positionMoisDI;
 				conteneurPrincipal.add(moisDI, c); //ajout du label moisBP
 				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-				comboBoxMoisDI = new JComboBox(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				comboBoxMoisDI = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 				c.gridx = 1;
 				c.gridwidth = GridBagConstraints.REMAINDER;
@@ -705,13 +766,13 @@ public class Formulaire extends JFrame{
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDI, c); //ajout du label emailCl
 	    JTextArea textAreaCommentaireDI = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComDI = new JScrollPane(textAreaCommentaireDI);
 	    commentaireDI.setLabelFor(textAreaCommentaireDI); //attribution de la zone de texte au label emailCl
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDI, c); //ajout de la zone de texte emailCl
@@ -721,7 +782,7 @@ public class Formulaire extends JFrame{
 	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDIEtat, c); //ajout du titreBPDomaine dans conteneurPrincipal
@@ -730,30 +791,39 @@ public class Formulaire extends JFrame{
 	    						"Attente de réalisation", "En cours de réalisation", "Réalisation partielle"}; //liste des etats
 	    int nbEtats = listeEtats.length; //nombre d'etats
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    
+	    // Toutes les JCheckBox d'etat
+	    Collection<JCheckBox> states    = new ArrayList<JCheckBox>();
+	    // Touts les JTextField correspondat
+	    Collection<JTextField> nbStates = new ArrayList<JTextField>();
+	    
 	    for(int i = 0; i < nbEtats; i++){
 	    	etat = new JCheckBox(listeEtats[i]); //creation d'une checkbox pour chaque etat possible
 		    c.gridx = 0;
-			c.gridy = ++compteur + i; 
+			c.gridy = ++positionCounter + i; 
 			c.gridwidth = 1;
 		    conteneurPrincipal.add(etat, c); //ajout de la checkbox etat
 			JTextField textFieldNbEtat = new JTextField(15); //initialisation de la zone de texte textFieldNbEtat
 		    c.gridx = 1;
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			conteneurPrincipal.add(textFieldNbEtat, c); //ajout de la zone de texte textFieldNbEtat
+			
+			states.add(etat);
+			nbStates.add(textFieldNbEtat);
 	    }
 	    
 		//commentaire DI par etat
 	    JLabel commentaireDIEtat = new JLabel("Commentaire : "); //creation du label commentaireDIEtat
 		c.gridx = 0;
-		compteur = compteur + 5;
-		c.gridy = compteur;
+		positionCounter = positionCounter + 5;
+		c.gridy = positionCounter;
 		c.gridwidth = 1;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDIEtat, c); //ajout du label commentaireDIEtat
 	    JTextArea textAreaCommentaireDIEtat = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireDIEtat
 	    JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
 	    commentaireDIEtat.setLabelFor(textAreaCommentaireDIEtat); //attribution de la zone de texte textAreaCommentaireDIEtat au label commentaireDIEtat
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDIEtat, c); //ajout de scrollPaneComDIEtat
@@ -763,7 +833,7 @@ public class Formulaire extends JFrame{
 	    JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0; //position horizontale
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDIDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
@@ -773,7 +843,7 @@ public class Formulaire extends JFrame{
 	    	diDomaine = new JCheckBox(listeDomaines[i]);
 	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 	    	c.gridx = 0; //position horizontale
-			c.gridy = ++compteur + i; //position de l'element a la position verticale de depart + i
+			c.gridy = ++positionCounter + i; //position de l'element a la position verticale de depart + i
 			conteneurPrincipal.add(diDomaine, c); //ajout de la checkbox domaine
 			try{
 				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
@@ -789,15 +859,15 @@ public class Formulaire extends JFrame{
 		//commentaire BP par domaine
 	    JLabel commentaireDIDomaine = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		compteur = compteur + 11;
-		c.gridy = compteur;
+		positionCounter = positionCounter + 11;
+		c.gridy = positionCounter;
 		c.gridwidth = 1;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDIDomaine, c); //ajout du label emailCl
 	    JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDIDomaine, c); //ajout de la zone de texte emailCl
@@ -807,14 +877,14 @@ public class Formulaire extends JFrame{
 		JLabel titreArboLibre2 = new JLabel("Arborescence libre"); //titre de la partie arborescence libre 2 du formulaire
 		titreArboLibre2.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreArboLibre2
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre2, c); //ajout du titreArboLibre2 dans conteneurPrincipal
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//titre
 	    JLabel titre2 = new JLabel("Titre : "); //creation du label titre2
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		conteneurPrincipal.add(titre2, c); //ajout du label titre2
 		JTextField textFieldTitre2 = new JTextField(15); //creation de la zone de texte textFieldTitre2 de taille 15
 		titre2.setLabelFor(textFieldTitre2); //attribution de la zone de texte textFieldTitre2 au label titre2
@@ -825,7 +895,7 @@ public class Formulaire extends JFrame{
 	    //element
 	    JLabel element2 = new JLabel("Elément : "); //creation du label element2
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 	    conteneurPrincipal.add(element2, c); //ajout du label element2
 	    JTextField textFieldElement2 = new JTextField(15); //creation de la zone de texte textFieldElement2
@@ -846,12 +916,12 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNombre2, c); //ajout de la zone de texte textFieldNombre2
 		
 		//bouton d'ajout d'element
-		positionElement2 = ++compteur;
+		positionElement2 = ++positionCounter;
 		
 		JButton ajoutElement2 = new JButton("+ Ajouter un élément");
 		c.gridx = 1;
-		compteur = compteur + 100;
-		c.gridy = ++compteur;
+		positionCounter = positionCounter + 100;
+		c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutElement2, c); //ajout du bouton ajoutElement
 		
@@ -891,14 +961,14 @@ public class Formulaire extends JFrame{
 		//commentaire
 	    JLabel commentaire2 = new JLabel("Commentaire : "); //creation du label commentaire2
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaire2, c); //ajout du label commentaire2
 	    JTextArea textAreaCommentaire2 = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaire2
 	    JScrollPane scrollPaneCom2 = new JScrollPane(textAreaCommentaire2);
 	    commentaire2.setLabelFor(textAreaCommentaire2); //attribution de la zone de texte textAreaCommentaire2 au label commentaire2
-	    ++compteur;
-		c.gridy = compteur;
+	    ++positionCounter;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneCom2, c); //ajout de la scrollPaneCom2
@@ -906,7 +976,7 @@ public class Formulaire extends JFrame{
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
 	  	c.gridx = 0;
-	  	c.gridy = ++compteur;
+	  	c.gridy = ++positionCounter;
 	  	c.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutArboLibre2, c); //ajout du bouton ajoutArboLibre
 	    
@@ -915,7 +985,7 @@ public class Formulaire extends JFrame{
 		JLabel titreCompteurs = new JLabel("Compteurs"); //titre de la partie compteurs du formulaire
 		titreCompteurs.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreCompteurs, c); //ajout du titreCompteurs dans conteneurPrincipal
 		
@@ -923,10 +993,10 @@ public class Formulaire extends JFrame{
 	    
 	    //type de compteur
 	    JLabel typeCompteur = new JLabel("Type du compteur : "); //creation du label typeCompteur
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 		conteneurPrincipal.add(typeCompteur, c); //ajout du label 
 		String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //differents choix de type de compteur
-		comboBoxTypeCompteur = new JComboBox(choixTypeCompteur);
+		comboBoxTypeCompteur = new JComboBox<String>(choixTypeCompteur);
 		comboBoxTypeCompteur.setPreferredSize(new Dimension(100, 20));
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -936,9 +1006,9 @@ public class Formulaire extends JFrame{
 		//mois
 	    JLabel moisCompteur = new JLabel("Mois : ");
 	    c.gridx = 0;
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
-		comboBoxMoisCompteur = new JComboBox(choixMois);
+		comboBoxMoisCompteur = new JComboBox<String>(choixMois);
 		comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -948,7 +1018,7 @@ public class Formulaire extends JFrame{
 		//consommation
 	    JLabel consommation = new JLabel("Consommation : ");
 	    c.gridx = 0;
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = 1;
 		conteneurPrincipal.add(consommation, c); //ajout du label consommation
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
@@ -958,19 +1028,19 @@ public class Formulaire extends JFrame{
 		
 		//unite
 	    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-	    comboBoxUnite = new JComboBox(choixUnite);
+	    comboBoxUnite = new JComboBox<String>(choixUnite);
 	    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
 		c.gridx = 2;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
 		
 		//bouton d'ajout de mois pour le compteur
-		positionMoisCompteur = ++compteur;
+		positionMoisCompteur = ++positionCounter;
 		
 		JButton ajoutMoisCompteur = new JButton("+ Ajouter un mois");
 		c.gridx = 1;
-		compteur = ++compteur + 100;
-		c.gridy = compteur;
+		positionCounter = ++positionCounter + 100;
+		c.gridy = positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutMoisCompteur, c); //ajout du bouton ajoutMoisCompteur
 	
@@ -984,7 +1054,7 @@ public class Formulaire extends JFrame{
 			    c.gridx = 0;
 			    c.gridy = ++positionMoisCompteur;
 				conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
-				comboBoxMoisCompteur = new JComboBox(choixMois);
+				comboBoxMoisCompteur = new JComboBox<String>(choixMois);
 				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
 				c.gridx = 1;
 				c.gridwidth = GridBagConstraints.REMAINDER;
@@ -1006,7 +1076,7 @@ public class Formulaire extends JFrame{
 				
 				//unite
 			    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-			    comboBoxUnite = new JComboBox(choixUnite);
+			    comboBoxUnite = new JComboBox<String>(choixUnite);
 			    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
 				c.gridx = 2;
 				c.gridwidth = GridBagConstraints.REMAINDER;
@@ -1020,20 +1090,20 @@ public class Formulaire extends JFrame{
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    JLabel commentaireCompteur = new JLabel("Commentaire : "); //creation du label commentaireCompteur
 		c.gridx = 0;
-		c.gridy = ++compteur;
+		c.gridy = ++positionCounter;
 	    conteneurPrincipal.add(commentaireCompteur, c); //ajout du label commentaireCompteur
 	    JTextArea textAreaComCompteur = new JTextArea(4, 15); //creation de la zone de texte textAreaComCompteur
 	    JScrollPane scrollPaneComCompteur = new JScrollPane(textAreaComCompteur);
 	    commentaireCompteur.setLabelFor(textAreaComCompteur); //attribution de la zone de texte au label commentaireCompteur
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    c.gridy = ++compteur;
+	    c.gridy = ++positionCounter;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(scrollPaneComCompteur, c); //ajout de la scrollPaneComCompteur
 	    
 	    //bouton d'ajout de compteur
 	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
 	  	c.gridx = 0;
-	  	c.gridy = ++compteur;
+	  	c.gridy = ++positionCounter;
 	  	c.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutCompteur, c); //ajout du bouton ajoutCompteur
 	  	
@@ -1043,8 +1113,8 @@ public class Formulaire extends JFrame{
 		
 		JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
-		compteur = compteur + 100;
-		c.gridy = compteur;
+		positionCounter = positionCounter + 100;
+		c.gridy = positionCounter;
 	    c.gridwidth = GridBagConstraints.REMAINDER;
 	    c.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(valideForm, c); //ajout du bouton de validation
@@ -1086,11 +1156,7 @@ public class Formulaire extends JFrame{
 		    	System.out.println(commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//affichage console des données commentaireBP
 		    	//partie bons preventifs par domaine
 		    	System.out.println(titreBPDomaine.getText()); //affichage console du titre de la partie du formulaire
-		    	for(int i = 0; i < nbDomaines; ++i){
-		    		if (bpDomaine.isSelected() == true) {
-		    			System.out.println(bpDomaine.getText() + " : " + textFieldPourcentBP.getText());           
-		    		}
-		    	}
+
 		    	System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
 		    	//partie arborescence libre
 		    	System.out.println(titreArboLibre.getText()); 								//affichage console du titre de la partie du formulaire
@@ -1106,11 +1172,7 @@ public class Formulaire extends JFrame{
 		    	//partie domaines d'intervention par etat
 		    	System.out.println(titreBPDomaine.getText()); 													//affichage console du titre de la partie du formulaire
 		    	System.out.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//affichage console des données commentaireBPDomaine
-		    	bpDomaine.addItemListener(new ItemListener() {
-		            public void itemStateChanged(ItemEvent e) {         
-		            	System.out.println(bpDomaine.getText() + (e.getStateChange()==1? " " : textFieldPourcentBP.getText()));
-		            } 
-		         });
+
 		    	//partie arborescence libre 2
 		    	System.out.println(titreArboLibre2.getText()); 									//affichage console du titre de la partie du formulaire
 		    	System.out.println(titre2.getText() + textFieldTitre.getText()); 				//affichage console des données titre2
@@ -1124,6 +1186,16 @@ public class Formulaire extends JFrame{
 		    	System.out.println(consommation.getText() + textFieldConsommation.getText() + comboBoxUnite.getSelectedItem()); //affichage console des données consommation
 		         
 		    	/*---ecriture dans le fichier texte rapport---*/
+		    	
+		    	File f = new File ("rapport.txt"); //creation d'un rapport au format txt
+		    	PrintWriter fw = null;
+				try {
+					fw = new PrintWriter (new BufferedWriter (new FileWriter (f)));
+				} 
+				catch (IOException e1) {
+					e1.printStackTrace();
+				}
+		    	
 		    	//partie redacteur
 		    	fw.println (titreRedacteur.getText()); 					 	//ecriture du titre de la partie du formulare 	
 		    	fw.println (nom.getText() + textFieldNom.getText()); 	 	//ecriture des donnees nom
@@ -1168,11 +1240,7 @@ public class Formulaire extends JFrame{
 		    	//partie domaines d'intervention par etat
 		    	System.out.println(titreDIEtat.getText()); 													//ecriture du titre de la partie du formulaire
 		    	System.out.println (commentaireDIEtat.getText() + textAreaCommentaireDIEtat.getText()); 	//ecriture des données commentaireBPDomaine
-		    	bpDomaine.addItemListener(new ItemListener() {
-		            public void itemStateChanged(ItemEvent e) {         
-		            	System.out.println(bpDomaine.getText() + (e.getStateChange()==1? " " : textFieldPourcentBP.getText()));
-		            } 
-		         });
+
 		    	//partie arborescence libre 2
 		    	fw.println(titreArboLibre2.getText()); 									//ecriture du titre de la partie du formulaire
 		    	fw.println(titre2.getText() + textFieldTitre.getText()); 				//ecriture des données titre2
@@ -1188,132 +1256,471 @@ public class Formulaire extends JFrame{
 		    	fw.println ("\r\n"); //retour ligne
 		    	fw.close();
 		    	
-		    	// Ecriture du PDF
+		    	/*-----------------Ecriture du PDF-----------------*/
 		    	
-		    	/**Debut check des input**/
-				// Check Redacteur
+		    	// On prepare les donnees
+		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
+		    	
+				/*-----------------Partie Redacteur-----------------*/
+		    	
+		    	/*IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
+				
 		    	if (textFieldNom.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		writerPart.addString(textFieldNom.getText(), nom.getText());   // nom
+		    	}
+		    	
 		    	if (textAreaAdr.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
+		    	}
+		    	
 		    	if (textFieldTelRedac.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		writerPart.addString(textFieldTelRedac.getText(), tel.getText());   // telephone 
+		    	}
+		    	
 		    	if (textFieldEmail.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		writerPart.addString(textFieldEmail.getText(), email.getText()); // email
+		    	}
+		    	
 		    	if (textFieldNomCA.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		writerPart.addString(textFieldNomCA.getText(),    nomCA.getText()); // nom du chage d'affaire
+		    	}
 		    	
-		    	// Check client
+		    	datas.add(writerPart);
+		    	
+		    	/*-----------------Partie client-----------------*/
+		    	
+		    	/*IDataHandler clientPart = new DefaultDataHandler(titreClient.getText());
+		    	
 		    	if (textFieldNomSite.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		clientPart.addString(textFieldNomSite.getText(), nomSite.getText());    // nom
+		    	}
+		    	
 		    	if (textFieldCode.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		clientPart.addString(textFieldCode.getText(), code.getText());       // code
+		    	}
+		    	
+		    	if (textAreaAdrCl.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + adrCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+		    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
+		    	}
+		    	
 		    	if (textFieldCodePostal.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		clientPart.addString(textFieldCodePostal.getText(), codePostal.getText()); // code postal
+		    	}
+		    	
 		    	if (textFieldVille.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		clientPart.addString(textFieldVille.getText(),      ville.getText());      // ville
+		    	}
+		    	
 		    	if (textFieldTelCl.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
+		    	else {
+		    		clientPart.addString(textFieldTelCl.getText(),      telCl.getText());      // telephone client
+		    	}
+		    	
 		    	if (textFieldEmailCl.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Error", 
+		    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
-
-				/**Fin check des input**/
-				
-				// On prepare les donnees
-		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
-				
-				// On ajoute autant de String que necessaire
-				// Partie redacteur
-				
-		    	IDataHandler redacteurPart = new DefaultDataHandler("Rédacteur");
+		    	else {
+		    		clientPart.addString(textFieldEmailCl.getText(),    emailCl.getText());    // email client
+		    	}
 		    	
-				// Ajout des titres
-		    	redacteurPart.addString(textFieldNom.getText(), titreRedacteur.getText()); //titre redacteur
-		    	redacteurPart.addString(textAreaAdr.getText(), nom.getText());            // nom :
-		    	redacteurPart.addString(textFieldTelRedac.getText(), adr.getText());            // adresse : 
-		    	redacteurPart.addString(textFieldEmail.getText(), tel.getText());            // telephone : 
-				redacteurPart.addString(textFieldNomCA.getText(), email.getText());          // email : 
-				redacteurPart.addString(textFieldNomCA.getText(), nomCA.getText());          // nom du chage d'affaire
+		    	datas.add(clientPart);
+		    	
+		    	/*-----------------Partie Rapport-----------------*/
+		    	
+		    	/*IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
 				
-				datas.add(redacteurPart);
-				// Partie client
-				/*strings.add(titreClient.getText()); 		//ecriture du titre de la partie du formulare 	
-				strings.add(textFieldNomSite.getText()); 	//ecriture des donnees nomSite
-				strings.add(textFieldCode.getText()); 	 	//ecriture des donnees code
-				strings.add(textAreaAdrCl.getText());   	//ecriture des donnees adrCl
-				strings.add(textFieldCodePostal.getText()); //ecriture des donnees codePostal
-				strings.add(textFieldVille.getText());  	//ecriture des donnees ville
-				strings.add(textFieldTelCl.getText());   	//ecriture des donnees telCl
-				strings.add(textFieldEmailCl.getText());  	//ecriture des donnees emailCl
-				*/
-				// On ajoute les titres
-				//datas.put(0, titles);
+				reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
 				
-				// On ajoute les donnees en utilisant l'attribut pour prÃ©ciser le type de donnÃ©e
-				//datas.put(IWriteStrategie.DATA_TYPE_STRING, strings);
+		    	if (textFieldDateDebut.getText().equals("  /  /    ")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+		    		reportPart.addString(textFieldDateDebut.getText(), dateDebut.getText());
+		    	}
+		    	
+		    	if (textFieldDateFin.getText().equals("  /  /    ")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+		    		reportPart.addString(textFieldDateFin.getText(), dateFin.getText());
+		    	}
+		    	
+		    	datas.add(reportPart);
+
+		    	/*-----------------Partie Bons preventifs-----------------*/
+		    	
+		    	/*IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
+
+				preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), moisBP.getText());
 				
-				// On prepare la liste de diagramme
-				//Collection<Object> graphics = new ArrayList<Object>();
-				
-				// On ajoute un diagramme (attention, ceci n'est qu'un exemple)
-				//graphics.add(GraphTest.generateBarChart());
-				
-				// On ajoute aux donnees la liste des diagrammes
-				//datas.put(IWriteStrategie.DATA_TYPE_JFREECHART, graphics);
-				
+		    	if (textFieldNbBPOuverts.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nbBPOuverts.getText() + "\" de la partie " + titreBP.getText() + 
+		    				" doit être remplis avec un nombre", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else if (OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nbBPOuverts.getText() + "\" de la partie " + titreBP.getText() + 
+		    				" doit être un nombre", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+					preventivesVouchers.addString(textFieldNbBPOuverts.getText(), nbBPOuverts.getText());
+		    	}
+		    	
+		    	if (textFieldNbBPFermes.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nbBPFermes.getText() + "\" de la partie " + titreBP.getText() +
+		    				" doit être remplis avec un nombre", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else if (OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nbBPFermes.getText() + "\" de la partie " + titreBP.getText() +
+		    				" doit être remplis avec un nombre", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+		    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), nbBPFermes.getText());
+		    	}
+		    	
+		    	if (!textAreaCommentaireBP.getText().equals("")) {
+					preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
+				}
+		    	
+		    	datas.add(preventivesVouchers);
+		    
+		    	/*-----------------Partie Bons preventifs par domaines-----------------*/
+		    	
+		    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
+		    	
+		    	// On obtient l'iterator des domaines
+		    	Iterator<JCheckBox> domainsIter = domainesBP.iterator();
+		    	
+		    	// On obtient l'iterator des pourcentages correspondant
+		    	Iterator<JFormattedTextField> pourcentsIter = textFieldPourcentsBP.iterator();
+		    	
+		    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
+		    	DefaultPieDataset      pieChartDatas = new DefaultPieDataset();
+		    	
+		    	Map<String, Double> pourcentages = new HashMap<String, Double>();
+		    	Double total = new Double (0f);
+		    	
+		    	boolean continueAbove100 = false;
+		    	
+		    	// On itere sur les domaines
+		    	while (domainsIter.hasNext()) {
+		    		// On obtient le JCheckBox courrant
+		    		JCheckBox currentDomain = domainsIter.next();
+		    		
+		    		// On obtient le JFormattedTextField courant correspondant
+		    		JFormattedTextField currentPourcent = pourcentsIter.next();
+		    		// Si la case est coché 
+		    		if (currentDomain.isSelected()) {
+		    			
+		    			// Mais le pourcentage n'est pas renseigné
+		    			if (currentPourcent.getText().equals("  .  %")) {
+			    			JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
+				    				" doit être remplis si la case a été cochée", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		return;
+		    			}
+		    			else {		    				
+		    				domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+		    				
+		    				double currentPourcentage = 0;
+		    				
+		    				try {
+		    					currentPourcentage = Double.parseDouble(currentPourcent.getText().substring(0, 5));
+		    				}
+		    				catch (NumberFormatException e) {
+		    					JOptionPane.showMessageDialog(mainFrame, 
+					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
+					    				" n'est pas un nombre valide", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		return;
+		    				}
+		    				
+		    				barChartDatas.addValue(currentPourcentage, "Pourcentage d'avancement", currentDomain.getText());
+		    				
+		    				total += currentPourcentage;
+		    				
+		    				if (total > 100 && !continueAbove100) {
+		    					int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont supérieurs"
+		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
+		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+		    							"Erreur", JOptionPane.YES_NO_OPTION);
+		    					if(dialogResult == JOptionPane.NO_OPTION){
+		    						return;
+		    					}
+		    					else {
+		    						continueAbove100 = true;
+		    					}
+		    				}
+		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
+		    			}
+		    		}
+		    	}		
+		    	
+		    	if (!domainPreventivesVouchers.isEmpty()) {
+		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
+		    		
+		    		if (total < 100) {
+		    			int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont inférieurs"
+    							+ " à 100% (" + total + "%).\n "
+    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
+    							"Erreur", JOptionPane.YES_NO_OPTION);
+    					if(dialogResult == JOptionPane.NO_OPTION){
+    						return;
+    					}
+		    		}
+		    		
+		    		try {
+						JFreeChart barChart = chartGenerator.generateBarChart(titreBPDomaine.getText(), 
+								"Domaines techniques", "Pourcentages d'avancement", barChartDatas);
+						
+						domainPreventivesVouchers.addJFreeChart(barChart);
+		    		} 
+		    		catch (Exception e) {
+		    			e.printStackTrace();
+						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en bare dans la partie"
+								+ titreBPDomaine.getText() + " : \n"
+								+ e.getMessage(), "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+		    		
+		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+		    		
+		    		while (mapIter.hasNext()) {
+		    			Map.Entry<String, Double> currentEntry = mapIter.next();
+		    			
+		    			double currentRelativePourcentage = currentEntry.getValue() / total;
+		    			pieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+		    					currentRelativePourcentage);
+		    		}
+		    		
+		    		try {
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
+						
+						domainPreventivesVouchers.addJFreeChart(pieChart);
+		    		} 
+		    		catch (Exception e) {
+		    			e.printStackTrace();
+						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie " +
+								titreBPDomaine.getText() + ": \n"
+								+ e.getMessage(), "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+		    		
+		    		datas.add(domainPreventivesVouchers);
+		    	}
+		
+		    	/*-----------------Partie demande d'intervention-----------------*/
+		    	
+		    	/*IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
+		    	
+		    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
+		    	
+		    	if (textFieldNbIntervention.getText().equals("")) {
+		    		JOptionPane.showMessageDialog(mainFrame, 
+		    				"le champs \"" + nbIntervention.getText() + "\" de la partie " + titreDI.getText() + 
+		    				" doit être remplis", "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else {
+		    		interventionDemand.addString(textFieldNbIntervention.getText(), nbIntervention.getText());
+		    	}
+		    	
+		    	if (!textAreaCommentaireDI.getText().equals("")) {
+		    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+		    	}
+		    	
+		    	datas.add(interventionDemand);
+		    	
+		    	/*-----------------Partie demande d'intervention par etat-----------------*/
+		    	
+		    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
+		    	
+		    	
+		    	pieChartDatas = new DefaultPieDataset();
+		    	
+		    	pourcentages = new HashMap<String, Double>();
+		    	total = new Double (0f);
+		    	
+		    	Iterator<JCheckBox> stateJComboBoxIter = states.iterator();
+		    	Iterator<JTextField> nbStatesJTextFieldIter = nbStates.iterator();
+		    	
+		    	while (stateJComboBoxIter.hasNext()) {
+		    		JCheckBox currentState = stateJComboBoxIter.next();
+		    		JTextField currentNbState = nbStatesJTextFieldIter.next();
+		    		
+		    		if (currentState.isSelected()) {
+		    			if (currentNbState.getText().equals("")) {
+		    				JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+				    				" doit être remplis avec un nombre si la case est cochée", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		return;
+		    			}
+		    			else if (!OperationUtilities.isNumeric(currentNbState.getText())) {
+		    				JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+				    				" doit être un nombre si la case est cochée", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		return;
+		    			}
+		    			else {
+		    				stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
+		    				
+		    				Integer currentPourcentage = 0;
+		    				
+		    				try {
+		    					currentPourcentage = Integer.parseInt(currentNbState.getText());
+		    				}
+		    				catch (NumberFormatException e) {
+		    					JOptionPane.showMessageDialog(mainFrame, 
+					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+					    				" n'est pas un nombre valide", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		return;
+		    				}
+		    				
+		    				total += currentPourcentage;
+		    				pourcentages.put(currentState.getText(), new Double(currentPourcentage));
+		    			}
+		    		}
+		    	}
+		    	
+		    	if (!stateInterventionDemand.isEmpty()) {
+		    		
+		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
+		    		
+		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+		    		
+		    		while (mapIter.hasNext()) {
+		    			Map.Entry<String, Double> currentEntry = mapIter.next();
+		    			
+		    			double currentRelativePourcentage = currentEntry.getValue() / total;
+		    			pieChartDatas.setValue(currentEntry.getKey() + " : " + 
+		    					OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+		    					currentRelativePourcentage);
+		    		}
+		    		
+		    		try {
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
+						
+						stateInterventionDemand.addJFreeChart(pieChart);
+		    		} 
+		    		catch (Exception e) {
+		    			e.printStackTrace();
+						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie "
+								+ titreDIEtat.getText() + " : \n"
+								+ e.getMessage(), "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+		    		
+		    		datas.add(stateInterventionDemand);
+		    	}
+		    	
 				try {
-					// Finallement on creer le document
-					CreateReportDocument.createPdf(datas);
-					JOptionPane.showMessageDialog(mainFrame, "Rapport généré", "Rapport généré", 
-							JOptionPane.INFORMATION_MESSAGE);
+					if (!datas.isEmpty()) {
+						// Finallement on creer le document
+						CreateReportDocument.createPdf(datas);
+						JOptionPane.showMessageDialog(mainFrame, "Rapport généré", "Rapport généré", 
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						JOptionPane.showMessageDialog(mainFrame, 
+			    				"Aucune donnée à rédiger dans le rapport", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
 				} 
 				catch (Exception e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(mainFrame, e.getMessage(), "Error", 
+					JOptionPane.showMessageDialog(mainFrame, e.getMessage(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 				}
 		    	

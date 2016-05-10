@@ -11,7 +11,7 @@ import documentHandler.CreateReportDocument;
  * @author Lucie PELLOTTEIRO
  *
  */
-public class PdfTest {
+public abstract class PdfTest {
 
 	/**
 	 * Le main a executer pour tester. Pour l'instant les arguments sont inutiles
@@ -21,12 +21,19 @@ public class PdfTest {
 		
 		Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
 		
-		IDataHandler redacteurPart = new DefaultDataHandler("RÃ©dacteur");
+		IDataHandler redacteurPart = new DefaultDataHandler("Rédacteur");
 		
-		redacteurPart.addString("Lucie", "prÃ©nom : ");
-		redacteurPart.addString("PELLOTTIERO", "nom : ");
+		redacteurPart.addString("Lucie"      , "prénom :");
+		redacteurPart.addString("PELLOTTIERO", "nom      :");
 		
 		datas.add(redacteurPart);
+		
+		IDataHandler clientPart = new DefaultDataHandler("Client");
+		
+		clientPart.addString("Thomas", "prénom :");
+		clientPart.addString("MEDARD", "nom      :");
+		
+		datas.add(clientPart);
 		
 		// On prepare les donnees
 		/*Map<Integer, Collection<Object>> datas = new HashMap<Integer, Collection<Object>>();

@@ -20,7 +20,7 @@ import com.itextpdf.text.pdf.PdfWriter;
  * @author Lucie PELLOTTIERO
  *
  */
-public class GraphTest {
+public abstract class GraphTest {
 	
 	/**
 	 * Permet de generer un exemple de graphe camembert
