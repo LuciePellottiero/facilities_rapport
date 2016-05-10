@@ -105,18 +105,20 @@ public class Formulaire extends JFrame{
 	private Collection<JCheckBox> domainesBP;
 	
 	/**
-	 * JLabel pour chaque mois de bon preventif
+	 * String utilisee pour chaque JLable de mois de bons preventifs
 	 */
-    private JLabel preventivVoucherMonthJLabel;
+	private final String preventiveVoucherMonthLabel = "Mois : ";
     
 	/**
 	 * liste differents choix de la duree du rapport d'activite
 	 */
-	private final String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
+	private String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
+	private int numberPreventiveMonthAllowed = 100;
+	
 	private int positionCounter;
-	private int positionMoisBP;
+	private int preventiveVoucherLastMonthPosition;
 	private int positionElement;
 	private int positionMoisDI;
 	private int positionElement2;
@@ -412,15 +414,33 @@ public class Formulaire extends JFrame{
 		
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
-	    preventivVoucherMonthJLabel = new JLabel("Mois : ");
-	    
-	    Collection<JComboBox<String>> preventivesVouchersMonths      = new ArrayList<JComboBox<String>>();
-	    Collection<JTextField>        nbPreventivesVouchersOpened    = new ArrayList<JTextField>();
-	    Collection<JTextField>        nbPreventivesVouchersCloseed   = new ArrayList<JTextField>();
+	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
+	    Collection<JTextField>        nbPreventivesVouchersOpened      = new ArrayList<JTextField>();
+	    Collection<JTextField>        nbPreventivesVouchersClosed      = new ArrayList<JTextField>();
+	    Collection<JLabel>            commentsLabelPreventivesVouchers = new ArrayList<JLabel>();
+	    Collection<JTextArea>         commentsPreventivesVouchers      = new ArrayList<JTextArea>();
 
+	    preventiveVoucherLastMonthPosition = positionCounter;
+	    positionCounter += numberPreventiveMonthAllowed;
+	    
 	    // Creation du mois
 	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois);
+	    
+	    JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
 		
+		constraint.gridx = 1;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
+		
+		ajoutMoisBP.addActionListener(new ActionListener() {
+			    	
+			public void actionPerformed(ActionEvent arg0) {
+				createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois);
+				conteneurPrincipal.revalidate();
+			}
+		});
+	    
 		//commentaire BP
 	    JLabel commentaireBP = new JLabel("Commentaire : "); //creation du label commentaireBP
 		constraint.gridx = 0;
@@ -1835,64 +1855,58 @@ public class Formulaire extends JFrame{
 	
 	private void createPreventiveVoucherMonth (GridBagConstraints constraint, JComponent mainContainer, final String[] monthsList) {
 	    
-	    constraint.gridy = ++positionCounter;
-		mainContainer.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
+		if (preventiveVoucherLastMonthPosition >= numberPreventiveMonthAllowed) {
+			JOptionPane.showMessageDialog(mainContainer, 
+    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabel, "Erreur", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabel);
+		
+		GridBagConstraints localConstraint = (GridBagConstraints) constraint.clone();
+		
+		localConstraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		
+		localConstraint.gridx = 0;
+		localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
+		mainContainer.add(preventivVoucherMonthJLabel, localConstraint); //ajout du label moisBP
 			
 		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(monthsList); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 		
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		localConstraint.gridx = 1;
+		localConstraint.gridwidth = GridBagConstraints.REMAINDER;
 		preventivVoucherMonthJLabel.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-		mainContainer.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+		mainContainer.add(comboBoxMoisBP, localConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
 	    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-	    mainContainer.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
+	    localConstraint.gridx = 0;
+	    localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    localConstraint.gridwidth = 1;
+	    mainContainer.add(nbBPOuverts, localConstraint); //ajout du label nbBPOuverts
 	    
 	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
 		
-	    constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+	    localConstraint.gridx = 1;
+	    localConstraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPOuverts, localConstraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
 	    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
 		
-	    constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
+	    localConstraint.gridx = 0;
+	    localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    localConstraint.gridwidth = 1;
 	    
-		mainContainer.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+		mainContainer.add(nbBPFermes, localConstraint); //ajout du label nbBPFermes
 	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
 	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
 		
-	    constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
-		
-		//bouton d'ajout de mois pour les BP
-		positionMoisBP = ++positionCounter;
-		
-		JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
-		
-		positionCounter = ++positionCounter + 100;
-		constraint.gridx = 1;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
-		
-		ajoutMoisBP.addActionListener(new ActionListener() {
-			    	
-			public void actionPerformed(ActionEvent arg0) {
-				createPreventiveVoucherMonth(constraint, mainContainer, monthsList);
-				mainContainer.revalidate();
-			}
-		});
+	    localConstraint.gridx = 1;
+	    localConstraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPFermes, localConstraint); //ajout de la zone de texte textFieldNbBPFermes
 	}
 
 }
