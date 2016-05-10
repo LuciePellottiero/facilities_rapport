@@ -51,14 +51,16 @@ public class Formulaire extends JFrame{
 	private JFormattedTextField textFieldDateDebut = new JFormattedTextField();   //declaration du textField date debut initialise dans le try
 	private JFormattedTextField textFieldDateFin = new JFormattedTextField();     //declaration du textField date fin initialise dans le try
 	private JComboBox<String> comboBoxRapport = new JComboBox<String>();  		  //declaration de la comboBox des durée de rapport
-	private JComboBox<String> comboBoxMoisBP = new JComboBox<String>(); 		  //declaraton de la comboBox des mois pour les BP
-	private JFormattedTextField textFieldPourcent = new JFormattedTextField();   //declaration du textFieldPourcent1 date fin initialise dans le try
-	private JComboBox<String> comboBoxMoisDI = new JComboBox<String>(); 		  //declaraton de la comboBox des mois pour les DI
-	private JComboBox<String> comboBoxTypeCompteur = new JComboBox<String>(); 	  //declaraton de la comboBox des types de compteur
-	private JComboBox<String> comboBoxMoisCompteur = new JComboBox<String>(); 	  //declaraton de la comboBox des mois pour les compteur
-	private JComboBox<String> comboBoxUnite = new JComboBox<String>(); 	  		  //declaraton de la comboBox des unites
-	private JCheckBox domaine = new JCheckBox();
+	private JComboBox<String> comboBoxMoisBP = new JComboBox<String>(); 		  //declaration de la comboBox des mois pour les BP
+	private JFormattedTextField textFieldPourcentBP = new JFormattedTextField();    //declaration du textFieldPourcent1 date fin initialise dans le try
+	private JComboBox<String> comboBoxMoisDI = new JComboBox<String>(); 		  //declaration de la comboBox des mois pour les DI
+	private JComboBox<String> comboBoxTypeCompteur = new JComboBox<String>(); 	  //declaration de la comboBox des types de compteur
+	private JComboBox<String> comboBoxMoisCompteur = new JComboBox<String>(); 	  //declaration de la comboBox des mois pour les compteur
+	private JComboBox<String> comboBoxUnite = new JComboBox<String>(); 	  		  //declaration de la comboBox des unites
+	private JCheckBox bpDomaine = new JCheckBox();
 	private JCheckBox etat = new JCheckBox();
+	private JCheckBox diDomaine = new JCheckBox();
+	private JFormattedTextField textFieldPourcentDI = new JFormattedTextField();    //declaration du textFieldPourcent1 date fin initialise dans le try
 	
 	private File f = new File ("rapport.txt"); //creation d'un rapport au format txt
 	private PrintWriter fw = new PrintWriter (new BufferedWriter (new FileWriter (f)));
@@ -420,20 +422,20 @@ public class Formulaire extends JFrame{
 	    int nbDomaines = listeDomaines.length; //taille de la liste des domaines
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    for(int i = 0; i < nbDomaines; i++){
-	    	domaine = new JCheckBox(listeDomaines[i]);
+	    	bpDomaine = new JCheckBox(listeDomaines[i]);
 	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
 	    	c.gridx = 0; //position horizontale
 			c.gridy = ++compteur + i; //position de l'element a la position verticale de depart + i
-			conteneurPrincipal.add(domaine, c); //ajout de la checkbox domaine
+			conteneurPrincipal.add(bpDomaine, c); //ajout de la checkbox domaine
 			try{
 				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
-				textFieldPourcent = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+				textFieldPourcentBP = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
 		    }catch(ParseException e){
 				e.printStackTrace(); //exception
 			}
 		    c.gridx = 1; //position horizontale
 			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
-			conteneurPrincipal.add(textFieldPourcent, c); //ajout de la zone de texte Pourcent1
+			conteneurPrincipal.add(textFieldPourcentBP, c); //ajout de la zone de texte Pourcent1
 	    }
 	  
 		//commentaire BP par domaine
@@ -528,6 +530,7 @@ public class Formulaire extends JFrame{
 				c.gridx = 3;
 				c.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin	
+				fenetre.revalidate();
 		    }
 		});
 		
@@ -644,6 +647,50 @@ public class Formulaire extends JFrame{
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDIEtat, c); //ajout de scrollPaneComDIEtat
+	    
+	    /*----------------------------------------formulaire demandes d'intervention par domaine------------------------------------------------*/
+	    
+	    JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
+	    titreDIDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
+		c.gridx = 0; //position horizontale
+		c.gridy = ++compteur;
+		c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+		c.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreDIDomaine, c); //ajout du titreBPDomaine dans conteneurPrincipal
+	    
+	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    for(int i = 0; i < nbDomaines; i++){
+	    	diDomaine = new JCheckBox(listeDomaines[i]);
+	    	c.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
+	    	c.gridx = 0; //position horizontale
+			c.gridy = ++compteur + i; //position de l'element a la position verticale de depart + i
+			conteneurPrincipal.add(diDomaine, c); //ajout de la checkbox domaine
+			try{
+				MaskFormatter maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
+				textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+		    }catch(ParseException e){
+				e.printStackTrace(); //exception
+			}
+		    c.gridx = 1; //position horizontale
+			c.gridwidth = GridBagConstraints.REMAINDER; //dernier element de sa ligne
+			conteneurPrincipal.add(textFieldPourcentDI, c); //ajout de la zone de texte Pourcent1
+	    }
+	  
+		//commentaire BP par domaine
+	    JLabel commentaireDIDomaine = new JLabel("Commentaire : "); //creation du label emailCl
+		c.gridx = 0;
+		compteur = compteur + 11;
+		c.gridy = compteur;
+		c.gridwidth = 1;
+		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+	    conteneurPrincipal.add(commentaireDIDomaine, c); //ajout du label emailCl
+	    JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
+	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
+	    c.gridy = ++compteur;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    conteneurPrincipal.add(scrollPaneComDIDomaine, c); //ajout de la zone de texte emailCl
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
@@ -887,8 +934,8 @@ public class Formulaire extends JFrame{
 		    	//partie bons preventifs par domaine
 		    	System.out.println(titreBPDomaine.getText()); //affichage console du titre de la partie du formulaire
 		    	for(int i = 0; i < nbDomaines; ++i){
-		    		if (domaine.isSelected() == true) {
-		    			System.out.println(domaine.getText() + " : " + textFieldPourcent.getText());           
+		    		if (bpDomaine.isSelected() == true) {
+		    			System.out.println(bpDomaine.getText() + " : " + textFieldPourcentBP.getText());           
 		    		}
 		    	}
 		    	System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
@@ -906,9 +953,9 @@ public class Formulaire extends JFrame{
 		    	//partie domaines d'intervention par etat
 		    	System.out.println(titreBPDomaine.getText()); 													//affichage console du titre de la partie du formulaire
 		    	System.out.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//affichage console des données commentaireBPDomaine
-		    	domaine.addItemListener(new ItemListener() {
+		    	bpDomaine.addItemListener(new ItemListener() {
 		            public void itemStateChanged(ItemEvent e) {         
-		            	System.out.println(domaine.getText() + (e.getStateChange()==1? " " : textFieldPourcent.getText()));
+		            	System.out.println(bpDomaine.getText() + (e.getStateChange()==1? " " : textFieldPourcentBP.getText()));
 		            } 
 		         });
 		    	//partie arborescence libre 2
@@ -968,9 +1015,9 @@ public class Formulaire extends JFrame{
 		    	//partie domaines d'intervention par etat
 		    	System.out.println(titreDIEtat.getText()); 													//ecriture du titre de la partie du formulaire
 		    	System.out.println (commentaireDIEtat.getText() + textAreaCommentaireDIEtat.getText()); 	//ecriture des données commentaireBPDomaine
-		    	domaine.addItemListener(new ItemListener() {
+		    	bpDomaine.addItemListener(new ItemListener() {
 		            public void itemStateChanged(ItemEvent e) {         
-		            	System.out.println(domaine.getText() + (e.getStateChange()==1? " " : textFieldPourcent.getText()));
+		            	System.out.println(bpDomaine.getText() + (e.getStateChange()==1? " " : textFieldPourcentBP.getText()));
 		            } 
 		         });
 		    	//partie arborescence libre 2
