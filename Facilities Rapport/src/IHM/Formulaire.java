@@ -66,8 +66,11 @@ public class Formulaire extends JFrame{
 	private PrintWriter fw = new PrintWriter (new BufferedWriter (new FileWriter (f)));
 	
 	private int compteur = 0;
-	
-	private JButton ajoutElement = new JButton();
+	private int positionMoisBP;
+	private int positionElement;
+	private int positionMoisDI;
+	private int positionElement2;
+	private int positionMoisCompteur;
 	
 	
 	public Formulaire() throws IOException{
@@ -355,7 +358,7 @@ public class Formulaire extends JFrame{
 		
 	    c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//mois
-	    JLabel moisBP = new JLabel("mois : ");
+	    JLabel moisBP = new JLabel("Mois : ");
 	    c.gridy = ++compteur;
 		conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
 		String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
@@ -389,6 +392,64 @@ public class Formulaire extends JFrame{
 		c.gridx = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldNbBPFermes, c); //ajout de la zone de texte textFieldNbBPFermes
+		
+		//bouton d'ajout de mois pour les BP
+		positionMoisBP = ++compteur;
+		
+		JButton ajoutMoisBP = new JButton("+ Ajouter un mois");
+		c.gridx = 1;
+		compteur = ++compteur + 100;
+		c.gridy = compteur;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisBP, c); //ajout du bouton ajoutElement
+		
+		ajoutMoisBP.addActionListener(new ActionListener() {
+			    	
+			public void actionPerformed(ActionEvent arg0) {	
+				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+				
+				//mois
+			    JLabel moisBP = new JLabel("Mois : ");
+			    c.gridx = 0;
+			    c.gridy = ++positionMoisBP;
+				conteneurPrincipal.add(moisBP, c); //ajout du label moisBP
+				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
+				comboBoxMoisBP = new JComboBox(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				moisBP.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
+				conteneurPrincipal.add(comboBoxMoisBP, c); //ajout de la zone de texte comboBox comboBoxMoisBP
+				
+				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				
+			    //nombre BP ouverts
+			    JLabel nbBPOuverts = new JLabel("Nombre de bons préventifs ouverts : "); //creation du label nbBPOuverts
+			    c.gridx = 0;
+			    c.gridy = ++positionMoisBP;
+				c.gridwidth = 1;
+			    conteneurPrincipal.add(nbBPOuverts, c); //ajout du label nbBPOuverts
+			    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
+			    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNbBPOuverts, c); //ajout de la zone de texte textFieldNbBPOuverts
+				
+				//nombre BP fermes
+			    JLabel nbBPFermes = new JLabel("Nombre de bons préventifs fermés : "); //creation du label nbBPFermes
+				c.gridx = 0;
+				c.gridy = ++positionMoisBP;
+				c.gridwidth = 1;
+			    conteneurPrincipal.add(nbBPFermes, c); //ajout du label nbBPFermes
+			    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
+			    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNbBPFermes, c); //ajout de la zone de texte textFieldNbBPFermes
+				
+				fenetre.revalidate();
+			}
+		});
 		
 		//commentaire BP
 	    JLabel commentaireBP = new JLabel("Commentaire : "); //creation du label commentaireBP
@@ -498,9 +559,12 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin
 
 		//bouton d'ajout d'element
-		ajoutElement = new JButton("+ Ajouter un élément");
+		positionElement = ++compteur;
+		
+		JButton ajoutElement = new JButton("+ Ajouter un élément");
 		c.gridx = 1;
-		c.gridy = compteur + 100;
+		compteur = compteur + 100;
+		c.gridy = ++compteur;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutElement, c); //ajout du bouton ajoutElement
 		
@@ -511,7 +575,7 @@ public class Formulaire extends JFrame{
 		    	//element
 			    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
 				c.gridx = 0;
-				c.gridy = ++compteur - 235;
+				c.gridy = ++positionElement;
 				c.gridwidth = 1;
 			    conteneurPrincipal.add(element, c); //ajout du label nbBPOuverts
 			    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
@@ -530,6 +594,7 @@ public class Formulaire extends JFrame{
 				c.gridx = 3;
 				c.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(textFieldNombre, c); //ajout de la zone de texte dateFin	
+				
 				fenetre.revalidate();
 		    }
 		});
@@ -538,7 +603,6 @@ public class Formulaire extends JFrame{
 		//commentaire
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
-		compteur = compteur + 101;
 		c.gridy = ++compteur;
 		c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaire, c); //ajout du label emailCl
@@ -592,6 +656,52 @@ public class Formulaire extends JFrame{
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldNbIntervention, c); //ajout de la zone de texte textFieldNbBPOuverts
 		
+		//bouton d'ajout de mois pour les BP
+		positionMoisDI = ++compteur;
+				
+		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
+		c.gridx = 1;
+		compteur = ++compteur + 100;
+		c.gridy = compteur;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisDI, c); //ajout du bouton ajoutElement
+				
+		ajoutMoisDI.addActionListener(new ActionListener() {
+					    	
+			public void actionPerformed(ActionEvent arg0) {	
+				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+						
+				//mois
+				JLabel moisDI = new JLabel("Mois : ");
+				c.gridx = 0;
+				c.gridy = ++positionMoisDI;
+				conteneurPrincipal.add(moisDI, c); //ajout du label moisBP
+				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
+				comboBoxMoisDI = new JComboBox(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				moisBP.setLabelFor(comboBoxMoisDI); //attribution de la comboBox comboBoxMoisBP au label moisBP
+				conteneurPrincipal.add(comboBoxMoisDI, c); //ajout de la zone de texte comboBox comboBoxMoisBP
+						
+				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+						
+				//nombre d'interventions
+				JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
+				c.gridx = 0;
+				c.gridy = ++positionMoisDI;
+				c.gridwidth = 1;
+				conteneurPrincipal.add(nbIntervention, c); //ajout du label nbBPOuverts
+				JTextField textFieldNbIntervention = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
+				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNbIntervention, c); //ajout de la zone de texte textFieldNbBPOuverts
+						
+				fenetre.revalidate();
+			}
+		});
+		
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
 		c.gridx = 0;
@@ -607,8 +717,8 @@ public class Formulaire extends JFrame{
 	    conteneurPrincipal.add(scrollPaneComDI, c); //ajout de la zone de texte emailCl
 	    
 	    
-	    /*----------------------------------------formulaire demandes d'intervention par état------------------------------------------------*/
-	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par état"); //titre de la partie Bons preventifs par domaine du formulaire
+	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
+	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		c.gridx = 0;
 		c.gridy = ++compteur;
@@ -736,13 +846,47 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldNombre2, c); //ajout de la zone de texte textFieldNombre2
 		
 		//bouton d'ajout d'element
+		positionElement2 = ++compteur;
+		
 		JButton ajoutElement2 = new JButton("+ Ajouter un élément");
 		c.gridx = 1;
+		compteur = compteur + 100;
 		c.gridy = ++compteur;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutElement2, c); //ajout du bouton ajoutElement
 		
-		
+		ajoutElement2.addActionListener(new ActionListener() {
+	    	
+		    public void actionPerformed(ActionEvent arg0) {	
+		    	
+		    	c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		    	
+		    	//element
+			    JLabel element2 = new JLabel("Elément : "); //creation du label dateDebut
+				c.gridx = 0;
+				c.gridy = ++positionElement2;
+				c.gridwidth = 1;
+			    conteneurPrincipal.add(element2, c); //ajout du label nbBPOuverts
+			    JTextField textFieldElement2 = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
+			    element.setLabelFor(textFieldElement2); //attribution de la zone de texte au label nbBPOuverts
+				c.gridx = 1;
+				c.gridwidth = 1;
+				conteneurPrincipal.add(textFieldElement2, c); //ajout de la zone de texte textFieldNbBPOuverts
+				
+				//nombre
+			    JLabel nombre2 = new JLabel("Nombre : "); //creation du label dateDebut
+				c.gridx = 2;
+				c.gridwidth = GridBagConstraints.RELATIVE;
+			    conteneurPrincipal.add(nombre2, c); //ajout du label dateDebut
+			    JTextField textFieldNombre2 = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
+			    nombre2.setLabelFor(textFieldNombre2); //attribution de la zone de texte au label dateFin
+				c.gridx = 3;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(textFieldNombre2, c); //ajout de la zone de texte dateFin	
+				
+				fenetre.revalidate();
+		    }
+		});
 		
 		//commentaire
 	    JLabel commentaire2 = new JLabel("Commentaire : "); //creation du label commentaire2
@@ -821,11 +965,56 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
 		
 		//bouton d'ajout de mois pour le compteur
+		positionMoisCompteur = ++compteur;
+		
 		JButton ajoutMoisCompteur = new JButton("+ Ajouter un mois");
 		c.gridx = 1;
-		c.gridy = ++compteur;
+		compteur = ++compteur + 100;
+		c.gridy = compteur;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutMoisCompteur, c); //ajout du bouton ajoutMoisCompteur
+	
+		ajoutMoisCompteur.addActionListener(new ActionListener() {
+			    	
+			public void actionPerformed(ActionEvent arg0) {	
+				c.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+				
+				//mois
+			    JLabel moisCompteur = new JLabel("Mois : ");
+			    c.gridx = 0;
+			    c.gridy = ++positionMoisCompteur;
+				conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
+				comboBoxMoisCompteur = new JComboBox(choixMois);
+				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
+				c.gridx = 1;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
+				conteneurPrincipal.add(comboBoxMoisCompteur, c); //ajout de la comboBoxMoisCompteur
+				
+				c.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				
+				//consommation
+			    JLabel consommation = new JLabel("Consommation : ");
+			    c.gridx = 0;
+			    c.gridy = ++positionMoisCompteur;
+				c.gridwidth = 1;
+				conteneurPrincipal.add(consommation, c); //ajout du label consommation
+				JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
+				consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
+				c.gridx = 1;
+				conteneurPrincipal.add(textFieldConsommation, c); //ajout de la zone de texte textFieldConsommation
+				
+				//unite
+			    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
+			    comboBoxUnite = new JComboBox(choixUnite);
+			    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
+				c.gridx = 2;
+				c.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
+				
+				fenetre.revalidate();
+			}
+		});
 		
 		//commentaire
 		 c.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
@@ -847,42 +1036,6 @@ public class Formulaire extends JFrame{
 	  	c.gridy = ++compteur;
 	  	c.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutCompteur, c); //ajout du bouton ajoutCompteur
-	  	
-	  	ajoutMoisCompteur.addActionListener(new ActionListener() {
-	    	
-		    public void actionPerformed(ActionEvent arg0) {	
-		    	//mois
-			    JLabel moisCompteur = new JLabel("Mois : ");
-			    c.gridx = 0;
-			    c.gridy = ++compteur;
-				conteneurPrincipal.add(moisCompteur, c); //ajout du label moisCompteur
-				comboBoxMoisCompteur = new JComboBox(choixMois);
-				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-				c.gridx = 1;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-				conteneurPrincipal.add(comboBoxMoisCompteur, c); //ajout de la comboBoxMoisCompteur
-				
-				//consommation
-			    JLabel consommation = new JLabel("Consommation : ");
-			    c.gridx = 0;
-			    c.gridy = ++compteur;
-				c.gridwidth = 1;
-				conteneurPrincipal.add(consommation, c); //ajout du label consommation
-				JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
-				consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
-				c.gridx = 1;
-				conteneurPrincipal.add(textFieldConsommation, c); //ajout de la zone de texte textFieldConsommation
-				
-				//unite
-			    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-			    comboBoxUnite = new JComboBox(choixUnite);
-			    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
-				c.gridx = 2;
-				c.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(comboBoxUnite, c); //ajout de la comboBoxUnite
-		    }
-	  	});
 	  	
 	  	
 		
