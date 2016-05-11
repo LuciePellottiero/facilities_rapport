@@ -1410,10 +1410,10 @@ public class Formulaire extends JFrame{
 		    	
 		    	IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
 		    	
-		    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter        = preventivesVouchersMonths.iterator();
-		    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter      = nbPreventivesVouchersOpened.iterator();
-		    	Iterator<JTextField>        nbPreventivesVouchersClosedIter      = nbPreventivesVouchersClosed.iterator();
-		    	Iterator<JTextArea>         commentsPreventivesVouchersIter      = commentsPreventivesVouchers.iterator();
+		    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter   = preventivesVouchersMonths.iterator();
+		    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter = nbPreventivesVouchersOpened.iterator();
+		    	Iterator<JTextField>        nbPreventivesVouchersClosedIter = nbPreventivesVouchersClosed.iterator();
+		    	Iterator<JTextArea>         commentsPreventivesVouchersIter = commentsPreventivesVouchers.iterator();
 		    	
 		    	int counter = 1;
 		    	while (preventivesVouchersMonthsIter.hasNext()) {
@@ -1422,8 +1422,6 @@ public class Formulaire extends JFrame{
 		    		JTextField        textFieldNbBPOuverts  = nbPreventivesVouchersOpenedIter.next();
 		    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
 		    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
-		    		
-		    		System.out.println("|" + textFieldNbBPOuverts.getText() + "|");
 
 					preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabel);
 					
