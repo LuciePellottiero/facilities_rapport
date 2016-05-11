@@ -118,7 +118,7 @@ public class Formulaire extends JFrame{
 	private String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
-	private int numberPreventiveMonthAllowed = 100;
+	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
 	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
@@ -423,7 +423,7 @@ public class Formulaire extends JFrame{
 	    Collection<JTextArea>         commentsPreventivesVouchers      = new ArrayList<JTextArea>();
 
 	    preventiveVoucherLastMonthPosition = positionCounter;
-	    positionCounter += numberPreventiveMonthAllowed;
+	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
 	    // Creation du mois
 	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois,
@@ -440,6 +440,18 @@ public class Formulaire extends JFrame{
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
 			public void actionPerformed(ActionEvent arg0) {
+				
+				if (preventiveVoucherLastMonthPosition >= NUMBER_PREVENTIVE_MONTH_ALLOWED) {
+					JOptionPane.showMessageDialog(conteneurPrincipal, 
+		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabel, "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+					ajoutMoisBP.setEnabled(false);
+					return;
+				}
+				else {
+					ajoutMoisBP.setEnabled(true);
+				}
+				
 				createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
@@ -1892,12 +1904,6 @@ public class Formulaire extends JFrame{
 	private void createPreventiveVoucherMonth (GridBagConstraints constraint, JComponent mainContainer, final String[] monthsList,
 			Collection<JComboBox<String>> preventivesVouchersMonths, Collection<JTextField> nbPreventivesVouchersOpened,
 			Collection<JTextField> nbPreventivesVouchersClosed, Collection<JTextArea> commentsPreventivesVouchers) {
-	    
-		if (preventiveVoucherLastMonthPosition >= numberPreventiveMonthAllowed) {
-			JOptionPane.showMessageDialog(mainContainer, 
-    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabel, "Erreur", 
-					JOptionPane.WARNING_MESSAGE);
-		}
 		
 		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabel);
 		
