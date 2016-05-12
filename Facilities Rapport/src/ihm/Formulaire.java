@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -130,10 +131,10 @@ public class Formulaire extends JFrame{
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
 	private int positionMoisDI;
-	private int positionElement2;
 	private int positionMoisCompteur;
 
 	private int freeTrees1Position;
+	private int freeTrees2Position;
 	
 	
 	public Formulaire() throws IOException{
@@ -409,18 +410,18 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldDateFin, constraint); //ajout de la zone de texte textFieldDateFin
 		
-		
-		
-		
 		/*----------------------------------------------formulaire bons preventifs----------------------------------------------------------*/
-	    
+	   
+		JPanel conteneurPrincipal2 = new JPanel(new GridBagLayout());
+		conteneurPrincipal2.setBorder(BorderFactory.createTitledBorder("Bons préventifs"));
+		
 		JLabel titreBP = new JLabel("Bons préventifs"); //titre de la partie bons preventifs du formulaire
 		titreBP.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
+		conteneurPrincipal2.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 	    
 	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
 	    Collection<JTextField>        nbPreventivesVouchersOpened      = new ArrayList<JTextField>();
@@ -440,7 +441,7 @@ public class Formulaire extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				
 				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
-					JOptionPane.showMessageDialog(conteneurPrincipal, 
+					JOptionPane.showMessageDialog(conteneurPrincipal2, 
 		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
@@ -452,11 +453,11 @@ public class Formulaire extends JFrame{
 					ajoutMoisBP.setText(addMonthButtonText[0]);
 				}
 				
-				createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois, 
+				createPreventiveVoucherMonth(constraint, conteneurPrincipal2, choixMois, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 				
-				conteneurPrincipal.revalidate();
+				conteneurPrincipal2.revalidate();
 				
 				ajoutMoisBP.setText(addMonthButtonText[2]);
 				ajoutMoisBP.setEnabled(false);
@@ -464,14 +465,19 @@ public class Formulaire extends JFrame{
 		});	 
 		
 		// Creation du mois
-	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois,
+	    createPreventiveVoucherMonth(constraint, conteneurPrincipal2, choixMois,
 	    		preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 	    		nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 	    
 	    constraint.gridx = 1;
 		constraint.gridy = positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
+		conteneurPrincipal2.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 4;
+		conteneurPrincipal.add(conteneurPrincipal2, constraint);
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
 	    
@@ -670,6 +676,7 @@ public class Formulaire extends JFrame{
 	    
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
+	   
 	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		constraint.gridx = 0;
@@ -810,107 +817,30 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
-		JLabel titreArboLibre2 = new JLabel("Arborescence libre"); //titre de la partie arborescence libre 2 du formulaire
-		titreArboLibre2.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreArboLibre2
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre2, constraint); //ajout du titreArboLibre2 dans conteneurPrincipal
-		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//titre
-	    JLabel titre2 = new JLabel("Titre : "); //creation du label titre2
-	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(titre2, constraint); //ajout du label titre2
-		JTextField textFieldTitre2 = new JTextField(15); //creation de la zone de texte textFieldTitre2 de taille 15
-		titre2.setLabelFor(textFieldTitre2); //attribution de la zone de texte textFieldTitre2 au label titre2
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTitre2, constraint); //ajout de la zone de texte textFieldTitre2
-		
-	    //element
-	    JLabel element2 = new JLabel("Elément : "); //creation du label element2
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-	    conteneurPrincipal.add(element2, constraint); //ajout du label element2
-	    JTextField textFieldElement2 = new JTextField(15); //creation de la zone de texte textFieldElement2
-	    element2.setLabelFor(textFieldElement2); //attribution de la zone de texte textFieldElement2 au label element2
-		constraint.gridx = 1;
-		constraint.gridwidth = 1;
-		conteneurPrincipal.add(textFieldElement2, constraint); //ajout de la zone de texte textFieldElement2
-		
-		//nombre
-	    JLabel nombre2 = new JLabel("Nombre  : "); //creation du label nombre2
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(nombre2, constraint); //ajout du label nombre2
-	    JTextField textFieldNombre2 = new JTextField(2); //creation de la zone de texte textFieldNombre2
-	    nombre2.setLabelFor(textFieldNombre2); //attribution de la zone de texte textFieldNombre2 au label nombre2
-		constraint.gridx = 3;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNombre2, constraint); //ajout de la zone de texte textFieldNombre2
-		
-		//bouton d'ajout d'element
-		positionElement2 = ++positionCounter;
-		
-		JButton ajoutElement2 = new JButton("+ Ajouter un élément");
-		constraint.gridx = 1;
-		positionCounter = positionCounter + 100;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutElement2, constraint); //ajout du bouton ajoutElement
-		
-		ajoutElement2.addActionListener(new ActionListener() {
-	    	
-		    public void actionPerformed(ActionEvent arg0) {	
-		    	
-		    	constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		    	
-		    	//element
-			    JLabel element2 = new JLabel("Elément : "); //creation du label dateDebut
-				constraint.gridx = 0;
-				constraint.gridy = ++positionElement2;
-				constraint.gridwidth = 1;
-			    conteneurPrincipal.add(element2, constraint); //ajout du label nbBPOuverts
-			    JTextField textFieldElement2 = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
-			    //element.setLabelFor(textFieldElement2); //attribution de la zone de texte au label nbBPOuverts
-				constraint.gridx = 1;
-				constraint.gridwidth = 1;
-				conteneurPrincipal.add(textFieldElement2, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-				
-				//nombre
-			    JLabel nombre2 = new JLabel("Nombre : "); //creation du label dateDebut
-				constraint.gridx = 2;
-				constraint.gridwidth = GridBagConstraints.RELATIVE;
-			    conteneurPrincipal.add(nombre2, constraint); //ajout du label dateDebut
-			    JTextField textFieldNombre2 = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
-			    nombre2.setLabelFor(textFieldNombre2); //attribution de la zone de texte au label dateFin
-				constraint.gridx = 3;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNombre2, constraint); //ajout de la zone de texte dateFin	
-				
-				fenetre.revalidate();
-		    }
-		});
-		
-		//commentaire
-	    JLabel commentaire2 = new JLabel("Commentaire : "); //creation du label commentaire2
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaire2, constraint); //ajout du label commentaire2
-	    JTextArea textAreaCommentaire2 = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaire2
-	    JScrollPane scrollPaneCom2 = new JScrollPane(textAreaCommentaire2);
-	    commentaire2.setLabelFor(textAreaCommentaire2); //attribution de la zone de texte textAreaCommentaire2 au label commentaire2
-	    ++positionCounter;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneCom2, constraint); //ajout de la scrollPaneCom2
+	    freeTrees2Position = ++positionCounter;
+	    
+	    new FreeTree(freeTrees2Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	    
+	    freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
+	    
+	    positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
+	  	
+	  	ajoutArboLibre2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new FreeTree(++freeTrees2Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+				
+				freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
+				
+				fenetre.revalidate();
+			}
+		});
+	  	
+	    
 	  	constraint.gridx = 0;
 	  	constraint.gridy = ++positionCounter;
 	  	constraint.gridwidth = 1;
