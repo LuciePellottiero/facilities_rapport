@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -105,12 +106,9 @@ public class Formulaire extends JFrame{
 	private Collection<JCheckBox> domainesBP;
 	
 	/**
-	 * String utilisee pour chaque JLable de mois de bons preventifs
+	 * String utilisees pour chaque JLable de mois de bons preventifs
 	 */
-	private final String preventiveVoucherMonthLabel    = "Mois : ";
-	private final String nbPreventiveVoucherOpenedLabel = "Nombre de bons préventifs ouverts : ";
-	private final String nbPreventiveVoucherClosedLabel = "Nombre de bons préventifs fermés : ";
-	private final String preventiveVoucherCommentLabel  = "Commentaire : ";
+	private final String[] preventiveVoucherMonthLabels    = {"Mois : ", "Nombre de bons préventifs ouverts : ", "Nombre de bons préventifs fermés : ", "Commentaire : "};
     
 	/**
 	 * liste differents choix de la duree du rapport d'activite
@@ -120,9 +118,11 @@ public class Formulaire extends JFrame{
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
 	
+	private static final int NUMBER_ELEMENT_ALLOWED = 1000;
+	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
-	private int positionElement;
+	private int lastElementPosition1;
 	private int positionMoisDI;
 	private int positionElement2;
 	private int positionMoisCompteur;
@@ -130,7 +130,6 @@ public class Formulaire extends JFrame{
 	
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
-	    Formulaire mainFrame = this;
 		
 		JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
@@ -423,6 +422,7 @@ public class Formulaire extends JFrame{
 	    Collection<JTextArea>         commentsPreventivesVouchers      = new ArrayList<JTextArea>();
 
 	    preventiveVoucherLastMonthPosition = positionCounter;
+	    final int preventiveVoucherFirstMonthPosition = positionCounter;
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
 	    // Creation du mois
@@ -441,9 +441,9 @@ public class Formulaire extends JFrame{
 			    	
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if (preventiveVoucherLastMonthPosition >= NUMBER_PREVENTIVE_MONTH_ALLOWED) {
+				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
-		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabel, "Erreur", 
+		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
 					return;
@@ -455,6 +455,7 @@ public class Formulaire extends JFrame{
 				createPreventiveVoucherMonth(constraint, conteneurPrincipal, choixMois, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
+				
 				conteneurPrincipal.revalidate();
 			}
 		});	    
@@ -533,53 +534,39 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
-		JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
+	    int elementCounter1 = positionCounter + 4;
+		
+	    JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
 		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
-		
+	    
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//titre
-	    JLabel titre = new JLabel("Titre : ");
+	    JLabel titre = new JLabel("Titre : "); //creation du label titre2
 	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(titre, constraint); //ajout du label 
-		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte nomSite de taille 15
-		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte au label nomSite
+		conteneurPrincipal.add(titre, constraint); //ajout du label titre2
+		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte textFieldTitre2 de taille 15
+		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte textFieldTitre2 au label titre2
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTitre, constraint); //ajout de la zone de texte nomSite
+		conteneurPrincipal.add(textFieldTitre, constraint); //ajout de la zone de texte textFieldTitre2
 		
-	    //element
-	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-	    conteneurPrincipal.add(element, constraint); //ajout du label nbBPOuverts
-	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
-	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
-		constraint.gridx = 1;
-		constraint.gridwidth = 1;
-		conteneurPrincipal.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+		Collection<JTextField> elements1       = new LinkedList<JTextField>();
+		Collection<JTextField> elementNumbers1 = new LinkedList<JTextField>();
+	    
+		lastElementPosition1 = ++positionCounter;
 		
-		//nombre
-	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.RELATIVE;
-	    conteneurPrincipal.add(nombre, constraint); //ajout du label dateDebut
-	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
-	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-		constraint.gridx = 3;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
+		addElement1(constraint, conteneurPrincipal,
+    			elements1, elementNumbers1);
 
 		//bouton d'ajout d'element
-		positionElement = ++positionCounter;
 		
 		JButton ajoutElement = new JButton("+ Ajouter un élément");
 		constraint.gridx = 1;
-		positionCounter = positionCounter + 100;
+		positionCounter = positionCounter + NUMBER_ELEMENT_ALLOWED;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(ajoutElement, constraint); //ajout du bouton ajoutElement
@@ -587,29 +574,20 @@ public class Formulaire extends JFrame{
 		ajoutElement.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
-		    	constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		    	//element
-			    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-				constraint.gridx = 0;
-				constraint.gridy = ++positionElement;
-				constraint.gridwidth = 1;
-			    conteneurPrincipal.add(element, constraint); //ajout du label nbBPOuverts
-			    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
-			    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
-				constraint.gridx = 1;
-				constraint.gridwidth = 1;
-				conteneurPrincipal.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-				
-				//nombre
-			    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-				constraint.gridx = 2;
-				constraint.gridwidth = GridBagConstraints.RELATIVE;
-			    conteneurPrincipal.add(nombre, constraint); //ajout du label dateDebut
-			    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
-			    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-				constraint.gridx = 3;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin	
+		    	
+		    	if (lastElementPosition1 >= elementCounter1 + NUMBER_ELEMENT_ALLOWED) {
+					JOptionPane.showMessageDialog(conteneurPrincipal, 
+		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titreArboLibre.getText(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+					ajoutElement.setEnabled(false);
+					return;
+				}
+				else {
+					ajoutElement.setEnabled(true);
+				}
+		    		
+		    	addElement1(constraint, conteneurPrincipal,
+		    			elements1, elementNumbers1);
 				
 				fenetre.revalidate();
 		    }
@@ -764,7 +742,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldNbEtat.setEnabled(etat.isSelected());
-					mainFrame.revalidate();
+					fenetre.revalidate();
 				}
 			} );
 			
@@ -836,7 +814,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldPourcentDI.setEnabled(diDomaine.isSelected());
-					mainFrame.revalidate();
+					fenetre.revalidate();
 				}
 			});
 			
@@ -938,7 +916,7 @@ public class Formulaire extends JFrame{
 				constraint.gridwidth = 1;
 			    conteneurPrincipal.add(element2, constraint); //ajout du label nbBPOuverts
 			    JTextField textFieldElement2 = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
-			    element.setLabelFor(textFieldElement2); //attribution de la zone de texte au label nbBPOuverts
+			    //element.setLabelFor(textFieldElement2); //attribution de la zone de texte au label nbBPOuverts
 				constraint.gridx = 1;
 				constraint.gridwidth = 1;
 				conteneurPrincipal.add(textFieldElement2, constraint); //ajout de la zone de texte textFieldNbBPOuverts
@@ -1157,10 +1135,10 @@ public class Formulaire extends JFrame{
 		    	//System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
 		    	//partie arborescence libre
 		    	System.out.println(titreArboLibre.getText()); 								//affichage console du titre de la partie du formulaire
-		    	System.out.println(titre.getText() + textFieldTitre.getText()); 			//affichage console des données titre
+		    	/*System.out.println(titre.getText() + textFieldTitre.getText()); 			//affichage console des données titre
 		    	System.out.println(element.getText() + textFieldElement.getText()); 		//affichage console des données element
 		    	System.out.println(nombre.getText() + textFieldNombre.getText()); 			//affichage console des données nombre
-		    	System.out.println(commentaire.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire
+		    	*/System.out.println(commentaire.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire
 		    	//partie domaines d'intervention
 		    	System.out.println(titreDI.getText()); 												//affichage console du titre de la partie du formulaire
 		    	System.out.println(moisDI.getText() + comboBoxMoisDI.getSelectedItem().toString()); //affichage console des données moisDI
@@ -1172,10 +1150,10 @@ public class Formulaire extends JFrame{
 
 		    	//partie arborescence libre 2
 		    	System.out.println(titreArboLibre2.getText()); 									//affichage console du titre de la partie du formulaire
-		    	System.out.println(titre2.getText() + textFieldTitre.getText()); 				//affichage console des données titre2
+		    	/*System.out.println(titre2.getText() + textFieldTitre.getText()); 				//affichage console des données titre2
 		    	System.out.println(element2.getText() + textFieldElement.getText()); 			//affichage console des données element2
 		    	System.out.println(nombre2.getText() + textFieldNombre.getText()); 				//affichage console des données nombre2
-		    	System.out.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire2
+		    	*/System.out.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire2
 		    	//partie compteurs
 		    	System.out.println(titreCompteurs.getText()); 																	//affichage console du titre de la partie du formulaire
 		    	System.out.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//affichage console des données typeCompteur
@@ -1225,10 +1203,10 @@ public class Formulaire extends JFrame{
 		    	fw.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//ecriture des données commentaireBPDomaine
 		    	//partie arborescence libre
 		    	fw.println (titreArboLibre.getText()); 								//ecriture du titre de la partie du formulaire
-		    	fw.println (titre.getText() + textFieldTitre.getText()); 			//ecriture des données titre
+		    	/*fw.println (titre.getText() + textFieldTitre.getText()); 			//ecriture des données titre
 		    	fw.println (element.getText() + textFieldElement.getText()); 		//ecriture des données element
 		    	fw.println (nombre.getText() + textFieldNombre.getText()); 			//ecriture des données nombre
-		    	fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
+		    	*/fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
 		    	//partie domaines d'intervention
 		    	fw.println(titreDI.getText()); 												//ecriture du titre de la partie du formulaire
 		    	//fw.println(moisDI.getText() + comboBoxMoisBP.getSelectedItem().toString()); //ecriture des données moisDI
@@ -1240,10 +1218,10 @@ public class Formulaire extends JFrame{
 
 		    	//partie arborescence libre 2
 		    	fw.println(titreArboLibre2.getText()); 									//ecriture du titre de la partie du formulaire
-		    	fw.println(titre2.getText() + textFieldTitre.getText()); 				//ecriture des données titre2
+		    	/*fw.println(titre2.getText() + textFieldTitre.getText()); 				//ecriture des données titre2
 		    	fw.println(element2.getText() + textFieldElement.getText()); 			//ecriture des données element2
 		    	fw.println(nombre2.getText() + textFieldNombre.getText()); 				//ecriture des données nombre2
-		    	fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
+		    	*/fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
 		    	//partie compteurs
 		    	fw.println(titreCompteurs.getText()); 																	//ecriture du titre de la partie du formulaire
 		    	fw.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//ecriture console des données typeCompteur
@@ -1435,46 +1413,46 @@ public class Formulaire extends JFrame{
 		    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
 		    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
 
-					preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabel);
+					preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
 					
 			    	if (textFieldNbBPOuverts.getText().equals("")) {
-			    		JOptionPane.showMessageDialog(mainFrame, 
-			    				"le champs \"" +  nbPreventiveVoucherOpenedLabel + "\" de la partie " + titreBP.getText() + 
+			    		JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
 			    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 			    		return;
 			    	}
 			    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
-			    		JOptionPane.showMessageDialog(mainFrame, 
-			    				"le champs \"" + nbPreventiveVoucherOpenedLabel + "\" de la partie " + titreBP.getText() + 
+			    		JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
 			    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 			    		return;
 			    	}
 			    	else {
-						preventivesVouchers.addString(textFieldNbBPOuverts.getText(), nbPreventiveVoucherOpenedLabel);
+						preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
 			    	}
 			    	
 			    	if (textFieldNbBPFermes.getText().equals("")) {
-			    		JOptionPane.showMessageDialog(mainFrame, 
-			    				"le champs \"" + nbPreventiveVoucherClosedLabel + "\" de la partie " + titreBP.getText() +
+			    		JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
 			    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 			    		return;
 			    	}
 			    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
-			    		JOptionPane.showMessageDialog(mainFrame, 
-			    				"le champs \"" + nbPreventiveVoucherClosedLabel + "\" de la partie " + titreBP.getText() +
+			    		JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
 			    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 			    		return;
 			    	}
 			    	else {
-			    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), nbPreventiveVoucherClosedLabel);
+			    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
 			    	}
 			    	
 			    	if (!textAreaCommentaireBP.getText().equals("")) {
-						preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherCommentLabel);
+						preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
 					}
 			    	
 			    	++counter;
@@ -1512,7 +1490,7 @@ public class Formulaire extends JFrame{
 		    			
 		    			// Mais le pourcentage n'est pas renseigné
 		    			if (currentPourcent.getText().equals("  .  %")) {
-			    			JOptionPane.showMessageDialog(mainFrame, 
+			    			JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 				    				" doit être remplis si la case a été cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1526,7 +1504,7 @@ public class Formulaire extends JFrame{
 		    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
 		    				
 		    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1537,7 +1515,7 @@ public class Formulaire extends JFrame{
 		    					currentPourcentage = Double.parseDouble(pourcentageNumber);
 		    				}
 		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1549,7 +1527,7 @@ public class Formulaire extends JFrame{
 		    				total += currentPourcentage;
 		    				
 		    				if (total > 100 && !continueAbove100) {
-		    					int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
 		    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont supérieurs"
 		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
 		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
@@ -1570,7 +1548,7 @@ public class Formulaire extends JFrame{
 		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
 		    		
 		    		if (total < 100) {
-		    			int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
     							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont inférieurs"
     							+ " à 100% (" + total + "%).\n "
     							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
@@ -1588,7 +1566,7 @@ public class Formulaire extends JFrame{
 		    		} 
 		    		catch (Exception e) {
 		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en bare dans la partie"
+						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
 								+ titreBPDomaine.getText() + " : \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
@@ -1611,7 +1589,7 @@ public class Formulaire extends JFrame{
 		    		} 
 		    		catch (Exception e) {
 		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie " +
+						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
 								titreBPDomaine.getText() + ": \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
@@ -1662,14 +1640,14 @@ public class Formulaire extends JFrame{
 		    		
 		    		if (currentState.isSelected()) {
 		    			if (currentNbState.getText().equals("")) {
-		    				JOptionPane.showMessageDialog(mainFrame, 
+		    				JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 				    				" doit être remplis avec un nombre si la case est cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		return;
 		    			}
 		    			else if (!OperationUtilities.isNumeric(currentNbState.getText())) {
-		    				JOptionPane.showMessageDialog(mainFrame, 
+		    				JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 				    				" doit être un nombre si la case est cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1683,7 +1661,7 @@ public class Formulaire extends JFrame{
 		    				String parsedNumber = currentNbState.getText();
 		    				
 		    				if (!OperationUtilities.isNumeric(parsedNumber)) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1694,7 +1672,7 @@ public class Formulaire extends JFrame{
 		    					currentNumber = Integer.parseInt(parsedNumber);
 		    				}
 		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1729,7 +1707,7 @@ public class Formulaire extends JFrame{
 		    		} 
 		    		catch (Exception e) {
 		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie "
+						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie "
 								+ titreDIEtat.getText() + " : \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
@@ -1768,7 +1746,7 @@ public class Formulaire extends JFrame{
 		    			
 		    			// Mais le pourcentage n'est pas renseigné
 		    			if (currentPourcent.getText().equals("  .  %")) {
-			    			JOptionPane.showMessageDialog(mainFrame, 
+			    			JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 				    				" doit être remplis si la case a été cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1782,7 +1760,7 @@ public class Formulaire extends JFrame{
 		    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
 		    				
 		    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1793,7 +1771,7 @@ public class Formulaire extends JFrame{
 		    					currentPourcentage = Double.parseDouble(pourcentageNumber);
 		    				}
 		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(mainFrame, 
+		    					JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
@@ -1803,7 +1781,7 @@ public class Formulaire extends JFrame{
 		    				total += currentPourcentage;
 		    				
 		    				if (total > 100 && !continueAbove100) {
-		    					int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
 		    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont supérieurs"
 		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
 		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
@@ -1824,7 +1802,7 @@ public class Formulaire extends JFrame{
 		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
 		    		
 		    		if (total < 100) {
-		    			int dialogResult = JOptionPane.showConfirmDialog (mainFrame, 
+		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
     							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont inférieurs"
     							+ " à 100% (" + total + "%).\n "
     							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
@@ -1851,7 +1829,7 @@ public class Formulaire extends JFrame{
 		    		} 
 		    		catch (Exception e) {
 		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(mainFrame, "Erreur lors de la création du graphe en camembert dans la partie " +
+						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
 								titreDIDomaine.getText() + ": \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
@@ -1864,18 +1842,18 @@ public class Formulaire extends JFrame{
 					if (!datas.isEmpty()) {
 						// Finallement on creer le document
 						CreateReportDocument.createPdf(datas);
-						JOptionPane.showMessageDialog(mainFrame, "Rapport généré", "Rapport généré", 
+						JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						JOptionPane.showMessageDialog(mainFrame, 
+						JOptionPane.showMessageDialog(fenetre, 
 			    				"Aucune donnée à rédiger dans le rapport", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 					}
 				} 
 				catch (Exception e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(mainFrame, e.getMessage(), "Erreur", 
+					JOptionPane.showMessageDialog(fenetre, e.getMessage(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 				}
 		    	
@@ -1905,58 +1883,58 @@ public class Formulaire extends JFrame{
 			Collection<JComboBox<String>> preventivesVouchersMonths, Collection<JTextField> nbPreventivesVouchersOpened,
 			Collection<JTextField> nbPreventivesVouchersClosed, Collection<JTextArea> commentsPreventivesVouchers) {
 		
-		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabel);
+		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
 		
-		GridBagConstraints localConstraint = (GridBagConstraints) constraint.clone();
+
 		
-		localConstraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		
-		localConstraint.gridx = 0;
-		localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
-		mainContainer.add(preventivVoucherMonthJLabel, localConstraint); //ajout du label moisBP
+		constraint.gridx = 0;
+		constraint.gridy = ++preventiveVoucherLastMonthPosition;
+		mainContainer.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
 		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(monthsList); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 		preventivesVouchersMonths.add(comboBoxMoisBP);
 		
-		localConstraint.gridx = 1;
-		localConstraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		preventivVoucherMonthJLabel.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-		mainContainer.add(comboBoxMoisBP, localConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+		mainContainer.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
-	    JLabel nbBPOuverts = new JLabel(nbPreventiveVoucherOpenedLabel); //creation du label nbBPOuverts
-	    localConstraint.gridx = 0;
-	    localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
-	    localConstraint.gridwidth = 1;
-	    mainContainer.add(nbBPOuverts, localConstraint); //ajout du label nbBPOuverts
+	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
+	    constraint.gridx = 0;
+	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridwidth = 1;
+	    mainContainer.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
 	    
 	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
 	    nbPreventivesVouchersOpened.add(textFieldNbBPOuverts);
 		
-	    localConstraint.gridx = 1;
-	    localConstraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPOuverts, localConstraint); //ajout de la zone de texte textFieldNbBPOuverts
+	    constraint.gridx = 1;
+	    constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
-	    JLabel nbBPFermes = new JLabel(nbPreventiveVoucherClosedLabel); //creation du label nbBPFermes
+	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
 		
-	    localConstraint.gridx = 0;
-	    localConstraint.gridy = ++preventiveVoucherLastMonthPosition;
-	    localConstraint.gridwidth = 1;
+	    constraint.gridx = 0;
+	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridwidth = 1;
 	    
-		mainContainer.add(nbBPFermes, localConstraint); //ajout du label nbBPFermes
+		mainContainer.add(nbBPFermes, constraint); //ajout du label nbBPFermes
 	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
 	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
 	    nbPreventivesVouchersClosed.add(textFieldNbBPFermes);
 		
-	    localConstraint.gridx = 1;
-	    localConstraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPFermes, localConstraint); //ajout de la zone de texte textFieldNbBPFermes
+	    constraint.gridx = 1;
+	    constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
 		
 		//commentaire BP
-	    JLabel commentaireBP = new JLabel(preventiveVoucherCommentLabel); //creation du label commentaireBP
+	    JLabel commentaireBP = new JLabel(preventiveVoucherMonthLabels[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherLastMonthPosition;
@@ -1971,6 +1949,39 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		mainContainer.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+	}
+	
+	private void addElement1(GridBagConstraints constraint, JComponent mainContainer,
+			Collection<JTextField> elements, Collection<JTextField> elementNumbers) {
+		
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+    	
+		//element
+	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
+		constraint.gridx = 0;
+		constraint.gridy = ++lastElementPosition1;
+		constraint.gridwidth = 1;
+		mainContainer.add(element, constraint); //ajout du label nbBPOuverts
+		
+	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
+	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
+		constraint.gridx = 1;
+		constraint.gridwidth = 1;
+		mainContainer.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+		elements.add(textFieldElement);
+		
+		//nombre
+	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
+		constraint.gridx = 2;
+		constraint.gridwidth = GridBagConstraints.RELATIVE;
+		mainContainer.add(nombre, constraint); //ajout du label dateDebut
+		
+	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
+	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
+		constraint.gridx = 3;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		mainContainer.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
+		elementNumbers.add(textFieldNombre);
 	}
 
 }
