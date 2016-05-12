@@ -117,10 +117,10 @@ public class Formulaire extends JFrame{
 	/**
 	 * liste differents choix de la duree du rapport d'activite
 	 */
-	private String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
+	private final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
-	private String[] addMonthButtonText = {"+ Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
+	private final String[] ADD_MONTH_BUTTON_TEXT = {"+ Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
 			"Remplissez les mois précedents"};
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
@@ -432,9 +432,9 @@ public class Formulaire extends JFrame{
 	    final int preventiveVoucherFirstMonthPosition = positionCounter;
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
-	    ajoutMoisBP = new JButton(addMonthButtonText[0]);
+	    ajoutMoisBP = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
 	    ajoutMoisBP.setEnabled(false);
-	    ajoutMoisBP.setText(addMonthButtonText[2]);
+	    ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
@@ -445,27 +445,27 @@ public class Formulaire extends JFrame{
 		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[1]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[1]);
 					return;
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 				
-				createPreventiveVoucherMonth(constraint, conteneurPrincipal2, choixMois, 
+				createPreventiveVoucherMonth(constraint, conteneurPrincipal2, MONTH_CHOICE, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 				
 				conteneurPrincipal2.revalidate();
 				
-				ajoutMoisBP.setText(addMonthButtonText[2]);
+				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				ajoutMoisBP.setEnabled(false);
 			}
 		});	 
 		
 		// Creation du mois
-	    createPreventiveVoucherMonth(constraint, conteneurPrincipal2, choixMois,
+	    createPreventiveVoucherMonth(constraint, conteneurPrincipal2, MONTH_CHOICE,
 	    		preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 	    		nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 	    
@@ -595,7 +595,7 @@ public class Formulaire extends JFrame{
 	    JLabel moisDI = new JLabel("Mois : ");
 	    constraint.gridy = ++positionCounter;
 		conteneurPrincipal.add(moisDI, constraint); //ajout du label
-		comboBoxMoisDI = new JComboBox<String>(choixMois);
+		comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE);
 		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -874,7 +874,7 @@ public class Formulaire extends JFrame{
 	    constraint.gridx = 0;
 	    constraint.gridy = ++positionCounter;
 		conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
-		comboBoxMoisCompteur = new JComboBox<String>(choixMois);
+		comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
 		comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -920,7 +920,7 @@ public class Formulaire extends JFrame{
 			    constraint.gridx = 0;
 			    constraint.gridy = ++positionMoisCompteur;
 				conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
-				comboBoxMoisCompteur = new JComboBox<String>(choixMois);
+				comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
 				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
 				constraint.gridx = 1;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -1900,11 +1900,11 @@ public class Formulaire extends JFrame{
 			public void removeUpdate(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 			
@@ -1912,11 +1912,11 @@ public class Formulaire extends JFrame{
 			public void insertUpdate(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 			
@@ -1925,11 +1925,11 @@ public class Formulaire extends JFrame{
 				
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 		});
@@ -1940,11 +1940,11 @@ public class Formulaire extends JFrame{
 			public void removeUpdate(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 			
@@ -1952,11 +1952,11 @@ public class Formulaire extends JFrame{
 			public void insertUpdate(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 			
@@ -1965,11 +1965,11 @@ public class Formulaire extends JFrame{
 				
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(addMonthButtonText[2]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(addMonthButtonText[0]);
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 			}
 		});
