@@ -1,4 +1,4 @@
-package IHM;
+package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -125,14 +124,16 @@ public class Formulaire extends JFrame{
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 1000;
+	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
-	private int lastElementPosition1;
 	private int positionMoisDI;
 	private int positionElement2;
 	private int positionMoisCompteur;
+
+	private int freeTrees1Position;
 	
 	
 	public Formulaire() throws IOException{
@@ -546,83 +547,28 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
-	    int elementCounter1 = positionCounter + 4;
-		
-	    JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
-		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
+	    freeTrees1Position = ++positionCounter;
 	    
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//titre
-	    JLabel titre = new JLabel("Titre : "); //creation du label titre
-	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(titre, constraint); //ajout du label titre
-		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte textFieldTitre2de taille 15
-		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte textFieldTitre au label titre
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldTitre, constraint); //ajout de la zone de texte textFieldTitre
-		
-		Collection<JTextField> elements1       = new LinkedList<JTextField>();
-		Collection<JTextField> elementNumbers1 = new LinkedList<JTextField>();
+	    new FreeTree(freeTrees1Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
 	    
-		lastElementPosition1 = ++positionCounter;
-		
-		addElement1(constraint, conteneurPrincipal,
-    			elements1, elementNumbers1);
-
-		//bouton d'ajout d'element
-		
-		JButton ajoutElement = new JButton("+ Ajouter un élément");
-		constraint.gridx = 1;
-		positionCounter = positionCounter + NUMBER_ELEMENT_ALLOWED;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutElement, constraint); //ajout du bouton ajoutElement
-		
-		ajoutElement.addActionListener(new ActionListener() {
-	    	
-		    public void actionPerformed(ActionEvent arg0) {	
-		    	
-		    	if (lastElementPosition1 >= elementCounter1 + NUMBER_ELEMENT_ALLOWED) {
-					JOptionPane.showMessageDialog(conteneurPrincipal, 
-		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titreArboLibre.getText(), "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-					ajoutElement.setEnabled(false);
-					return;
-				}
-				else {
-					ajoutElement.setEnabled(true);
-				}
-		    		
-		    	addElement1(constraint, conteneurPrincipal,
-		    			elements1, elementNumbers1);
-				
-				fenetre.revalidate();
-		    }
-		});
-		
-		
-		//commentaire
-	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    conteneurPrincipal.add(commentaire, constraint); //ajout du label emailCl
-	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
-	    commentaire.setLabelFor(textAreaCommentaire); //attribution de la zone de texte au label emailCl
-	    ++positionCounter;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    conteneurPrincipal.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
+	    freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
+	    
+	    positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
+	  	ajoutArboLibre.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new FreeTree(++freeTrees1Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+				
+				freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
+				
+				fenetre.revalidate();
+			}
+		});
+	  	
 	  	constraint.gridx = 0;
 	  	constraint.gridy = ++positionCounter;
 	  	constraint.gridwidth = 1;
@@ -1146,11 +1092,11 @@ public class Formulaire extends JFrame{
 
 		    	//System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
 		    	//partie arborescence libre
-		    	System.out.println(titreArboLibre.getText()); 								//affichage console du titre de la partie du formulaire
+		    	/*System.out.println(titreArboLibre.getText()); 								//affichage console du titre de la partie du formulaire
 		    	/*System.out.println(titre.getText() + textFieldTitre.getText()); 			//affichage console des données titre
 		    	System.out.println(element.getText() + textFieldElement.getText()); 		//affichage console des données element
 		    	System.out.println(nombre.getText() + textFieldNombre.getText()); 			//affichage console des données nombre
-		    	*/System.out.println(commentaire.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire
+		    	//System.out.println(commentaire.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire
 		    	//partie domaines d'intervention
 		    	System.out.println(titreDI.getText()); 												//affichage console du titre de la partie du formulaire
 		    	System.out.println(moisDI.getText() + comboBoxMoisDI.getSelectedItem().toString()); //affichage console des données moisDI
@@ -1165,7 +1111,7 @@ public class Formulaire extends JFrame{
 		    	/*System.out.println(titre2.getText() + textFieldTitre.getText()); 				//affichage console des données titre2
 		    	System.out.println(element2.getText() + textFieldElement.getText()); 			//affichage console des données element2
 		    	System.out.println(nombre2.getText() + textFieldNombre.getText()); 				//affichage console des données nombre2
-		    	*/System.out.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire2
+		    	//System.out.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire2
 		    	//partie compteurs
 		    	System.out.println(titreCompteurs.getText()); 																	//affichage console du titre de la partie du formulaire
 		    	System.out.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//affichage console des données typeCompteur
@@ -1214,13 +1160,13 @@ public class Formulaire extends JFrame{
 			    */fw.println (titreBPDomaine.getText()); 										//ecriture du titre de la partie du formulaire
 		    	fw.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//ecriture des données commentaireBPDomaine
 		    	//partie arborescence libre
-		    	fw.println (titreArboLibre.getText()); 								//ecriture du titre de la partie du formulaire
+		    	/*fw.println (titreArboLibre.getText()); 								//ecriture du titre de la partie du formulaire
 		    	/*fw.println (titre.getText() + textFieldTitre.getText()); 			//ecriture des données titre
 		    	fw.println (element.getText() + textFieldElement.getText()); 		//ecriture des données element
 		    	fw.println (nombre.getText() + textFieldNombre.getText()); 			//ecriture des données nombre
-		    	*/fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
+		    	fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
 		    	//partie domaines d'intervention
-		    	fw.println(titreDI.getText()); 												//ecriture du titre de la partie du formulaire
+		    	/*fw.println(titreDI.getText()); 												//ecriture du titre de la partie du formulaire
 		    	//fw.println(moisDI.getText() + comboBoxMoisBP.getSelectedItem().toString()); //ecriture des données moisDI
 		    	fw.println(nbIntervention.getText() + textFieldNbIntervention.getText()); 	//ecriture des données nbIntervention
 		    	//fw.println(commentaireDI.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireDI
@@ -1233,8 +1179,8 @@ public class Formulaire extends JFrame{
 		    	/*fw.println(titre2.getText() + textFieldTitre.getText()); 				//ecriture des données titre2
 		    	fw.println(element2.getText() + textFieldElement.getText()); 			//ecriture des données element2
 		    	fw.println(nombre2.getText() + textFieldNombre.getText()); 				//ecriture des données nombre2
-		    	*/fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
-		    	//partie compteurs
+		    	fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
+		    	*///partie compteurs
 		    	fw.println(titreCompteurs.getText()); 																	//ecriture du titre de la partie du formulaire
 		    	fw.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//ecriture console des données typeCompteur
 		    	fw.println(moisCompteur.getText() + comboBoxMoisCompteur.getSelectedItem().toString()); 				//ecriture console des données moisCompteur
@@ -1662,7 +1608,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Partie arborescence libre 1-----------------*/
 		    	
-		    	if (!textFieldTitre.getText().equals("")) {
+		    	/*if (!textFieldTitre.getText().equals("")) {
 		    		
 			    	Iterator<JTextField> elementsIter = elements1.iterator();
 			    	Iterator<JTextField> elementNumbersIter = elementNumbers1.iterator();
@@ -2114,39 +2060,6 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		mainContainer.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
-	}
-	
-	private void addElement1(GridBagConstraints constraint, JComponent mainContainer,
-			Collection<JTextField> elements, Collection<JTextField> elementNumbers) {
-		
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-    	
-		//element
-	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-		constraint.gridx = 0;
-		constraint.gridy = ++lastElementPosition1;
-		constraint.gridwidth = 1;
-		mainContainer.add(element, constraint); //ajout du label nbBPOuverts
-		
-	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
-	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
-		constraint.gridx = 1;
-		constraint.gridwidth = 1;
-		mainContainer.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-		elements.add(textFieldElement);
-		
-		//nombre
-	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.RELATIVE;
-		mainContainer.add(nombre, constraint); //ajout du label dateDebut
-		
-	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
-	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-		constraint.gridx = 3;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
-		elementNumbers.add(textFieldNombre);
 	}
 
 }
