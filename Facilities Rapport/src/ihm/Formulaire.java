@@ -123,8 +123,7 @@ public class Formulaire extends JFrame{
 			"Remplissez les mois précedents"};
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
-	
-	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+
 	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
 	private int positionCounter;
@@ -556,9 +555,9 @@ public class Formulaire extends JFrame{
 	    
 	    conteneurPrincipal.add(new FreeTree(), constraint);
 	    
-	    freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
+	    freeTrees1Position = ++positionCounter;
 	    
-	    positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
+	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
@@ -566,9 +565,11 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				conteneurPrincipal.add(new FreeTree(), constraint);
 				
-				freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
+				constraint.gridx = 0;
+				constraint.gridy = ++freeTrees1Position;
+				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+				conteneurPrincipal.add(new FreeTree(), constraint);
 				
 				fenetre.revalidate();
 			}
@@ -828,9 +829,9 @@ public class Formulaire extends JFrame{
 	    
 	    conteneurPrincipal.add(new FreeTree(), constraint);
 	    
-	    freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
+	    freeTrees2Position += positionCounter;
 	    
-	    positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
+	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
@@ -839,9 +840,11 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				conteneurPrincipal.add(new FreeTree(), constraint);
 				
-				freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
+				constraint.gridx = 0;
+				constraint.gridy = ++freeTrees2Position;
+				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+				conteneurPrincipal.add(new FreeTree(), constraint);
 				
 				fenetre.revalidate();
 			}
