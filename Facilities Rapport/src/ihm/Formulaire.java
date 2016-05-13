@@ -420,7 +420,7 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal2.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 	    
 	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
@@ -1850,9 +1850,7 @@ public class Formulaire extends JFrame{
 		
 		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
 		
-
-		
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherLastMonthPosition;
@@ -1898,35 +1896,10 @@ public class Formulaire extends JFrame{
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
 		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
 		
-		textFieldNbBPOuverts.getDocument().addDocumentListener(new DocumentListener() {
+		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
 			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
-					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-				}
-				else {
-					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-				}
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
-					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-				}
-				else {
-					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-				}
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				
+			public void update(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
@@ -1938,35 +1911,10 @@ public class Formulaire extends JFrame{
 			}
 		});
 		
-		textFieldNbBPFermes.getDocument().addDocumentListener(new DocumentListener() {
+		textFieldNbBPFermes.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
 			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
-					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-				}
-				else {
-					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-				}
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
-					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-				}
-				else {
-					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-				}
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				
+			public void update(DocumentEvent arg0) {
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
