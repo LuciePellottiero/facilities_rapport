@@ -37,7 +37,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -112,7 +111,8 @@ public class Formulaire extends JFrame{
 	/**
 	 * String utilisees pour chaque JLable de mois de bons preventifs
 	 */
-	private final String[] preventiveVoucherMonthLabels    = {"Mois : ", "Nombre de bons préventifs ouverts : ", "Nombre de bons préventifs fermés : ", "Commentaire : "};
+	private final String[] preventiveVoucherMonthLabels    = {"Mois : ", "Nombre de bons préventifs ouverts : ", 
+			"Nombre de bons préventifs fermés : ", "Commentaire : "};
     
 	/**
 	 * liste differents choix de la duree du rapport d'activite
