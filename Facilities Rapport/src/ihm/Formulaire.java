@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -411,9 +410,6 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(textFieldDateFin, constraint); //ajout de la zone de texte textFieldDateFin
 		
 		/*----------------------------------------------formulaire bons preventifs----------------------------------------------------------*/
-	   
-		JPanel conteneurPrincipal2 = new JPanel(new GridBagLayout());
-		conteneurPrincipal2.setBorder(BorderFactory.createTitledBorder("Bons préventifs"));
 		
 		JLabel titreBP = new JLabel("Bons préventifs"); //titre de la partie bons preventifs du formulaire
 		titreBP.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
@@ -421,7 +417,7 @@ public class Formulaire extends JFrame{
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
-		conteneurPrincipal2.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
+		conteneurPrincipal.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 	    
 	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
 	    Collection<JTextField>        nbPreventivesVouchersOpened      = new ArrayList<JTextField>();
@@ -441,7 +437,7 @@ public class Formulaire extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				
 				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
-					JOptionPane.showMessageDialog(conteneurPrincipal2, 
+					JOptionPane.showMessageDialog(conteneurPrincipal, 
 		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
@@ -453,11 +449,11 @@ public class Formulaire extends JFrame{
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 				
-				createPreventiveVoucherMonth(constraint, conteneurPrincipal2, MONTH_CHOICE, 
+				createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 				
-				conteneurPrincipal2.revalidate();
+				conteneurPrincipal.revalidate();
 				
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				ajoutMoisBP.setEnabled(false);
@@ -465,19 +461,14 @@ public class Formulaire extends JFrame{
 		});	 
 		
 		// Creation du mois
-	    createPreventiveVoucherMonth(constraint, conteneurPrincipal2, MONTH_CHOICE,
+	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE,
 	    		preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 	    		nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 	    
 	    constraint.gridx = 1;
 		constraint.gridy = positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal2.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
-		
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 4;
-		conteneurPrincipal.add(conteneurPrincipal2, constraint);
+		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
 	    
@@ -553,9 +544,17 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
+	    JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
+		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
+	    
 	    freeTrees1Position = ++positionCounter;
 	    
-	    new FreeTree(freeTrees1Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	    conteneurPrincipal.add(new FreeTree(), constraint);
 	    
 	    freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
 	    
@@ -567,7 +566,7 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new FreeTree(++freeTrees1Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+				conteneurPrincipal.add(new FreeTree(), constraint);
 				
 				freeTrees1Position += NUMBER_ELEMENT_ALLOWED + 6;
 				
@@ -817,9 +816,17 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
+	    titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
+		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
+	    
 	    freeTrees2Position = ++positionCounter;
 	    
-	    new FreeTree(freeTrees2Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	    conteneurPrincipal.add(new FreeTree(), constraint);
 	    
 	    freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
 	    
@@ -832,7 +839,7 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new FreeTree(++freeTrees2Position, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+				conteneurPrincipal.add(new FreeTree(), constraint);
 				
 				freeTrees2Position += NUMBER_ELEMENT_ALLOWED + 6;
 				
