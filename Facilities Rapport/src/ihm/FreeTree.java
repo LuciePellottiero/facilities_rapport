@@ -8,7 +8,9 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,22 +35,25 @@ public class FreeTree extends JPanel{
 	Collection<JTextField> elements;
 	Collection<JTextField> elementNumbers;
 
-	public FreeTree(){
+	public FreeTree(JComponent container){
 
 		super (new GridBagLayout());
+		
+		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
 		this.positionCounter = 0;
 		
 		this.constraint = new GridBagConstraints();
-		this.constraint.gridx = 0;
-		this.constraint.gridy = positionCounter;
-		this.constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.gridx = 0;
+		constraint.gridy = positionCounter;
+		constraint.weightx = 1;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 		constraint.fill = GridBagConstraints.BOTH;
 		
 		elements = new LinkedList<JTextField>();
 		elementNumbers = new LinkedList<JTextField>();
 	    
-	    constraint.insets = new Insets(20, 7, 3, 7); //marges autour de l'element
+	    constraint.insets = new Insets(20, 0, 3, 0); //marges autour de l'element
 		//titre
 	    JLabel titre = new JLabel("Titre : "); //creation du label titre
 	    
@@ -106,7 +111,7 @@ public class FreeTree extends JPanel{
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(0, 7, 0, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    this.add(commentaire, constraint); //ajout du label emailCl
 	    
 	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
@@ -115,21 +120,30 @@ public class FreeTree extends JPanel{
 
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		this.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
 	    
 	    // Bouton supprimer
 	    JButton delete = new JButton("- Supprimer");
 	    
+	    delete.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				container.remove(thisPanel);
+				container.revalidate();
+			}
+		});
+	    
 	    constraint.gridx = 1;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
 	public void addElement() {
 		
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
     	
 		//element
 	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut

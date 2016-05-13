@@ -553,10 +553,6 @@ public class Formulaire extends JFrame{
 	    
 	    freeTrees1Position = ++positionCounter;
 	    
-	    conteneurPrincipal.add(new FreeTree(), constraint);
-	    
-	    freeTrees1Position = ++positionCounter;
-	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
 	    //bouton d'ajout d'arborescence libre
@@ -568,8 +564,9 @@ public class Formulaire extends JFrame{
 				
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees1Position;
-				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-				conteneurPrincipal.add(new FreeTree(), constraint);
+				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
+			    constraint.gridwidth = 4;
+				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
 				
 				fenetre.revalidate();
 			}
@@ -818,16 +815,11 @@ public class Formulaire extends JFrame{
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
 	    titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
-		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
-	    
-	    freeTrees2Position = ++positionCounter;
-	    
-	    conteneurPrincipal.add(new FreeTree(), constraint);
 	    
 	    freeTrees2Position += positionCounter;
 	    
@@ -844,7 +836,7 @@ public class Formulaire extends JFrame{
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-				conteneurPrincipal.add(new FreeTree(), constraint);
+				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
 				
 				fenetre.revalidate();
 			}
