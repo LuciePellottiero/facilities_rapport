@@ -1301,7 +1301,7 @@ public class Formulaire extends JFrame{
 		    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
 		    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
  
-					if (counter <= 0) {
+					if (counter <= 1) {
 		    		
 			    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
 						
@@ -1347,22 +1347,24 @@ public class Formulaire extends JFrame{
 				    	
 				    	++counter;
 					}
-					else if (!textFieldNbBPOuverts.getText().equals("") && 
-							!textFieldNbBPOuverts.getText().equals("") &&
+					else if (!textFieldNbBPOuverts.getText().equals("") ||
+							!textAreaCommentaireBP.getText().equals("") ||
 							!textFieldNbBPFermes.getText().equals("")) {
 						preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
 						
 				    	if (textFieldNbBPOuverts.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
 				    		JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
+				    				" du mois numéro " + counter + " doit être un nombre"
+				    						+ " (Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		return;
 				    	}
@@ -1373,14 +1375,16 @@ public class Formulaire extends JFrame{
 				    	if (textFieldNbBPFermes.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
 				    		JOptionPane.showMessageDialog(fenetre, 
 				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		return;
 				    	}
