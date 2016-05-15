@@ -91,18 +91,6 @@ public class Formulaire extends JFrame{
 	 */
 	private JComboBox<String>   comboBoxMoisDI;
 	/**
-	 * Declaration de la comboBox des types de compteur
-	 */
-	private JComboBox<String>   comboBoxTypeCompteur;
-	/**
-	 * Declaration de la comboBox des mois pour les compteur
-	 */
-	private JComboBox<String>   comboBoxMoisCompteur;
-	/**
-	 * Declaration de la comboBox des unites
-	 */
-	private JComboBox<String>   comboBoxUnite;
-	/**
 	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
 	 */
 	private Collection<JCheckBox> domainesBP;
@@ -126,14 +114,14 @@ public class Formulaire extends JFrame{
 
 	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
+	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
 	private int positionMoisDI;
-	private int positionMoisCompteur;
-
 	private int freeTrees1Position;
 	private int freeTrees2Position;
-	
+	private int freeTreesCompteurPosition;
 	
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
@@ -850,132 +838,33 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
 	    
-		JLabel titreCompteurs = new JLabel("Compteurs"); //titre de la partie compteurs du formulaire
-		titreCompteurs.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-	    conteneurPrincipal.add(titreCompteurs, constraint); //ajout du titreCompteurs dans conteneurPrincipal
-		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	  	freeTreesCompteurPosition = ++positionCounter;
 	    
-	    //type de compteur
-	    JLabel typeCompteur = new JLabel("Type du compteur : "); //creation du label typeCompteur
-		constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(typeCompteur, constraint); //ajout du label 
-		String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //differents choix de type de compteur
-		comboBoxTypeCompteur = new JComboBox<String>(choixTypeCompteur);
-		comboBoxTypeCompteur.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		typeCompteur.setLabelFor(comboBoxTypeCompteur); //attribution de la zone de texte comboBoxTypeCompteur au label typeCompteur
-		conteneurPrincipal.add(comboBoxTypeCompteur, constraint); //ajout de la zone de texte comboBoxTypeCompteur
-		
-		//mois
-	    JLabel moisCompteur = new JLabel("Mois : ");
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
-		comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
-		comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-		conteneurPrincipal.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
-		
-		//consommation
-	    JLabel consommation = new JLabel("Consommation : ");
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-		conteneurPrincipal.add(consommation, constraint); //ajout du label consommation
-		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
-		consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
-		constraint.gridx = 1;
-		conteneurPrincipal.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
-		
-		//unite
-	    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-	    comboBoxUnite = new JComboBox<String>(choixUnite);
-	    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(comboBoxUnite, constraint); //ajout de la comboBoxUnite
-		
-		//bouton d'ajout de mois pour le compteur
-		positionMoisCompteur = ++positionCounter;
-		
-		JButton ajoutMoisCompteur = new JButton("+ Ajouter un mois");
-		constraint.gridx = 1;
-		positionCounter = ++positionCounter + 100;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisCompteur, constraint); //ajout du bouton ajoutMoisCompteur
-	
-		ajoutMoisCompteur.addActionListener(new ActionListener() {
-			    	
-			public void actionPerformed(ActionEvent arg0) {	
-				constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
-				
-				//mois
-			    JLabel moisCompteur = new JLabel("Mois : ");
-			    constraint.gridx = 0;
-			    constraint.gridy = ++positionMoisCompteur;
-				conteneurPrincipal.add(moisCompteur, constraint); //ajout du label moisCompteur
-				comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
-				comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-				constraint.gridx = 1;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-				conteneurPrincipal.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
-				
-				constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-				
-				//consommation
-			    JLabel consommation = new JLabel("Consommation : ");
-			    constraint.gridx = 0;
-			    constraint.gridy = ++positionMoisCompteur;
-				constraint.gridwidth = 1;
-				conteneurPrincipal.add(consommation, constraint); //ajout du label consommation
-				JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
-				consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
-				constraint.gridx = 1;
-				conteneurPrincipal.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
-				
-				//unite
-			    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-			    comboBoxUnite = new JComboBox<String>(choixUnite);
-			    comboBoxUnite.setPreferredSize(new Dimension(20, 20));
-				constraint.gridx = 2;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(comboBoxUnite, constraint); //ajout de la comboBoxUnite
-				
-				fenetre.revalidate();
-			}
-		});
-		
-		//commentaire
-		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    JLabel commentaireCompteur = new JLabel("Commentaire : "); //creation du label commentaireCompteur
-		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-	    conteneurPrincipal.add(commentaireCompteur, constraint); //ajout du label commentaireCompteur
-	    JTextArea textAreaComCompteur = new JTextArea(4, 15); //creation de la zone de texte textAreaComCompteur
-	    JScrollPane scrollPaneComCompteur = new JScrollPane(textAreaComCompteur);
-	    commentaireCompteur.setLabelFor(textAreaComCompteur); //attribution de la zone de texte au label commentaireCompteur
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    constraint.gridy = ++positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-	    conteneurPrincipal.add(scrollPaneComCompteur, constraint); //ajout de la scrollPaneComCompteur
-	    
-	    //bouton d'ajout de compteur
+	  	new FreeTree2(freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+    
+	  	freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
+    
+	  	positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
+    
+	  	//bouton d'ajout d'arborescence libre
 	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
+  	
+	  	ajoutCompteur.addActionListener(new ActionListener() {
+	  		@Override
+	  		public void actionPerformed(ActionEvent e) {
+	  			new FreeTree2(++freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+			
+	  			freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
+			
+	  			fenetre.revalidate();
+	  		}
+	  	});
+	  	
+    
 	  	constraint.gridx = 0;
 	  	constraint.gridy = ++positionCounter;
 	  	constraint.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutCompteur, constraint); //ajout du bouton ajoutCompteur
-	  	
-	  	
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
@@ -1113,11 +1002,11 @@ public class Formulaire extends JFrame{
 		    	fw.println(nombre2.getText() + textFieldNombre.getText()); 				//ecriture des données nombre2
 		    	fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
 		    	*///partie compteurs
-		    	fw.println(titreCompteurs.getText()); 																	//ecriture du titre de la partie du formulaire
+		    	/*fw.println(titreCompteurs.getText()); 																	//ecriture du titre de la partie du formulaire
 		    	fw.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//ecriture console des données typeCompteur
 		    	fw.println(moisCompteur.getText() + comboBoxMoisCompteur.getSelectedItem().toString()); 				//ecriture console des données moisCompteur
 		    	fw.println(consommation.getText() + textFieldConsommation.getText() + comboBoxUnite.getSelectedItem()); //ecriture console des données consommation
-		    	
+		    	*/
 		    	fw.println ("\r\n"); //retour ligne
 		    	fw.close();
 		    	
