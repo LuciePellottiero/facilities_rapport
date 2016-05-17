@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class FreeTree2 {
+public class Meter {
 	
 	private int positionCounter;
 	private int startElementPosition;
@@ -47,7 +47,7 @@ public class FreeTree2 {
 	Collection<JTextField> elements;
 	Collection<JTextField> elementNumbers;
 
-	public FreeTree2(int startPosition, int nbElementsAllowed, JComponent mainContainer) {
+	public Meter(int startPosition, int nbElementsAllowed, JComponent mainContainer) {
 		
 		this.positionCounter = startPosition;
 		numberElementAllowed = nbElementsAllowed;

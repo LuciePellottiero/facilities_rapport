@@ -840,7 +840,7 @@ public class Formulaire extends JFrame{
 	    
 	  	freeTreesCompteurPosition = ++positionCounter;
 	    
-	  	new FreeTree2(freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  	new Meter(freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
     
 	  	freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
     
@@ -852,7 +852,7 @@ public class Formulaire extends JFrame{
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
-	  			new FreeTree2(++freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  			new Meter(++freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
 			
 	  			freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
 			
