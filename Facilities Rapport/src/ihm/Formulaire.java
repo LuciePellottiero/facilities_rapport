@@ -56,18 +56,6 @@ public class Formulaire extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Declaration du textField telephone initialise dans le try
-	 */
-	private JFormattedTextField textFieldTelRedac; 	  
-	/**
-	 * Declaration du textField code postal initialise dans le try
-	 */
-	private JFormattedTextField textFieldCodePostal;  
-	/**
-	 * Declaration du textField telephone client initialise dans le try
-	 */
-	private JFormattedTextField textFieldTelCl;
-	/**
 	 * Declaration du textField date debut initialise dans le try
 	 */
 	private JFormattedTextField textFieldDateDebut;
@@ -128,6 +116,8 @@ public class Formulaire extends JFrame{
 		
 		JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
+		Formulaire mainFrame = this;
+		
 		this.setTitle("Facilities Rapport"); //titre fenetre
 		this.setSize(700, 600); //taille fenetre
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //pour fermer la fenetre
@@ -185,16 +175,21 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(tel, constraint); //ajout du label tel
+	    
+	    JFormattedTextField textFieldTelRedac = null;
 	    try{
 			MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
 	    tel.setLabelFor(textFieldTelRedac); //attribution de la zone de texte au label tel
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelRedac, constraint); //ajout de la zone de texte tel
+		
+		final JFormattedTextField finalTextFieldTelRedac = textFieldTelRedac;
 	   
 	    //email
 	    JLabel email = new JLabel("Email : "); //creation du label email
@@ -274,16 +269,22 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(codePostal, constraint); //ajout du label codePostal
+	    
+	    JFormattedTextField textFieldCodePostal = null;
 	    try{
 			MaskFormatter maskCodePostal  = new MaskFormatter("## ###"); //masque pour le format du code postal
 			textFieldCodePostal = new JFormattedTextField(maskCodePostal); //initialisation de la zone de texte codePostal formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    codePostal.setLabelFor(textFieldCodePostal); //attribution de la zone de texte au label codePostal
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldCodePostal, constraint); //ajout de la zone de texte codePostal
+		
+		final JFormattedTextField finalTtextFieldCodePostal = textFieldCodePostal;
 		
 		//ville
 		JLabel ville = new JLabel("Ville : "); //creation du label ville
@@ -315,16 +316,22 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(telCl, constraint); //ajout du label telCl
+	   
+	    JFormattedTextField textFieldTelCl = null;
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    telCl.setLabelFor(textFieldTelCl); //attribution de la zone de texte au label telCl
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelCl, constraint); //ajout de la zone de texte telCl
+		
+		final JFormattedTextField finalTextFieldTelCl = textFieldTelCl;
 	   
 	    //email client
 	    JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
@@ -885,7 +892,7 @@ public class Formulaire extends JFrame{
 		    	System.out.println(titreRedacteur.getText()); 						//affichage console du titre de la partie du formulare 	
 		    	System.out.println(nom.getText() + textFieldNom.getText()); 		//affichage console des données nom
 		    	System.out.println(adr.getText() + textAreaAdr.getText()); 			//affichage console des données adr
-		    	System.out.println(tel.getText() + textFieldTelRedac.getText()); 	//affichage console des données tel
+		    	//System.out.println(tel.getText() + textFieldTelRedac.getText()); 	//affichage console des données tel
 		    	System.out.println(email.getText() + textFieldEmail.getText()); 	//affichage console des données email
 		    	System.out.println(nomCA.getText() + textFieldNomCA.getText());		//affichage console des données nomCA
 		    	//partie client
@@ -893,9 +900,9 @@ public class Formulaire extends JFrame{
 		    	System.out.println(nomSite.getText() + textFieldNomSite.getText()); 		//affichage console des données nomSite
 		    	System.out.println(code.getText() + textFieldCode.getText()); 				//affichage console des données code
 		    	System.out.println(adrCl.getText() + textAreaAdrCl.getText()); 				//affichage console des données adrCl
-		    	System.out.println(codePostal.getText() + textFieldCodePostal.getText()); 	//affichage console des données codePostal
+		    	System.out.println(codePostal.getText() + finalTtextFieldCodePostal.getText()); 	//affichage console des données codePostal
 		    	System.out.println(ville.getText() + textFieldVille.getText()); 			//affichage console des données ville
-		    	System.out.println(telCl.getText() + textFieldTelCl.getText()); 			//affichage console des données telCl
+		    	System.out.println(telCl.getText() + finalTextFieldTelCl.getText()); 			//affichage console des données telCl
 		    	System.out.println(emailCl.getText() + textFieldEmailCl.getText()); 		//affichage console des données emailCl  
 		    	//partie rapport
 		    	System.out.println(titreRapport.getText()); 													//affichage console du titre de la partie du formulaire
@@ -954,7 +961,7 @@ public class Formulaire extends JFrame{
 		    	fw.println (titreRedacteur.getText()); 					 	//ecriture du titre de la partie du formulare 	
 		    	fw.println (nom.getText() + textFieldNom.getText()); 	 	//ecriture des donnees nom
 		    	fw.println (adr.getText() + textAreaAdr.getText()); 	 	//ecriture des donnees adr
-		    	fw.println (tel.getText() + textFieldTelRedac.getText()); 	//ecriture des donnees tel
+		    	fw.println (tel.getText() + finalTextFieldTelRedac.getText()); 	//ecriture des donnees tel
 		    	fw.println (email.getText() + textFieldEmail.getText()); 	//ecriture des donnees email
 		    	fw.println (nomCA.getText() + textFieldNomCA.getText()); 	//ecriture des donnees nomCA
 		    	//partie client
@@ -962,9 +969,9 @@ public class Formulaire extends JFrame{
 			    fw.println (nomSite.getText() + textFieldNomSite.getText());		//ecriture des données nomSite
 			    fw.println (code.getText() + textFieldCode.getText()); 				//ecriture des données code
 			    fw.println (adrCl.getText() + textAreaAdrCl.getText()); 		    //ecriture des données adrCl
-			    fw.println (codePostal.getText() + textFieldCodePostal.getText());  //ecriture des données codePostal
+			    fw.println (codePostal.getText() + finalTtextFieldCodePostal.getText());  //ecriture des données codePostal
 			    fw.println (ville.getText() + textFieldVille.getText()); 			//ecriture des données ville
-			    fw.println (telCl.getText() + textFieldTelCl.getText()); 			//ecriture des données telCl
+			    fw.println (telCl.getText() + finalTextFieldTelCl.getText()); 			//ecriture des données telCl
 			    fw.println (emailCl.getText() + textFieldEmailCl.getText()); 		//ecriture des données emailCl
 		    	//partie rapport
 			    fw.println (titreRapport.getText()); 													//ecriture du titre de la partie du formulaire
@@ -1017,7 +1024,7 @@ public class Formulaire extends JFrame{
 		    	
 				/*-----------------Partie Redacteur-----------------*/
 		    	
-		    	/*IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
+		    	IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
 				
 		    	if (textFieldNom.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
@@ -1039,14 +1046,14 @@ public class Formulaire extends JFrame{
 		    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
 		    	}
 		    	
-		    	if (textFieldTelRedac.getText().equals("")) {
+		    	if (finalTextFieldTelRedac.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
 		    	else {
-		    		writerPart.addString(textFieldTelRedac.getText(), tel.getText());   // telephone 
+		    		writerPart.addString(finalTextFieldTelRedac.getText(), tel.getText());   // telephone 
 		    	}
 		    	
 		    	if (textFieldEmail.getText().equals("")) {
@@ -1073,7 +1080,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Partie client-----------------*/
 		    	
-		    	/*IDataHandler clientPart = new DefaultDataHandler(titreClient.getText());
+		    	IDataHandler clientPart = new DefaultDataHandler(titreClient.getText());
 		    	
 		    	if (textFieldNomSite.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
@@ -1105,14 +1112,14 @@ public class Formulaire extends JFrame{
 		    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
 		    	}
 		    	
-		    	if (textFieldCodePostal.getText().equals("")) {
+		    	if (finalTtextFieldCodePostal.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
 		    	else {
-		    		clientPart.addString(textFieldCodePostal.getText(), codePostal.getText()); // code postal
+		    		clientPart.addString(finalTtextFieldCodePostal.getText(), codePostal.getText()); // code postal
 		    	}
 		    	
 		    	if (textFieldVille.getText().equals("")) {
@@ -1125,14 +1132,14 @@ public class Formulaire extends JFrame{
 		    		clientPart.addString(textFieldVille.getText(),      ville.getText());      // ville
 		    	}
 		    	
-		    	if (textFieldTelCl.getText().equals("")) {
+		    	if (finalTextFieldTelCl.getText().equals("")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 		    		return;
 		    	}
 		    	else {
-		    		clientPart.addString(textFieldTelCl.getText(),      telCl.getText());      // telephone client
+		    		clientPart.addString(finalTextFieldTelCl.getText(), telCl.getText());      // telephone client
 		    	}
 		    	
 		    	if (textFieldEmailCl.getText().equals("")) {
