@@ -1823,6 +1823,7 @@ public class Formulaire extends JFrame{
 	    constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherLastMonthPosition;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		mainContainer.add(commentaireBP, constraint);
 	    
 		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP

@@ -80,8 +80,6 @@ public class FreeTree extends JPanel{
 	    
 		lastElementPosition = ++positionCounter;
 		
-		addElement();
-		
 		this.startElementPosition = positionCounter;
 
 		//bouton d'ajout d'element
@@ -107,9 +105,8 @@ public class FreeTree extends JPanel{
 				else {
 					ajoutElement.setEnabled(true);
 				}
-		    		
+		    	
 		    	addElement();
-				
 		    	thisPanel.revalidate();
 		    }
 		});
@@ -170,14 +167,46 @@ public class FreeTree extends JPanel{
 		//nombre
 	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
 		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.RELATIVE;
+		constraint.gridwidth = 1;
 		this.add(nombre, constraint); //ajout du label dateDebut
 		
 	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
 		constraint.gridx = 3;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridwidth = 1;
 		this.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
 		elementNumbers.add(textFieldNombre);
+		
+		JPanel thisPanel = this;
+		
+		JButton deleteElementButton = new JButton("X");
+		deleteElementButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				thisPanel.remove(element);
+				thisPanel.remove(textFieldElement);
+				thisPanel.remove(nombre);
+				thisPanel.remove(textFieldNombre);
+				thisPanel.remove(deleteElementButton);
+				
+				elements.remove(textFieldElement);
+				elementNumbers.remove(textFieldNombre);
+				
+				thisPanel.revalidate();
+			}
+		});
+		
+		constraint.gridx = 4;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		this.add(deleteElementButton, constraint); //ajout du bouton supprimer dans conteneurPrincipal
+	}
+	
+	public Collection<JTextField> elements() {
+		return elements;
+	}
+	
+	public Collection<JTextField> elementNumbers() {
+		return elementNumbers;
 	}
 }
