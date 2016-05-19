@@ -1100,11 +1100,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(writerPart);
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(10);
-					}
-				});
+		    	pBarFrame.updateBar(10);
 		    	
 		    	/*-----------------Partie client-----------------*/
 		    	
