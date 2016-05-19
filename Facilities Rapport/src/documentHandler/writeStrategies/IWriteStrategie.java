@@ -6,6 +6,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import dataHandler.IDataHandler;
+import ihm.ProgressBarFrame;
 
 /**
  * Cette interface decrit les strategies d'edition de document
@@ -33,4 +34,6 @@ public interface IWriteStrategie {
 	 * @throws Exception Aucune Exception n'est geree
 	 */
 	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer) throws Exception;
+	
+	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer, ProgressBarFrame pBFrame) throws Exception;
 }

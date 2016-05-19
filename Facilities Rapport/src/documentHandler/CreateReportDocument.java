@@ -3,6 +3,9 @@ package documentHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
+
+import javax.swing.SwingUtilities;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -10,6 +13,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import dataHandler.IDataHandler;
 import documentHandler.writeStrategieFactory.WriteStrategieFactory;
 import documentHandler.writeStrategies.IWriteStrategie;
+import ihm.ProgressBarFrame;
 import utilities.FileUtilities;
 
 /**
@@ -30,11 +34,18 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est geree
 	 */
-	public static boolean createPdf (Collection<IDataHandler> datas) throws Exception{
+	public static boolean createPdf (Collection<IDataHandler> datas, ProgressBarFrame pBFrame) throws Exception{
+		
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		File pdfReport = FileUtilities.getResource(defaultPdfReportsPathName);
 		// Puis on creer le fichier a l'emplacement precise precedamment
 		pdfReport.createNewFile();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				pBFrame.updateBar(83);
+			}
+		});
 		
 		// On creer le Document correspondant
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -45,8 +56,14 @@ public class CreateReportDocument {
 		// On cree la strategie que l'on va utiliser pour creer le document
 		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
 		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				pBFrame.updateBar(85);
+			}
+		});
+		
 		// On effectue l'edition du PDF par la strategie
-		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
+		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter, pBFrame);
 		
 		// On n'oublie pas de fermer tous les flux
 		pdfWriter.close();

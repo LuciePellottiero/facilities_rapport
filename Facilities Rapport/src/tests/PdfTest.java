@@ -5,6 +5,7 @@ import java.util.Collection;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import ihm.ProgressBarFrame;
 
 /**
  * Cette class permet de tester certaines parties de l'application
@@ -75,7 +76,7 @@ public abstract class PdfTest {
 		
 		try {
 			// Finalement on cree le document
-			CreateReportDocument.createPdf(datas);
+			CreateReportDocument.createPdf(datas, new ProgressBarFrame());
 			System.out.println("Rapport termine");
 		} 
 		catch (Exception e) {

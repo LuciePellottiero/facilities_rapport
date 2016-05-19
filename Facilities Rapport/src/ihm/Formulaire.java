@@ -2,6 +2,7 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -35,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
@@ -54,19 +56,6 @@ public class Formulaire extends JFrame{
 	 * Truc utilise par JFrame
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * Declaration du textField date debut initialise dans le try
-	 */
-	private JFormattedTextField textFieldDateDebut;
-	/**
-	 * Declaration du textField date fin initialise dans le try
-	 */
-	private JFormattedTextField textFieldDateFin;
-	/**
-	 * Declaration de la comboBox des durée de rapport
-	 */
-	private JComboBox<String>   comboBoxRapport;
 
 	private JButton ajoutMoisBP;
 	
@@ -356,14 +345,18 @@ public class Formulaire extends JFrame{
 	    conteneurPrincipal.add(titreRapport, constraint); //ajout du titreRapport dans conteneurPrincipal
 		
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//rapport d'activite
+		
+	    //rapport d'activite
 	    JLabel rapportActivite = new JLabel("Rapport d'activité : "); ////creation du label rapportActivite
+	    
 	    constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 		conteneurPrincipal.add(rapportActivite, constraint); //ajout du label rapportActivite
+		
 		String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
-		comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
+		JComboBox<String> comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
+		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		rapportActivite.setLabelFor(comboBoxRapport); //attribution de la comboBox comboBoxRapport au label rapportActivite
@@ -371,37 +364,51 @@ public class Formulaire extends JFrame{
 	    
 	    //date debut
 	    JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
-		constraint.gridx = 0;
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateDebut, constraint); //ajout du label dateDebut
+	    
+	    JFormattedTextField textFieldDateDebut = null;
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateDebut = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateDebut formattee par le masque maskDate
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    dateDebut.setLabelFor(textFieldDateDebut); //attribution de la zone de texte textFieldDateDebut au label dateDebut
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldDateDebut, constraint); //ajout de la zone de texte textFieldDateDebut
+		JFormattedTextField finalTextFieldDateDebut = textFieldDateDebut;
 		
 		//date fin
 	    JLabel dateFin = new JLabel("Date de fin : "); //creation du label dateFin
-		constraint.gridx = 0;
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateFin, constraint); //ajout du label dateFin
+	    
+	    JFormattedTextField textFieldDateFin = null;
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateFin = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateFin formattee par le masque maskDate
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    dateFin.setLabelFor(textFieldDateFin); //attribution de la zone de texte textFieldDateFin au label dateFin
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldDateFin, constraint); //ajout de la zone de texte textFieldDateFin
+		JFormattedTextField finalTextFieldDateFin = textFieldDateFin;
 		
 		/*----------------------------------------------formulaire bons preventifs----------------------------------------------------------*/
 		
@@ -907,8 +914,8 @@ public class Formulaire extends JFrame{
 		    	//partie rapport
 		    	System.out.println(titreRapport.getText()); 													//affichage console du titre de la partie du formulaire
 		    	System.out.println(rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//affichage console des données duree rapport d'activite
-		    	System.out.println(dateDebut.getText() + textFieldDateDebut.getText()); 						//affichage console des données code
-		    	System.out.println(dateFin.getText() + textFieldDateFin.getText()); 							//affichage console des données adr
+		    	System.out.println(dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//affichage console des données code
+		    	System.out.println(dateFin.getText() + finalTextFieldDateFin.getText()); 							//affichage console des données adr
 		    	//partie bons preventifs
 		    	System.out.println(titreBP.getText()); 												//affichage console du titre de la partie du formulaire
 		    	/*System.out.println(moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString()); //affichage console des données mois
@@ -976,8 +983,8 @@ public class Formulaire extends JFrame{
 		    	//partie rapport
 			    fw.println (titreRapport.getText()); 													//ecriture du titre de la partie du formulaire
 		    	fw.println (rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//ecriture console des données rpportActivite
-		    	fw.println (dateDebut.getText() + textFieldDateDebut.getText()); 						//ecriture console des données codeDebut
-		    	fw.println (dateFin.getText() + textFieldDateFin.getText()); 							//ecriture console des données dateFin
+		    	fw.println (dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//ecriture console des données codeDebut
+		    	fw.println (dateFin.getText() + finalTextFieldDateFin.getText()); 							//ecriture console des données dateFin
 		    	//partie bons preventifs
 			    fw.println (titreBP.getText()); 												//ecriture du titre de la partie du formulaire
 		    	/*fw.println (moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString());	//ecriture des données moisBP
@@ -1019,6 +1026,11 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Ecriture du PDF-----------------*/
 		    	
+		    	mainFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		    	mainFrame.setEnabled(false);
+		    	
+		    	ProgressBarFrame pBarFrame = new ProgressBarFrame();
+		    	
 		    	// On prepare les donnees
 		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
 		    	
@@ -1030,6 +1042,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1040,6 +1053,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1050,6 +1064,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1060,6 +1075,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1070,6 +1086,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1077,6 +1094,12 @@ public class Formulaire extends JFrame{
 		    	}
 		    	
 		    	datas.add(writerPart);
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(10);
+					}
+				});
 		    	
 		    	/*-----------------Partie client-----------------*/
 		    	
@@ -1086,6 +1109,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1096,6 +1120,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1106,6 +1131,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + adrCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1116,6 +1142,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1126,6 +1153,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1136,6 +1164,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1146,6 +1175,7 @@ public class Formulaire extends JFrame{
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1154,33 +1184,47 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(clientPart);
 		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(20);
+					}
+				});
+		    	
 		    	/*-----------------Partie Rapport-----------------*/
 		    	
-		    	/*IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
+		    	IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
 				
 				reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
 				
-		    	if (textFieldDateDebut.getText().equals("  /  /    ")) {
+		    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
-		    		reportPart.addString(textFieldDateDebut.getText(), dateDebut.getText());
+		    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
 		    	}
 		    	
-		    	if (textFieldDateFin.getText().equals("  /  /    ")) {
+		    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
 		    		JOptionPane.showMessageDialog(mainFrame, 
 		    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
-		    		reportPart.addString(textFieldDateFin.getText(), dateFin.getText());
+		    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
 		    	}
 		    	
 		    	datas.add(reportPart);
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(30);
+					}
+				});
 
 		    	/*-----------------Partie Bons preventifs-----------------*/
 		    	
@@ -1192,6 +1236,10 @@ public class Formulaire extends JFrame{
 		    	Iterator<JTextArea>         commentsPreventivesVouchersIter = commentsPreventivesVouchers.iterator();
 		    	
 		    	int counter = 1;
+		    	
+		    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
+		    	IChartGenerator chartGenerator = new DefaultChartGenerator();
+		    	
 		    	while (preventivesVouchersMonthsIter.hasNext()) {
 		    		
 		    		JComboBox<String> comboBoxMoisBP        = preventivesVouchersMonthsIter.next();
@@ -1208,6 +1256,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
@@ -1215,10 +1264,13 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
 				    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else {
 							preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+							
+							barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", comboBoxMoisBP.getSelectedItem().toString());
 				    	}
 				    	
 				    	if (textFieldNbBPFermes.getText().equals("")) {
@@ -1226,6 +1278,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
@@ -1233,14 +1286,17 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else {
 				    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+				    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
 				    	}
 				    	
 				    	if (!textAreaCommentaireBP.getText().equals("")) {
 							preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+							stopPdfCreation(pBarFrame);
 						}
 				    	
 				    	++counter;
@@ -1248,6 +1304,7 @@ public class Formulaire extends JFrame{
 					else if (!textFieldNbBPOuverts.getText().equals("") ||
 							!textAreaCommentaireBP.getText().equals("") ||
 							!textFieldNbBPFermes.getText().equals("")) {
+						
 						preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
 						
 				    	if (textFieldNbBPOuverts.getText().equals("")) {
@@ -1256,6 +1313,7 @@ public class Formulaire extends JFrame{
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
@@ -1264,10 +1322,13 @@ public class Formulaire extends JFrame{
 				    				" du mois numéro " + counter + " doit être un nombre"
 				    						+ " (Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else {
 							preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+							barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
+									comboBoxMoisBP.getSelectedItem().toString());
 				    	}
 				    	
 				    	if (textFieldNbBPFermes.getText().equals("")) {
@@ -1276,6 +1337,7 @@ public class Formulaire extends JFrame{
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
@@ -1284,21 +1346,46 @@ public class Formulaire extends JFrame{
 				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
 				    	else {
 				    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+				    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", 
+				    				comboBoxMoisBP.getSelectedItem().toString());
 				    	}
 				    	
 				    	if (!textAreaCommentaireBP.getText().equals("")) {
 							preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+							stopPdfCreation(pBarFrame);
 						}
 				    	
 				    	++counter;
 					}
 		    	}
 		    	
+		    	try {
+					JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
+							"Mois", "Nombre de bons préventifs", barChartDatas, true);
+					
+					preventivesVouchers.addJFreeChart(barChart);
+	    		} 
+	    		catch (Exception e) {
+	    			e.printStackTrace();
+					JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
+							+ titreBP.getText() + " : \n"
+							+ e.getMessage(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+					stopPdfCreation(pBarFrame);
+				}
+		    	
 		    	datas.add(preventivesVouchers);
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(40);
+					}
+				});
 		    
 		    	/*-----------------Partie Bons preventifs par domaines-----------------*/
 		    	
@@ -1310,7 +1397,7 @@ public class Formulaire extends JFrame{
 		    	// On obtient l'iterator des pourcentages correspondant
 		    	Iterator<JFormattedTextField> pourcentsIter = textFieldPourcentsBP.iterator();
 		    	
-		    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
+		    	barChartDatas = new DefaultCategoryDataset();
 		    	DefaultPieDataset      pieChartDatas = new DefaultPieDataset();
 		    	
 		    	Map<String, Double> pourcentages = new HashMap<String, Double>();
@@ -1334,6 +1421,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 				    				" doit être remplis si la case a été cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+			    			stopPdfCreation(pBarFrame);
 				    		return;
 		    			}
 		    			else {		    				
@@ -1348,6 +1436,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1359,6 +1448,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1373,6 +1463,7 @@ public class Formulaire extends JFrame{
 		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
 		    							"Erreur", JOptionPane.YES_NO_OPTION);
 		    					if(dialogResult == JOptionPane.NO_OPTION){
+		    						stopPdfCreation(pBarFrame);
 		    						return;
 		    					}
 		    					else {
@@ -1385,7 +1476,6 @@ public class Formulaire extends JFrame{
 		    	}		
 		    	
 		    	if (!domainPreventivesVouchers.isEmpty()) {
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
 		    		
 		    		if (total < 100) {
 		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
@@ -1394,13 +1484,14 @@ public class Formulaire extends JFrame{
     							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
     							"Erreur", JOptionPane.YES_NO_OPTION);
     					if(dialogResult == JOptionPane.NO_OPTION){
+    						stopPdfCreation(pBarFrame);
     						return;
     					}
 		    		}
 		    		
 		    		try {
 						JFreeChart barChart = chartGenerator.generateBarChart(titreBPDomaine.getText(), 
-								"Domaines techniques", "Pourcentages d'avancement", barChartDatas);
+								"Domaines techniques", "Pourcentages d'avancement", barChartDatas, false);
 						
 						domainPreventivesVouchers.addJFreeChart(barChart);
 		    		} 
@@ -1410,6 +1501,7 @@ public class Formulaire extends JFrame{
 								+ titreBPDomaine.getText() + " : \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
+						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
@@ -1423,7 +1515,7 @@ public class Formulaire extends JFrame{
 		    		}
 		    		
 		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
 						
 						domainPreventivesVouchers.addJFreeChart(pieChart);
 		    		} 
@@ -1433,9 +1525,16 @@ public class Formulaire extends JFrame{
 								titreBPDomaine.getText() + ": \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
+						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		datas.add(domainPreventivesVouchers);
+		    		
+			    	SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							pBarFrame.updateBar(50);
+						}
+					});
 		    	}
 		    	
 		    	/*-----------------Partie arborescence libre 1-----------------*/
@@ -1458,12 +1557,18 @@ public class Formulaire extends JFrame{
 				    	}
 			    	}
 			    	
-			    	IDataHandler freeTree1 = new DefaultDataHandler(textFieldTitre.getText());   	
+			    	IDataHandler freeTree1 = new DefaultDataHandler(textFieldTitre.getText());
+			    	
+			    	SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							pBarFrame.updateBar(60);
+						}
+					});
 		    	}
 		
 		    	/*-----------------Partie demande d'intervention-----------------*/
 		    	
-		    	/*IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
+		    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 		    	
 		    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
 		    	
@@ -1472,6 +1577,7 @@ public class Formulaire extends JFrame{
 		    				"le champs \"" + nbIntervention.getText() + "\" de la partie " + titreDI.getText() + 
 		    				" doit être remplis", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+		    		stopPdfCreation(pBarFrame);
 		    		return;
 		    	}
 		    	else {
@@ -1483,6 +1589,12 @@ public class Formulaire extends JFrame{
 		    	}
 		    	
 		    	datas.add(interventionDemand);
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(70);
+					}
+				});
 		    	
 		    	/*-----------------Partie demande d'intervention par etat-----------------*/
 		    	
@@ -1507,6 +1619,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 				    				" doit être remplis avec un nombre si la case est cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+		    				stopPdfCreation(pBarFrame);
 				    		return;
 		    			}
 		    			else if (!OperationUtilities.isNumeric(currentNbState.getText())) {
@@ -1514,6 +1627,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 				    				" doit être un nombre si la case est cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+		    				stopPdfCreation(pBarFrame);
 				    		return;
 		    			}
 		    			else {
@@ -1528,6 +1642,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1539,6 +1654,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1549,8 +1665,6 @@ public class Formulaire extends JFrame{
 		    	}
 		    	
 		    	if (!stateInterventionDemand.isEmpty()) {
-		    		
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
 		    		
 		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
 		    		
@@ -1564,7 +1678,7 @@ public class Formulaire extends JFrame{
 		    		}
 		    		
 		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
 						
 						stateInterventionDemand.addJFreeChart(pieChart);
 		    		} 
@@ -1574,9 +1688,16 @@ public class Formulaire extends JFrame{
 								+ titreDIEtat.getText() + " : \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
+						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		datas.add(stateInterventionDemand);
+		    		
+		    		SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							pBarFrame.updateBar(80);
+						}
+					});
 		    	}
 		    	
 		    	/*-----------------Partie demande d'intervention par domaine-----------------*/
@@ -1613,6 +1734,7 @@ public class Formulaire extends JFrame{
 				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 				    				" doit être remplis si la case a été cochée", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+			    			stopPdfCreation(pBarFrame);
 				    		return;
 		    			}
 		    			else {		    				
@@ -1627,6 +1749,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1638,6 +1761,7 @@ public class Formulaire extends JFrame{
 					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
 					    				" n'est pas un nombre valide", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
+		    					stopPdfCreation(pBarFrame);
 					    		return;
 		    				}
 		    				
@@ -1650,6 +1774,7 @@ public class Formulaire extends JFrame{
 		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
 		    							"Erreur", JOptionPane.YES_NO_OPTION);
 		    					if(dialogResult == JOptionPane.NO_OPTION){
+		    						stopPdfCreation(pBarFrame);
 		    						return;
 		    					}
 		    					else {
@@ -1662,7 +1787,6 @@ public class Formulaire extends JFrame{
 		    	}		
 		    	
 		    	if (!domainInterventionDemand.isEmpty()) {
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
 		    		
 		    		if (total < 100) {
 		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
@@ -1671,6 +1795,7 @@ public class Formulaire extends JFrame{
     							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
     							"Erreur", JOptionPane.YES_NO_OPTION);
     					if(dialogResult == JOptionPane.NO_OPTION){
+    						stopPdfCreation(pBarFrame);
     						return;
     					}
 		    		}
@@ -1686,7 +1811,7 @@ public class Formulaire extends JFrame{
 		    		}
 		    		
 		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreDIDomaine.getText(), interventionPieChartDatas);
+						JFreeChart pieChart = chartGenerator.generatePieChart(titreDIDomaine.getText(), interventionPieChartDatas, false);
 						
 						domainInterventionDemand.addJFreeChart(pieChart);
 		    		} 
@@ -1696,30 +1821,43 @@ public class Formulaire extends JFrame{
 								titreDIDomaine.getText() + ": \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
+						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		datas.add(domainInterventionDemand);
+		    		
+		    		SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							pBarFrame.updateBar(80);
+						}
+					});
 		    	}
 		    	
 				try {
 					if (!datas.isEmpty()) {
 						// Finallement on creer le document
-						CreateReportDocument.createPdf(datas);
+						CreateReportDocument.createPdf(datas, pBarFrame);
 						JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
 								JOptionPane.INFORMATION_MESSAGE);
+						stopPdfCreation(pBarFrame);
+						pBarFrame.updateBar(100);
+
 					}
 					else {
 						JOptionPane.showMessageDialog(fenetre, 
 			    				"Aucune donnée à rédiger dans le rapport", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
+						stopPdfCreation(pBarFrame);
 					}
 				} 
 				catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(fenetre, e.getMessage(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
+					stopPdfCreation(pBarFrame);
 				}
-		    	
+				
+
 		    }
 		});
 	    
@@ -1841,6 +1979,14 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		mainContainer.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+	}
+	
+	private void stopPdfCreation(ProgressBarFrame pBFrame) {
+		
+		this.setCursor(null);
+		this.setEnabled(true);
+		
+		pBFrame.setVisible(false);
 	}
 
 }
