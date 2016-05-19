@@ -1468,6 +1468,7 @@ public class Formulaire extends JFrame{
 		    					}
 		    					else {
 		    						continueAbove100 = true;
+		    						pBarFrame.toFront();
 		    					}
 		    				}
 		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
@@ -1486,6 +1487,9 @@ public class Formulaire extends JFrame{
     					if(dialogResult == JOptionPane.NO_OPTION){
     						stopPdfCreation(pBarFrame);
     						return;
+    					}
+    					else {
+    						pBarFrame.toFront();
     					}
 		    		}
 		    		
@@ -1831,6 +1835,7 @@ public class Formulaire extends JFrame{
 		    					}
 		    					else {
 		    						continueAbove100 = true;
+		    						pBarFrame.toFront();
 		    					}
 		    				}
 		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
@@ -1849,6 +1854,9 @@ public class Formulaire extends JFrame{
     					if(dialogResult == JOptionPane.NO_OPTION){
     						stopPdfCreation(pBarFrame);
     						return;
+    					}
+    					else {
+    						pBarFrame.toFront();
     					}
 		    		}
 		    		
