@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -557,6 +558,8 @@ public class Formulaire extends JFrame{
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
+	    Collection<FreeTree> freeTrees1 = new LinkedList<FreeTree>();
+	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
 	  	ajoutArboLibre.addActionListener(new ActionListener() {
@@ -568,7 +571,9 @@ public class Formulaire extends JFrame{
 				constraint.gridy = ++freeTrees1Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
-				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
+			    FreeTree arboLibre = new FreeTree(conteneurPrincipal);
+			    freeTrees1.add(arboLibre);
+				conteneurPrincipal.add(arboLibre, constraint);
 				
 				fenetre.revalidate();
 			}
@@ -1376,7 +1381,6 @@ public class Formulaire extends JFrame{
 							+ titreBP.getText() + " : \n"
 							+ e.getMessage(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
-					stopPdfCreation(pBarFrame);
 				}
 		    	
 		    	datas.add(preventivesVouchers);
@@ -1501,7 +1505,6 @@ public class Formulaire extends JFrame{
 								+ titreBPDomaine.getText() + " : \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
-						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
@@ -1525,7 +1528,6 @@ public class Formulaire extends JFrame{
 								titreBPDomaine.getText() + ": \n"
 								+ e.getMessage(), "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
-						stopPdfCreation(pBarFrame);
 					}
 		    		
 		    		datas.add(domainPreventivesVouchers);
@@ -1539,32 +1541,86 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Partie arborescence libre 1-----------------*/
 		    	
-		    	/*if (!textFieldTitre.getText().equals("")) {
+		    	Iterator<FreeTree> freeTrees1Iter = freeTrees1.iterator();
+		    	
+		    	while (freeTrees1Iter.hasNext()) {
+		    		Boolean isElement = false;
 		    		
-			    	Iterator<JTextField> elementsIter = elements1.iterator();
-			    	Iterator<JTextField> elementNumbersIter = elementNumbers1.iterator();
-			    	
-			    	while (elementsIter.hasNext()) {
-			    		JTextField currentElem = elementsIter.next();	
-				    	JTextField currentElemNumber = elementNumbersIter.next();
-				    	
-				    	if (!currentElem.getText().equals("") && currentElemNumber.getText().equals("")) {
+		    		FreeTree currentTree = freeTrees1Iter.next();
+		    		
+		    		if (currentTree.titleTextField().getText().equals("")) {
+		    			JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+			    				" doit être remplis", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+			    		stopPdfCreation(pBarFrame);
+			    		return;
+		    		}
+		    		
+		    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.titleTextField().getText());
+		    		
+		    		barChartDatas = new DefaultCategoryDataset();
+		    		
+		    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
+		    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+		    		
+		    		while (currentTreeElementIter.hasNext()) {
+		    			JTextField currentElement = currentTreeElementIter.next();
+		    			JTextField currentElementNumber = currentTreeElementNumber.next();
+		    			
+		    			if (currentElement.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"Elément : \" de la partie " + textFieldTitre.getText() + 
-				    				" n'est pas un nombre valide", "Erreur", 
+				    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+				    				" doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
-			    	}
-			    	
-			    	IDataHandler freeTree1 = new DefaultDataHandler(textFieldTitre.getText());
-			    	
-			    	SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pBarFrame.updateBar(60);
+		    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+		    				JOptionPane.showMessageDialog(fenetre, 
+				    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
+				    				" de la partie " + currentTree.titleTextField().getText() + 
+				    				" doit être remplis avec un nombre", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return;
+		    			}
+		    			else {
+		    				freeTree1.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+		    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
+		    				
+		    				isElement = true;
+		    			}
+		    		}
+		    		
+		    		if (!currentTree.textAreaComment().getText().equals("")) {
+		    			freeTree1.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+		    		}
+		    		
+		    		if (isElement) {
+			    		try {
+							JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+									"Element", "Nombre", barChartDatas, true);
+							
+							freeTree1.addJFreeChart(barchart);
+						} 
+			    		catch (Exception e) {
+			    			e.printStackTrace();
+							JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
+									currentTree.titleTextField().getText() + ": \n"
+									+ e.getMessage(), "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
 						}
-					});
+		    		}
+		    		
+		    		datas.add(freeTree1);
 		    	}
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(60);
+					}
+				});
 		
 		    	/*-----------------Partie demande d'intervention-----------------*/
 		    	
@@ -1832,6 +1888,89 @@ public class Formulaire extends JFrame{
 						}
 					});
 		    	}
+		    	
+		    	/*-----------------Partie arborescence libre 2-----------------*/
+		    	
+		    	Iterator<FreeTree> freeTrees2Iter = freeTrees1.iterator();
+		    	
+		    	while (freeTrees2Iter.hasNext()) {
+		    		Boolean isElement = false;
+		    		
+		    		FreeTree currentTree = freeTrees2Iter.next();
+		    		
+		    		if (currentTree.titleTextField().getText().equals("")) {
+		    			JOptionPane.showMessageDialog(fenetre, 
+			    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+			    				" doit être remplis", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+			    		stopPdfCreation(pBarFrame);
+			    		return;
+		    		}
+		    		
+		    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.titleTextField().getText());
+		    		
+		    		barChartDatas = new DefaultCategoryDataset();
+		    		
+		    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
+		    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+		    		
+		    		while (currentTreeElementIter.hasNext()) {
+		    			JTextField currentElement = currentTreeElementIter.next();
+		    			JTextField currentElementNumber = currentTreeElementNumber.next();
+		    			
+		    			if (currentElement.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(fenetre, 
+				    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+				    				" doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return;
+				    	}
+		    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+		    				JOptionPane.showMessageDialog(fenetre, 
+				    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
+				    				" de la partie " + currentTree.titleTextField().getText() + 
+				    				" doit être remplis avec un nombre", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return;
+		    			}
+		    			else {
+		    				freeTree1.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+		    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
+		    				
+		    				isElement = true;
+		    			}
+		    		}
+		    		
+		    		if (!currentTree.textAreaComment().getText().equals("")) {
+		    			freeTree1.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+		    		}
+		    		
+		    		if (isElement) {
+			    		try {
+							JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+									"Element", "Nombre", barChartDatas, true);
+							
+							freeTree1.addJFreeChart(barchart);
+						} 
+			    		catch (Exception e) {
+			    			e.printStackTrace();
+							JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
+									currentTree.titleTextField().getText() + ": \n"
+									+ e.getMessage(), "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+						}
+		    		}
+		    		
+		    		datas.add(freeTree1);
+		    	}
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						pBarFrame.updateBar(90);
+					}
+				});
 		    	
 				try {
 					if (!datas.isEmpty()) {

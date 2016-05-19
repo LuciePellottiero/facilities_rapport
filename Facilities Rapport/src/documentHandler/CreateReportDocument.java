@@ -1,5 +1,6 @@
 package documentHandler;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
@@ -68,6 +69,8 @@ public class CreateReportDocument {
 		// On n'oublie pas de fermer tous les flux
 		pdfWriter.close();
 		
+		Desktop.getDesktop().open(pdfReport);
+		
 		//On renvoie le resultat
 		return result;
 	}
@@ -99,6 +102,8 @@ public class CreateReportDocument {
 		
 		// On oublie pas de fermer tous les flux
 		pdfWriter.close();
+		
+		Desktop.getDesktop().open(pdfReport);
 		
 		// On renvoie le resultat
 		return result;		

@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="Facilities Rapport/librairies/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="Facilities Rapport/librairies/jfreechart-1.0.19.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Facilities%20Rapport/Facilities%20Rapport/librairies/jfreechart-1.0.19-fx-javadocs.zip!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Facilities%20Rapport/Facilities%20Rapport/librairies/jfreechart-1.0.19-fx-javadocs.zip!/jfreechart-1.0.19-fx-javadocs"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
