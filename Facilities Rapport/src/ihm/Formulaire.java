@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,7 +38,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
@@ -431,8 +431,6 @@ public class Formulaire extends JFrame{
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
 	    ajoutMoisBP = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
-	    ajoutMoisBP.setEnabled(false);
-	    ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
@@ -451,9 +449,15 @@ public class Formulaire extends JFrame{
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 				
-				createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE, 
+				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
+				
+				preventiveVoucherMonth.setBorder(BorderFactory.createTitledBorder("Bon préventif"));
+				constraint.gridy = ++preventiveVoucherLastMonthPosition;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
+				conteneurPrincipal.add(preventiveVoucherMonth, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
@@ -461,15 +465,11 @@ public class Formulaire extends JFrame{
 				ajoutMoisBP.setEnabled(false);
 			}
 		});	 
-		
-		// Creation du mois
-	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE,
-	    		preventivesVouchersMonths, nbPreventivesVouchersOpened, 
-	    		nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 	    
 	    constraint.gridx = 1;
 		constraint.gridy = positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
@@ -1035,6 +1035,7 @@ public class Formulaire extends JFrame{
 		    	mainFrame.setEnabled(false);
 		    	
 		    	ProgressBarFrame pBarFrame = new ProgressBarFrame();
+		    	final int incrementUnit = 5;
 		    	
 		    	// On prepare les donnees
 		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
@@ -1100,7 +1101,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(writerPart);
 		    	
-		    	pBarFrame.updateBar(10);
+		    	pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	
 		    	/*-----------------Partie client-----------------*/
 		    	
@@ -1185,11 +1186,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(clientPart);
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(20);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	
 		    	/*-----------------Partie Rapport-----------------*/
 		    	
@@ -1221,11 +1218,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(reportPart);
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(30);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 
 		    	/*-----------------Partie Bons preventifs-----------------*/
 		    	
@@ -1381,11 +1374,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(preventivesVouchers);
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(40);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    
 		    	/*-----------------Partie Bons preventifs par domaines-----------------*/
 		    	
@@ -1532,11 +1521,7 @@ public class Formulaire extends JFrame{
 		    		
 		    		datas.add(domainPreventivesVouchers);
 		    		
-			    	SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pBarFrame.updateBar(50);
-						}
-					});
+					pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	}
 		    	
 		    	/*-----------------Partie arborescence libre 1-----------------*/
@@ -1616,11 +1601,7 @@ public class Formulaire extends JFrame{
 		    		datas.add(freeTree1);
 		    	}
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(60);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		
 		    	/*-----------------Partie demande d'intervention-----------------*/
 		    	
@@ -1646,11 +1627,7 @@ public class Formulaire extends JFrame{
 		    	
 		    	datas.add(interventionDemand);
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(70);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	
 		    	/*-----------------Partie demande d'intervention par etat-----------------*/
 		    	
@@ -1749,11 +1726,7 @@ public class Formulaire extends JFrame{
 		    		
 		    		datas.add(stateInterventionDemand);
 		    		
-		    		SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pBarFrame.updateBar(80);
-						}
-					});
+					pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	}
 		    	
 		    	/*-----------------Partie demande d'intervention par domaine-----------------*/
@@ -1886,11 +1859,7 @@ public class Formulaire extends JFrame{
 		    		
 		    		datas.add(domainInterventionDemand);
 		    		
-		    		SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pBarFrame.updateBar(80);
-						}
-					});
+					pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	}
 		    	
 		    	/*-----------------Partie arborescence libre 2-----------------*/
@@ -1970,11 +1939,7 @@ public class Formulaire extends JFrame{
 		    		datas.add(freeTree1);
 		    	}
 		    	
-		    	SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBarFrame.updateBar(90);
-					}
-				});
+				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		    	
 				try {
 					if (!datas.isEmpty()) {
@@ -1982,8 +1947,8 @@ public class Formulaire extends JFrame{
 						CreateReportDocument.createPdf(datas, pBarFrame);
 						JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
 								JOptionPane.INFORMATION_MESSAGE);
+						pBarFrame.updateBar(ProgressBarFrame.MY_MAXIMUM);
 						stopPdfCreation(pBarFrame);
-						pBarFrame.updateBar(100);
 
 					}
 					else {
@@ -2023,33 +1988,43 @@ public class Formulaire extends JFrame{
 	    
 	}	
 
-	private void createPreventiveVoucherMonth (GridBagConstraints constraint, JComponent mainContainer, final String[] monthsList,
-			Collection<JComboBox<String>> preventivesVouchersMonths, Collection<JTextField> nbPreventivesVouchersOpened,
-			Collection<JTextField> nbPreventivesVouchersClosed, Collection<JTextArea> commentsPreventivesVouchers) {
+	private JPanel createPreventiveVoucherMonth (JComponent mainContainer, Collection<JComboBox<String>> preventivesVouchersMonths, 
+			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed,
+			Collection<JTextArea> commentsPreventivesVouchers) {
+		
+		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
+		
+		int preventiveVoucherMonthPosition = 0;
+		
+		GridBagConstraints constraint = new GridBagConstraints();
+		
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+		
+		constraint.gridx = 0;
+		constraint.gridy = preventiveVoucherMonthPosition;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.weightx = 1;
+		constraint.fill = GridBagConstraints.BOTH;
 		
 		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
 		
-		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
-		
-		constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
-		mainContainer.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
+		thisPreventiveVoucherMonthPanel.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
-		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(monthsList); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 		preventivesVouchersMonths.add(comboBoxMoisBP);
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		preventivVoucherMonthJLabel.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-		mainContainer.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+		thisPreventiveVoucherMonthPanel.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
 	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
 	    constraint.gridx = 0;
-	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
-	    mainContainer.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
+	    thisPreventiveVoucherMonthPanel.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
 	    
 	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
@@ -2057,23 +2032,23 @@ public class Formulaire extends JFrame{
 		
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
 	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
 		
 	    constraint.gridx = 0;
-	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
-	    
-		mainContainer.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+	    thisPreventiveVoucherMonthPanel.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+		
 	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
 	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
 	    nbPreventivesVouchersClosed.add(textFieldNbBPFermes);
 		
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
+	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
 		
 		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
@@ -2109,19 +2084,44 @@ public class Formulaire extends JFrame{
 	    JLabel commentaireBP = new JLabel(preventiveVoucherMonthLabels[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
+		constraint.gridy = ++preventiveVoucherMonthPosition;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-		mainContainer.add(commentaireBP, constraint);
+		thisPreventiveVoucherMonthPanel.add(commentaireBP, constraint);
 	    
 		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
 	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
 	    commentsPreventivesVouchers.add(textAreaCommentaireBP);
 	    
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
+		constraint.gridy = ++preventiveVoucherMonthPosition;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		mainContainer.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+		thisPreventiveVoucherMonthPanel.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+		
+		JButton deleteMonthButton = new JButton("Supprimer mois");
+		deleteMonthButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainContainer.remove(thisPreventiveVoucherMonthPanel);
+				
+				preventivesVouchersMonths.remove(comboBoxMoisBP);
+				nbPreventivesVouchersOpened.remove(textFieldNbBPOuverts);
+				nbPreventivesVouchersClosed.remove(textFieldNbBPFermes);
+				commentsPreventivesVouchers.remove(textAreaCommentaireBP);
+				
+				ajoutMoisBP.setEnabled(true);
+				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+				
+				mainContainer.revalidate();
+			}
+		});
+		
+		constraint.gridy = ++preventiveVoucherMonthPosition;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		thisPreventiveVoucherMonthPanel.add(deleteMonthButton, constraint);
+		
+		return thisPreventiveVoucherMonthPanel;
 	}
 	
 	private void stopPdfCreation(ProgressBarFrame pBFrame) {

@@ -11,11 +11,11 @@ public class ProgressBarFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	JProgressBar pbar;
+	private JProgressBar pbar;
 	
-	static final int MY_MINIMUM = 0;
+	public static final int MY_MINIMUM = 0;
 	
-	static final int MY_MAXIMUM = 100;
+	public static final int MY_MAXIMUM = 100;
 	
 	public ProgressBarFrame() {
 		

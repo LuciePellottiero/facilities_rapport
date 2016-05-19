@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
 
-import javax.swing.SwingUtilities;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -42,11 +40,7 @@ public class CreateReportDocument {
 		// Puis on creer le fichier a l'emplacement precise precedamment
 		pdfReport.createNewFile();
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				pBFrame.updateBar(83);
-			}
-		});
+		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
 		// On creer le Document correspondant
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -57,11 +51,7 @@ public class CreateReportDocument {
 		// On cree la strategie que l'on va utiliser pour creer le document
 		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				pBFrame.updateBar(85);
-			}
-		});
+		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
 		// On effectue l'edition du PDF par la strategie
 		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter, pBFrame);

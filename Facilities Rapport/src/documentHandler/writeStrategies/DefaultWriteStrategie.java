@@ -4,8 +4,6 @@ import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.swing.SwingUtilities;
-
 import org.jfree.chart.JFreeChart;
 
 import com.itextpdf.awt.PdfGraphics2D;
@@ -37,7 +35,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	
 	public DefaultWriteStrategie () {
 		chartWidth  = 500;
-		chartHeight = 400;
+		chartHeight = 350;
 	}
 	
 	/**
@@ -183,7 +181,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	@Override
 	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer,
 			ProgressBarFrame pBFrame) throws Exception {
-		// On ouvre le document a la modification
+				// On ouvre le document a la modification
 				document.open();
 				
 				// Creation de la font par defaut
@@ -194,13 +192,9 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 				// On creer un Iterator pour les donnees
 				Iterator<IDataHandler> datasIterator = datas.iterator();
 				
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						pBFrame.updateBar(90);
-					}
-				});
-				
 				int counter = pBFrame.getProgress();
+				
+				int progressIncrement = ProgressBarFrame.MY_MAXIMUM - counter / datas.size();
 				
 				// On itere sur les parties
 				while (datasIterator.hasNext()) {
@@ -316,12 +310,9 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 					// On ajout le paragraphe au document
 					document.add(para);
 					
-					final int finalCounter = ++counter;
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pBFrame.updateBar(finalCounter);
-						}
-					});
+					final int finalCounter = counter + progressIncrement;
+
+					pBFrame.updateBar(finalCounter);
 				}
 				
 				// A la fin, on ferme tous les flux
