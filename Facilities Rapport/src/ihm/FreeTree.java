@@ -29,6 +29,9 @@ public class FreeTree extends JPanel{
 	private int positionCounter;
 	private int startElementPosition;
 	private int lastElementPosition;
+	@SuppressWarnings("unused")
+	private int thisYPosition;
+	
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
 	
 	private GridBagConstraints constraint;
@@ -38,11 +41,12 @@ public class FreeTree extends JPanel{
 	private JTextField titleTextField;
 	private JTextArea textAreaComment;
 
-	public FreeTree(JComponent container){
+	public FreeTree(JComponent container, int yPosition){
 
 		super (new GridBagLayout());
 		
 		JPanel thisPanel = this;
+		this.thisYPosition = yPosition;
 		
 		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
@@ -137,6 +141,9 @@ public class FreeTree extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				--thisYPosition;
+				
 				container.remove(thisPanel);
 				container.revalidate();
 			}

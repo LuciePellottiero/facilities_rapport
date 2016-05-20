@@ -65,10 +65,6 @@ public class Formulaire extends JFrame{
 	 */
 	private Collection<JFormattedTextField> textFieldPourcentsBP;
 	/**
-	 * Declaration de la comboBox des mois pour les DI
-	 */
-	private JComboBox<String>   comboBoxMoisDI;
-	/**
 	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
 	 */
 	private Collection<JCheckBox> domainesBP;
@@ -93,6 +89,8 @@ public class Formulaire extends JFrame{
 	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	
+	private static final int NUMBER_INTERVENTION_DEMAND_ALLOWED = 100;
 	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
@@ -571,11 +569,11 @@ public class Formulaire extends JFrame{
 				constraint.gridy = ++freeTrees1Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
-			    FreeTree arboLibre = new FreeTree(conteneurPrincipal);
+			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position);
 			    freeTrees1.add(arboLibre);
 				conteneurPrincipal.add(arboLibre, constraint);
 				
-				fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 			}
 		});
 	  	
@@ -594,75 +592,98 @@ public class Formulaire extends JFrame{
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//mois
-	    JLabel moisDI = new JLabel("Mois : ");
-	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisDI, constraint); //ajout du label
-		comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE);
-		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		moisDI.setLabelFor(comboBoxMoisDI); //attribution de la zone de texte au label adr
-		conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte adr
-		
-	    //nombre d'interventions
-	    JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label dateDebut
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-	    conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
-	    JTextField textFieldNbIntervention = new JTextField(2); //initialisation de la zone de texte textFieldNbBPOuverts
-	    nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-		
 		//bouton d'ajout de mois pour les BP
 		positionMoisDI = ++positionCounter;
+		positionCounter += NUMBER_INTERVENTION_DEMAND_ALLOWED;
+		
+		Collection<JComboBox<String>> interventionMonths = new LinkedList<JComboBox<String>>();
+		Collection<JTextField> interventionNumbers = new LinkedList<JTextField>();
 				
 		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
-		constraint.gridx = 1;
-		positionCounter = ++positionCounter + 100;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
 			public void actionPerformed(ActionEvent arg0) {	
-				constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
-						
+				
+				JPanel interventionDemand = new JPanel(new GridBagLayout());
+				interventionDemand.setBorder(BorderFactory.createTitledBorder("Demande d'intervention"));
+				
+				int currentPositionCounter = 0;
+				
+				GridBagConstraints interventionDemandConstraint = new GridBagConstraints();
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = currentPositionCounter;
+				interventionDemandConstraint.weightx = 1;
+				interventionDemandConstraint.fill = GridBagConstraints.BOTH;
+				
 				//mois
 				JLabel moisDI = new JLabel("Mois : ");
-				constraint.gridx = 0;
-				constraint.gridy = ++positionMoisDI;
-				conteneurPrincipal.add(moisDI, constraint); //ajout du label moisBP
-				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-				comboBoxMoisDI = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				
+				interventionDemandConstraint.insets = new Insets(3, 7, 0, 7); //marges autour de l'element
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemand.add(moisDI, interventionDemandConstraint); //ajout du label moisBP
+				
+				JComboBox<String> comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-				constraint.gridx = 1;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				moisDI.setLabelFor(comboBoxMoisDI); //attribution de la comboBox comboBoxMoisBP au label moisBP
-				conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
-						
-				constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				moisDI.setLabelFor(comboBoxMoisDI); //attribution du label moisBP à la comboBox comboBoxMoisBP
+				interventionMonths.add(comboBoxMoisDI);
+				
+				interventionDemandConstraint.gridx = 1;
+				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+				interventionDemand.add(comboBoxMoisDI, interventionDemandConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 						
 				//nombre d'interventions
 				JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
-				constraint.gridx = 0;
-				constraint.gridy = ++positionMoisDI;
-				constraint.gridwidth = 1;
-				conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
+				
+				interventionDemandConstraint.insets = new Insets(0, 7, 0, 7); //marges autour de l'element
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemandConstraint.gridwidth = 1;
+				interventionDemand.add(nbIntervention, interventionDemandConstraint); //ajout du label nbBPOuverts
+				
 				JTextField textFieldNbIntervention = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-				constraint.gridx = 1;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+				interventionNumbers.add(textFieldNbIntervention);
+				
+				interventionDemandConstraint.gridx = 1;
+				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+				interventionDemand.add(textFieldNbIntervention, interventionDemandConstraint); //ajout de la zone de texte textFieldNbBPOuverts
+				
+				JButton deleteInterventionDemand = new JButton("- Supprimer mois");
+				
+				deleteInterventionDemand.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						interventionMonths.remove(comboBoxMoisDI);
+						interventionNumbers.remove(textFieldNbIntervention);
 						
-				fenetre.revalidate();
+						--positionMoisDI;
+						
+						conteneurPrincipal.remove(interventionDemand);
+						conteneurPrincipal.revalidate();
+					}
+				});
+				
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemandConstraint.gridwidth = 1;
+				interventionDemand.add(deleteInterventionDemand, interventionDemandConstraint);
+				
+				constraint.gridx = 0;
+				constraint.gridy = ++positionMoisDI;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				constraint.insets = new Insets(7, 7, 0, 7); //marges autour de l'element
+				conteneurPrincipal.add(interventionDemand, constraint);
+				
+				conteneurPrincipal.revalidate();
 			}
 		});
+		
+		constraint.gridx = 1;	
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 		
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
@@ -843,7 +864,7 @@ public class Formulaire extends JFrame{
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
+				conteneurPrincipal.add(new FreeTree(conteneurPrincipal, freeTrees2Position), constraint);
 				
 				fenetre.revalidate();
 			}
@@ -1604,7 +1625,7 @@ public class Formulaire extends JFrame{
 				pBarFrame.updateBar(pBarFrame.getProgress() + incrementUnit);
 		
 		    	/*-----------------Partie demande d'intervention-----------------*/
-		    	
+		    	/*
 		    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 		    	
 		    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
@@ -2102,8 +2123,7 @@ public class Formulaire extends JFrame{
 		deleteMonthButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				mainContainer.remove(thisPreventiveVoucherMonthPanel);
+			public void actionPerformed(ActionEvent e) {	
 				
 				preventivesVouchersMonths.remove(comboBoxMoisBP);
 				nbPreventivesVouchersOpened.remove(textFieldNbBPOuverts);
@@ -2112,6 +2132,10 @@ public class Formulaire extends JFrame{
 				
 				ajoutMoisBP.setEnabled(true);
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+				
+				--preventiveVoucherLastMonthPosition;
+				
+				mainContainer.remove(thisPreventiveVoucherMonthPanel);
 				
 				mainContainer.revalidate();
 			}
