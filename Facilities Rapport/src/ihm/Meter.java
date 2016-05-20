@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -36,12 +39,21 @@ public class Meter extends JPanel{
 	
 	private static final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
+	
+	private Collection<JComboBox<String>> typeComboBoxes;
+	private Collection<JComboBox<String>> monthComboBoxes;
+	private Collection<JTextField>        monthConsommations;
+	private ArrayList<String>             monthUnits;
 
 	public Meter(JComponent mainContainer, int yPosition) {
 		
 		super (new GridBagLayout());
 		
 		this.thisYPosition = yPosition;
+		typeComboBoxes      = new LinkedList<JComboBox<String>>();
+		monthComboBoxes     = new LinkedList<JComboBox<String>>();
+		monthConsommations  = new LinkedList<JTextField>();
+		monthUnits          = new ArrayList<String>();
 		
 		int positionCounter = 0;
 		JPanel thisPanel = this;
@@ -63,6 +75,7 @@ public class Meter extends JPanel{
 		comboBoxTypeCompteur = new JComboBox<String>(choixTypeCompteur);
 		comboBoxTypeCompteur.setPreferredSize(new Dimension(100, 20));
 		typeCompteur.setLabelFor(comboBoxTypeCompteur); //attribution de la zone de texte comboBoxTypeCompteur au label typeCompteur
+		typeComboBoxes.add(comboBoxTypeCompteur);
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;	
@@ -85,7 +98,9 @@ public class Meter extends JPanel{
 		
 		ajoutMois.addActionListener(new ActionListener() {
 	    	
-		    public void actionPerformed(ActionEvent arg0) {	
+		    private int counter = 0;
+
+			public void actionPerformed(ActionEvent arg0) {	
 		    	
 		    	if (lastMonthPosition >= startMonthPosition + NUMBER_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(mainContainer, 
@@ -98,7 +113,7 @@ public class Meter extends JPanel{
 					ajoutMois.setEnabled(true);
 				}
 		    		
-		    	JPanel elementPanel = addMois();
+		    	JPanel elementPanel = addMois(counter++);
 		    	
 		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
 		    	constraint.gridx = 0;
@@ -150,7 +165,8 @@ public class Meter extends JPanel{
 		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
-	public JPanel addMois() {
+	@SuppressWarnings("unchecked")
+	public JPanel addMois(int index) {
 		
 		JPanel monthPanel = new JPanel(new GridBagLayout());
 		
@@ -172,6 +188,7 @@ public class Meter extends JPanel{
 	    JComboBox<String> comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
 	    comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
 	    moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
+	    monthComboBoxes.add(comboBoxMoisCompteur);
 		
 	    constraint.gridx = 1;	
 		monthPanel.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
@@ -196,6 +213,7 @@ public class Meter extends JPanel{
 		
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
 		consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
+		monthConsommations.add(textFieldConsommation);
 		
 		constraint.gridx = 1;
 		monthPanel.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
@@ -208,10 +226,26 @@ public class Meter extends JPanel{
 	    JComponent unite;
 		
 		if (comboBoxTypeCompteur.getSelectedIndex() >= 3) {
+			
 			unite = new JComboBox<String>(energieChoice);
+			
+			String lastUnit = ((JComboBox<String>) unite).getSelectedItem().toString();
+			monthUnits.add(lastUnit);
+			
+			((JComboBox<String>) unite).addItemListener(new ItemListener() {
+				
+				@Override
+				public void itemStateChanged(ItemEvent arg0) {
+					
+					monthUnits.remove(index);
+					String lastUnit = ((JComboBox<String>) unite).getSelectedItem().toString();
+					monthUnits.add(lastUnit);
+				}
+			});
 		}
 		else {
 			unite = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
+			monthUnits.add(((JLabel) unite).getText());
 		}
 		
 	    constraint.gridx = 2;
@@ -225,13 +259,29 @@ public class Meter extends JPanel{
 			public void itemStateChanged(ItemEvent arg0) {
 				
 				monthPanel.remove(monthPanel.getComponentCount() - 1);
+				monthUnits.remove(index);
 				
 				JComponent unite;
 				if (comboBoxTypeCompteur.getSelectedIndex() >= 3) {
 					unite = new JComboBox<String>(energieChoice);
+					
+					String lastUnit = ((JComboBox<String>) unite).getSelectedItem().toString();
+					monthUnits.add(lastUnit);
+					
+					((JComboBox<String>) unite).addItemListener(new ItemListener() {
+						
+						@Override
+						public void itemStateChanged(ItemEvent arg0) {
+							
+							monthUnits.remove(index);
+							String lastUnit = ((JComboBox<String>) unite).getSelectedItem().toString();
+							monthUnits.add(lastUnit);
+						}
+					});
 				}
 				else {
 					unite = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
+					monthUnits.add(((JLabel) unite).getText());
 				}
 				
 				constraint.gridx = 2;
@@ -256,5 +306,17 @@ public class Meter extends JPanel{
 		});
 				
 		return monthPanel;
+	}
+
+	public Collection<JComboBox<String>> monthComboBoxes() {
+		return monthComboBoxes;
+	}
+
+	public Collection<JTextField> monthConsommations() {
+		return monthConsommations;
+	}
+
+	public ArrayList<String> monthUnits() {
+		return monthUnits;
 	}
 }
