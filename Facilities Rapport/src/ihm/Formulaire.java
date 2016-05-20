@@ -88,7 +88,7 @@ public class Formulaire extends JFrame{
 
 	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	private static final int NUMBER_METER_ALLOWED = 30;
 	
 	private static final int NUMBER_INTERVENTION_DEMAND_ALLOWED = 100;
 	
@@ -512,7 +512,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					currentTextFieldPourcent.setEnabled(currentDomain.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			});
 			
@@ -577,9 +577,9 @@ public class Formulaire extends JFrame{
 			}
 		});
 	  	
-	  	constraint.gridx = 0;
+	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
-	  	constraint.gridwidth = 1;
+	  	constraint.gridwidth = GridBagConstraints.REMAINDER;
 	  	conteneurPrincipal.add(ajoutArboLibre, constraint); //ajout du bouton ajoutArboLibre
 	
 	    
@@ -732,7 +732,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldNbEtat.setEnabled(etat.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			} );
 			
@@ -804,7 +804,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldPourcentDI.setEnabled(diDomaine.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			});
 			
@@ -864,27 +864,32 @@ public class Formulaire extends JFrame{
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(new FreeTree(conteneurPrincipal, freeTrees2Position), constraint);
 				
-				fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 			}
 		});
 	  	
 	    
-	  	constraint.gridx = 0;
+	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
-	  	constraint.gridwidth = 1;
+	  	constraint.gridwidth = GridBagConstraints.REMAINDER;
 	  	conteneurPrincipal.add(ajoutArboLibre2, constraint); //ajout du bouton ajoutArboLibre
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
 	    
-	  	freeTreesCompteurPosition = ++positionCounter;
+	  	JLabel meterTitle = new JLabel("Compteurs"); //titre de la parte rapport du formulaire
+	  	meterTitle.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
+	  	
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(meterTitle, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	  	new Meter(freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  	freeTreesCompteurPosition = ++positionCounter;
     
-	  	freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
-    
-	  	positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
+	  	positionCounter += NUMBER_METER_ALLOWED;
     
 	  	//bouton d'ajout d'arborescence libre
 	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
@@ -892,11 +897,17 @@ public class Formulaire extends JFrame{
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
-	  			new Meter(++freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  			
+	  			JPanel meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition);
+	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
+	  			
+	  			constraint.gridx = 0;
+				constraint.gridy = ++freeTreesCompteurPosition;
+				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(meter, constraint);
 			
-	  			freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
-			
-	  			fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 	  		}
 	  	});
 	  	
@@ -2141,8 +2152,9 @@ public class Formulaire extends JFrame{
 			}
 		});
 		
+		constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherMonthPosition;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridwidth = 1;
 		thisPreventiveVoucherMonthPanel.add(deleteMonthButton, constraint);
 		
 		return thisPreventiveVoucherMonthPanel;

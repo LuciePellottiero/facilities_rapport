@@ -1,111 +1,95 @@
 package ihm;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Meter {
+public class Meter extends JPanel{
 	
-	private int positionCounter;
-	private int startElementPosition;
-	private int lastElementPosition;
-	private int numberElementAllowed;
 	/**
-	 * Declaration de la comboBox des types de compteur
+	 * 
 	 */
-	private JComboBox<String>   comboBoxTypeCompteur;
-	/**
-	 * Declaration de la comboBox des mois pour les compteur
-	 */
-	private JComboBox<String>   comboBoxMoisCompteur;
-	/**
-	 * Declaration de la comboBox des unites
-	 */
-	private JComboBox<String>   comboBoxUnite;
+	private static final long serialVersionUID = 1L;
 	
-	private final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
+	private int lastMonthPosition;
+	@SuppressWarnings("unused")
+	private int thisYPosition;
+	
+	private JComboBox<String> comboBoxTypeCompteur;
+	
+	private static final int NUMBER_MONTH_ALLOWED = 100;
+	
+	private static final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
-	
-	GridBagConstraints constraint;
-	
-	JComponent mainContainer;
-	
-	Collection<JTextField> elements;
-	Collection<JTextField> elementNumbers;
 
-	public Meter(int startPosition, int nbElementsAllowed, JComponent mainContainer) {
+	public Meter(JComponent mainContainer, int yPosition) {
 		
-		this.positionCounter = startPosition;
-		numberElementAllowed = nbElementsAllowed;
+		super (new GridBagLayout());
 		
-		this.constraint = new GridBagConstraints();
-		this.constraint.gridx = 0;
-		this.constraint.gridy = positionCounter;
-		this.constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-		constraint.fill = GridBagConstraints.BOTH;
+		this.thisYPosition = yPosition;
 		
-		this.mainContainer = mainContainer;
+		int positionCounter = 0;
+		JPanel thisPanel = this;
 		
-		elements = new LinkedList<JTextField>();
-		elementNumbers = new LinkedList<JTextField>();
-		
-		JLabel titreCompteurs = new JLabel("Compteurs"); //titre de la partie compteurs du formulaire
-		titreCompteurs.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
+		GridBagConstraints constraint = new GridBagConstraints();
 		constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-		mainContainer.add(titreCompteurs, constraint); //ajout du titreCompteurs dans conteneurPrincipal
-		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    
+		constraint.weightx = 1;
+		constraint.gridy = positionCounter;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		constraint.fill = GridBagConstraints.BOTH;
+
 	    //type de compteur
 	    JLabel typeCompteur = new JLabel("Type du compteur : "); //creation du label typeCompteur
-		constraint.gridy = ++positionCounter;
-		mainContainer.add(typeCompteur, constraint); //ajout du label 
-		String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //differents choix de type de compteur
+		
+	    constraint.gridy = ++positionCounter;
+		this.add(typeCompteur, constraint); //ajout du label 
+		
+		final String[] choixTypeCompteur = {"eau", "gaz", "électricité", "énergie"}; //differents choix de type de compteur
 		comboBoxTypeCompteur = new JComboBox<String>(choixTypeCompteur);
 		comboBoxTypeCompteur.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		typeCompteur.setLabelFor(comboBoxTypeCompteur); //attribution de la zone de texte comboBoxTypeCompteur au label typeCompteur
-		mainContainer.add(comboBoxTypeCompteur, constraint); //ajout de la zone de texte comboBoxTypeCompteur
 		
-		lastElementPosition = ++positionCounter;
+		constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;	
+		this.add(comboBoxTypeCompteur, constraint); //ajout de la zone de texte comboBoxTypeCompteur
 		
-		addMois();
+		lastMonthPosition = ++positionCounter;
 		
-		this.startElementPosition = positionCounter;
+		final int startMonthPosition = lastMonthPosition;
 
 		//bouton d'ajout de mois
 		
 		JButton ajoutMois = new JButton("+ Ajouter un mois");
-		constraint.gridx = 1;
-		positionCounter += numberElementAllowed;
+		
+		positionCounter += NUMBER_MONTH_ALLOWED;
+		
+		constraint.gridx = 1;	
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(ajoutMois, constraint); //ajout du bouton ajoutCompteur
+		this.add(ajoutMois, constraint); //ajout du bouton ajoutCompteur
 		
 		ajoutMois.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
 		    	
-		    	if (lastElementPosition >= startElementPosition + numberElementAllowed) {
+		    	if (lastMonthPosition >= startMonthPosition + NUMBER_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(mainContainer, 
-		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titreCompteurs.getText(), "Erreur", 
+		    				"Impossible d'ajouter un mois supplémentaire dans la partie \"Compteurs\"", "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMois.setEnabled(false);
 					return;
@@ -114,9 +98,15 @@ public class Meter {
 					ajoutMois.setEnabled(true);
 				}
 		    		
-		    	addMois();
+		    	JPanel elementPanel = addMois();
+		    	
+		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
+		    	constraint.gridx = 0;
+				constraint.gridy = ++lastMonthPosition;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				thisPanel.add(elementPanel, constraint);
 				
-				mainContainer.revalidate();
+				thisPanel.revalidate();
 		    }
 		});
 		
@@ -125,8 +115,9 @@ public class Meter {
 	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-	    mainContainer.add(commentaire, constraint); //ajout du label emailCl
+	    this.add(commentaire, constraint); //ajout du label emailCl
 	    
 	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
 	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
@@ -135,44 +126,135 @@ public class Meter {
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-	    mainContainer.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
+	    this.add(scrollPaneCom, constraint); //ajout de la zone de texte
+	    
+	    // Bouton supprimer
+	    JButton delete = new JButton("- Supprimer");
+	    
+	    delete.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				--thisYPosition;
+				
+				mainContainer.remove(thisPanel);
+				mainContainer.revalidate();
+			}
+		});
+	    
+	    constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
-	public void addMois() {
+	public JPanel addMois() {
 		
+		JPanel monthPanel = new JPanel(new GridBagLayout());
+		
+		int positionCounter = 0;
+		
+		GridBagConstraints constraint = new GridBagConstraints();
+		constraint.gridx = 0;
+		constraint.weightx = 1;
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = 1;
 		constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
+		constraint.fill = GridBagConstraints.BOTH;
 		
 		//mois
 	    JLabel moisCompteur = new JLabel("Mois : ");
-	    constraint.gridx = 0;
-	    constraint.gridy = ++lastElementPosition;
-	    mainContainer.add(moisCompteur, constraint); //ajout du label moisCompteur
-	    comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
+	    
+	    monthPanel.add(moisCompteur, constraint); //ajout du label moisCompteur
+	    
+	    JComboBox<String> comboBoxMoisCompteur = new JComboBox<String>(MONTH_CHOICE);
 	    comboBoxMoisCompteur.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
-		mainContainer.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
+	    moisCompteur.setLabelFor(comboBoxMoisCompteur); //attribution de la moisCompteur au label moisCompteur
 		
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+	    constraint.gridx = 1;	
+		monthPanel.add(comboBoxMoisCompteur, constraint); //ajout de la comboBoxMoisCompteur
+		
+		JButton deleteElementButton = new JButton("X");
+		
+		constraint.gridx = 3;
+		constraint.weightx = 0;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.gridheight = GridBagConstraints.REMAINDER;
+		monthPanel.add(deleteElementButton, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 		
 		//consommation
 	    JLabel consommation = new JLabel("Consommation : ");
+	    
+	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    constraint.gridx = 0;
-	    constraint.gridy = ++lastElementPosition;
+	    constraint.weightx = 1;
+	    constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-		mainContainer.add(consommation, constraint); //ajout du label consommation
+		monthPanel.add(consommation, constraint); //ajout du label consommation
+		
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
 		consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
+		
 		constraint.gridx = 1;
-		mainContainer.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
+		monthPanel.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
 		
 		//unite
-	    String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
-	    comboBoxUnite = new JComboBox<String>(choixUnite);
-	    comboBoxUnite.setPreferredSize(new Dimension(60, 20));
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(comboBoxUnite, constraint); //ajout de la comboBoxUnite
+	    final String[] choixUnite = {"m³", "m³", "kWh", "MWh"}; //differents choix de l'unite
+	   //unite d'energie
+	    final String[] energieChoice = {"kWh", "MWh"}; //differents choix de l'unite
+		
+	    JComponent unite;
+		
+		if (comboBoxTypeCompteur.getSelectedIndex() >= 3) {
+			unite = new JComboBox<String>(energieChoice);
+		}
+		else {
+			unite = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
+		}
+		
+	    constraint.gridx = 2;
+	    constraint.weightx = 0;
+		constraint.gridwidth = 1;
+		monthPanel.add(unite, constraint); //ajout de la comboBoxUnite
+		
+		comboBoxTypeCompteur.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				
+				monthPanel.remove(monthPanel.getComponentCount() - 1);
+				
+				JComponent unite;
+				if (comboBoxTypeCompteur.getSelectedIndex() >= 3) {
+					unite = new JComboBox<String>(energieChoice);
+				}
+				else {
+					unite = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
+				}
+				
+				constraint.gridx = 2;
+				constraint.weightx = 0;
+				constraint.gridwidth = 1;
+				monthPanel.add(unite, constraint); //ajout de la comboBoxUnite
+				
+				monthPanel.revalidate();
+			}
+		});
+		
+		JPanel thisPanel = this;
+		
+		deleteElementButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				thisPanel.remove(monthPanel);
+				
+				thisPanel.revalidate();
+			}
+		});
+				
+		return monthPanel;
 	}
 }
