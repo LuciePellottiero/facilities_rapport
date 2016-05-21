@@ -25,28 +25,31 @@ public class FreeTree extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	@SuppressWarnings("unused")
+	private int thisYPosition;
 	
-	private int positionCounter;
-	private int startElementPosition;
-	private int lastElementPosition;
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
 	
-	GridBagConstraints constraint;
-	
-	Collection<JTextField> elements;
-	Collection<JTextField> elementNumbers;
+	private Collection<JTextField> elements;
+	private Collection<JTextField> elementNumbers;
+	private JTextField titleTextField;
+	private JTextArea textAreaComment;
 
-	public FreeTree(JComponent container){
+	private int lastElementPosition;
+
+	public FreeTree(JComponent container, int yPosition){
 
 		super (new GridBagLayout());
 		
 		JPanel thisPanel = this;
+		this.thisYPosition = yPosition;
 		
 		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
-		this.positionCounter = 0;
+		int positionCounter = 0;
 		
-		this.constraint = new GridBagConstraints();
+		GridBagConstraints constraint = new GridBagConstraints();
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
 		constraint.weightx = 1;
@@ -58,31 +61,29 @@ public class FreeTree extends JPanel{
 	    
 	    constraint.insets = new Insets(20, 0, 3, 0); //marges autour de l'element
 		//titre
-	    JLabel titre = new JLabel("Titre : "); //creation du label titre
+	    JLabel title = new JLabel("Titre : "); //creation du label titre
 	    
 	    constraint.gridx = 0;
 	    constraint.gridy = ++positionCounter;
-		this.add(titre, constraint); //ajout du label titre
+		this.add(title, constraint); //ajout du label titre
 		
-		JTextField textFieldTitre = new JTextField(15); //creation de la zone de texte textFieldTitre2de taille 15
-		titre.setLabelFor(textFieldTitre); //attribution de la zone de texte textFieldTitre au label titre
-		textFieldTitre.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+		titleTextField = new JTextField(15); //creation de la zone de texte textFieldTitre2de taille 15
+		title.setLabelFor(titleTextField); //attribution de la zone de texte textFieldTitre au label titre
+		titleTextField.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
 			@Override
 			public void update(DocumentEvent arg0) {
-				thisPanel.setBorder(BorderFactory.createTitledBorder(textFieldTitre.getText()));
+				thisPanel.setBorder(BorderFactory.createTitledBorder(titleTextField.getText()));
 			}
 		});
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		this.add(textFieldTitre, constraint); //ajout de la zone de texte textFieldTitre
+		this.add(titleTextField, constraint); //ajout de la zone de texte textFieldTitre
 	    
 		lastElementPosition = ++positionCounter;
 		
-		addElement();
-		
-		this.startElementPosition = positionCounter;
+		final int startElementPosition = lastElementPosition;
 
 		//bouton d'ajout d'element
 		
@@ -99,7 +100,7 @@ public class FreeTree extends JPanel{
 		    	
 		    	if (lastElementPosition >= startElementPosition + NUMBER_ELEMENT_ALLOWED) {
 					JOptionPane.showMessageDialog(thisPanel, 
-		    				"Impossible d'ajouter un element supplémentaire dans la partie " + textFieldTitre.getText(), "Erreur", 
+		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titleTextField.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutElement.setEnabled(false);
 					return;
@@ -107,9 +108,15 @@ public class FreeTree extends JPanel{
 				else {
 					ajoutElement.setEnabled(true);
 				}
-		    		
-		    	addElement();
-				
+		    	
+		    	JPanel elementPanel = addElement();
+		    	
+		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
+		    	constraint.gridx = 0;
+				constraint.gridy = ++lastElementPosition;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+		    	thisPanel.add(elementPanel, constraint);
+		    	
 		    	thisPanel.revalidate();
 		    }
 		});
@@ -122,9 +129,9 @@ public class FreeTree extends JPanel{
 		constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    this.add(commentaire, constraint); //ajout du label emailCl
 	    
-	    JTextArea textAreaCommentaire = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneCom = new JScrollPane(textAreaCommentaire);
-	    commentaire.setLabelFor(textAreaCommentaire); //attribution de la zone de texte au label emailCl
+	    textAreaComment = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    JScrollPane scrollPaneCom = new JScrollPane(textAreaComment);
+	    commentaire.setLabelFor(textAreaComment); //attribution de la zone de texte au label emailCl
 
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -138,46 +145,97 @@ public class FreeTree extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				--thisYPosition;
+				
 				container.remove(thisPanel);
 				container.revalidate();
 			}
 		});
 	    
-	    constraint.gridx = 1;
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
 		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
-	public void addElement() {
+	public JPanel addElement() {
 		
-		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+		JPanel elementPanel = new JPanel();
+		
+		int positionCounter = 0;
+		
+		GridBagConstraints constraint = new GridBagConstraints();
+		constraint.gridx = 0;
+		constraint.weightx = 1;
+		constraint.gridy = positionCounter;
+		constraint.gridwidth = 1;
+		constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
+		constraint.fill = GridBagConstraints.BOTH;
     	
 		//element
 	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
-		constraint.gridx = 0;
-		constraint.gridy = ++lastElementPosition;
-		constraint.gridwidth = 1;
-		this.add(element, constraint); //ajout du label nbBPOuverts
+		
+		elementPanel.add(element, constraint); //ajout du label nbBPOuverts
 		
 	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
+	    elements.add(textFieldElement);
+	    
 	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
 		constraint.gridx = 1;
-		constraint.gridwidth = 1;
-		this.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-		elements.add(textFieldElement);
+		elementPanel.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts	
 		
 		//nombre
 	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
-		constraint.gridx = 2;
-		constraint.gridwidth = GridBagConstraints.RELATIVE;
-		this.add(nombre, constraint); //ajout du label dateDebut
+		
+	    constraint.gridx = 2;
+		elementPanel.add(nombre, constraint); //ajout du label dateDebut
 		
 	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
-		constraint.gridx = 3;
+	    elementNumbers.add(textFieldNombre);
+	    
+	    constraint.gridx = 3;
+		constraint.gridwidth = 2;
+		elementPanel.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
+			
+		JPanel thisPanel = this;
+		
+		JButton deleteElementButton = new JButton("X");
+		deleteElementButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				thisPanel.remove(elementPanel);
+				
+				elements.remove(textFieldElement);
+				elementNumbers.remove(textFieldNombre);
+				
+				thisPanel.revalidate();
+			}
+		});
+		
+		constraint.gridx = 4;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		this.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
-		elementNumbers.add(textFieldNombre);
+		elementPanel.add(deleteElementButton, constraint); //ajout du bouton supprimer dans conteneurPrincipal
+		
+		return elementPanel;
+	}
+	
+	public Collection<JTextField> elements() {
+		return elements;
+	}
+	
+	public Collection<JTextField> elementNumbers() {
+		return elementNumbers;
+	}
+	
+	public JTextField titleTextField() {
+		return titleTextField;
+	}
+	
+	public JTextArea textAreaComment() {
+		return textAreaComment;
 	}
 }

@@ -2,6 +2,7 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -35,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
@@ -54,31 +58,6 @@ public class Formulaire extends JFrame{
 	 * Truc utilise par JFrame
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * Declaration du textField telephone initialise dans le try
-	 */
-	private JFormattedTextField textFieldTelRedac; 	  
-	/**
-	 * Declaration du textField code postal initialise dans le try
-	 */
-	private JFormattedTextField textFieldCodePostal;  
-	/**
-	 * Declaration du textField telephone client initialise dans le try
-	 */
-	private JFormattedTextField textFieldTelCl;
-	/**
-	 * Declaration du textField date debut initialise dans le try
-	 */
-	private JFormattedTextField textFieldDateDebut;
-	/**
-	 * Declaration du textField date fin initialise dans le try
-	 */
-	private JFormattedTextField textFieldDateFin;
-	/**
-	 * Declaration de la comboBox des durée de rapport
-	 */
-	private JComboBox<String>   comboBoxRapport;
 
 	private JButton ajoutMoisBP;
 	
@@ -86,10 +65,6 @@ public class Formulaire extends JFrame{
 	 * Declaration de la Collection<JFormattedTextField> des Pourcents date fin remplis dans le try
 	 */
 	private Collection<JFormattedTextField> textFieldPourcentsBP;
-	/**
-	 * Declaration de la comboBox des mois pour les DI
-	 */
-	private JComboBox<String>   comboBoxMoisDI;
 	/**
 	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
 	 */
@@ -114,7 +89,9 @@ public class Formulaire extends JFrame{
 
 	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	private static final int NUMBER_METER_ALLOWED = 30;
+	
+	private static final int NUMBER_INTERVENTION_DEMAND_ALLOWED = 100;
 	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
@@ -127,6 +104,8 @@ public class Formulaire extends JFrame{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
 		
 		JPanel fenetre = new JPanel(); //creation de la fenetre principale
+		
+		Formulaire mainFrame = this;
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
 		this.setSize(700, 600); //taille fenetre
@@ -185,16 +164,21 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(tel, constraint); //ajout du label tel
+	    
+	    JFormattedTextField textFieldTelRedac = null;
 	    try{
 			MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
 	    tel.setLabelFor(textFieldTelRedac); //attribution de la zone de texte au label tel
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelRedac, constraint); //ajout de la zone de texte tel
+		
+		final JFormattedTextField finalTextFieldTelRedac = textFieldTelRedac;
 	   
 	    //email
 	    JLabel email = new JLabel("Email : "); //creation du label email
@@ -274,16 +258,22 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(codePostal, constraint); //ajout du label codePostal
+	    
+	    JFormattedTextField textFieldCodePostal = null;
 	    try{
 			MaskFormatter maskCodePostal  = new MaskFormatter("## ###"); //masque pour le format du code postal
 			textFieldCodePostal = new JFormattedTextField(maskCodePostal); //initialisation de la zone de texte codePostal formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    codePostal.setLabelFor(textFieldCodePostal); //attribution de la zone de texte au label codePostal
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldCodePostal, constraint); //ajout de la zone de texte codePostal
+		
+		final JFormattedTextField finalTtextFieldCodePostal = textFieldCodePostal;
 		
 		//ville
 		JLabel ville = new JLabel("Ville : "); //creation du label ville
@@ -315,16 +305,22 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(telCl, constraint); //ajout du label telCl
+	   
+	    JFormattedTextField textFieldTelCl = null;
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    telCl.setLabelFor(textFieldTelCl); //attribution de la zone de texte au label telCl
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelCl, constraint); //ajout de la zone de texte telCl
+		
+		final JFormattedTextField finalTextFieldTelCl = textFieldTelCl;
 	   
 	    //email client
 	    JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
@@ -349,14 +345,18 @@ public class Formulaire extends JFrame{
 	    conteneurPrincipal.add(titreRapport, constraint); //ajout du titreRapport dans conteneurPrincipal
 		
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//rapport d'activite
+		
+	    //rapport d'activite
 	    JLabel rapportActivite = new JLabel("Rapport d'activité : "); ////creation du label rapportActivite
+	    
 	    constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 		conteneurPrincipal.add(rapportActivite, constraint); //ajout du label rapportActivite
+		
 		String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
-		comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
+		JComboBox<String> comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
+		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		rapportActivite.setLabelFor(comboBoxRapport); //attribution de la comboBox comboBoxRapport au label rapportActivite
@@ -364,37 +364,51 @@ public class Formulaire extends JFrame{
 	    
 	    //date debut
 	    JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
-		constraint.gridx = 0;
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateDebut, constraint); //ajout du label dateDebut
+	    
+	    JFormattedTextField textFieldDateDebut = null;
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateDebut = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateDebut formattee par le masque maskDate
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    dateDebut.setLabelFor(textFieldDateDebut); //attribution de la zone de texte textFieldDateDebut au label dateDebut
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldDateDebut, constraint); //ajout de la zone de texte textFieldDateDebut
+		JFormattedTextField finalTextFieldDateDebut = textFieldDateDebut;
 		
 		//date fin
 	    JLabel dateFin = new JLabel("Date de fin : "); //creation du label dateFin
-		constraint.gridx = 0;
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 	    conteneurPrincipal.add(dateFin, constraint); //ajout du label dateFin
+	    
+	    JFormattedTextField textFieldDateFin = null;
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateFin = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateFin formattee par le masque maskDate
-	    }catch(ParseException e){
+	    }
+	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
+	    
 	    dateFin.setLabelFor(textFieldDateFin); //attribution de la zone de texte textFieldDateFin au label dateFin
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldDateFin, constraint); //ajout de la zone de texte textFieldDateFin
+		JFormattedTextField finalTextFieldDateFin = textFieldDateFin;
 		
 		/*----------------------------------------------formulaire bons preventifs----------------------------------------------------------*/
 		
@@ -416,8 +430,6 @@ public class Formulaire extends JFrame{
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
 	    ajoutMoisBP = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
-	    ajoutMoisBP.setEnabled(false);
-	    ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
@@ -436,9 +448,15 @@ public class Formulaire extends JFrame{
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 				
-				createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE, 
+				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
+				
+				preventiveVoucherMonth.setBorder(BorderFactory.createTitledBorder("Bon préventif"));
+				constraint.gridy = ++preventiveVoucherLastMonthPosition;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
+				conteneurPrincipal.add(preventiveVoucherMonth, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
@@ -446,15 +464,11 @@ public class Formulaire extends JFrame{
 				ajoutMoisBP.setEnabled(false);
 			}
 		});	 
-		
-		// Creation du mois
-	    createPreventiveVoucherMonth(constraint, conteneurPrincipal, MONTH_CHOICE,
-	    		preventivesVouchersMonths, nbPreventivesVouchersOpened, 
-	    		nbPreventivesVouchersClosed, commentsPreventivesVouchers);
 	    
 	    constraint.gridx = 1;
 		constraint.gridy = positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
@@ -499,7 +513,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					currentTextFieldPourcent.setEnabled(currentDomain.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			});
 			
@@ -543,6 +557,8 @@ public class Formulaire extends JFrame{
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
+	    Collection<FreeTree> freeTrees1 = new LinkedList<FreeTree>();
+	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
 	  	ajoutArboLibre.addActionListener(new ActionListener() {
@@ -554,15 +570,17 @@ public class Formulaire extends JFrame{
 				constraint.gridy = ++freeTrees1Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
-				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
+			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position);
+			    freeTrees1.add(arboLibre);
+				conteneurPrincipal.add(arboLibre, constraint);
 				
-				fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 			}
 		});
 	  	
-	  	constraint.gridx = 0;
+	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
-	  	constraint.gridwidth = 1;
+	  	constraint.gridwidth = GridBagConstraints.REMAINDER;
 	  	conteneurPrincipal.add(ajoutArboLibre, constraint); //ajout du bouton ajoutArboLibre
 	
 	    
@@ -575,75 +593,98 @@ public class Formulaire extends JFrame{
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//mois
-	    JLabel moisDI = new JLabel("Mois : ");
-	    constraint.gridy = ++positionCounter;
-		conteneurPrincipal.add(moisDI, constraint); //ajout du label
-		comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE);
-		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20));
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		moisDI.setLabelFor(comboBoxMoisDI); //attribution de la zone de texte au label adr
-		conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte adr
-		
-	    //nombre d'interventions
-	    JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label dateDebut
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-	    conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
-	    JTextField textFieldNbIntervention = new JTextField(2); //initialisation de la zone de texte textFieldNbBPOuverts
-	    nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
-		
 		//bouton d'ajout de mois pour les BP
 		positionMoisDI = ++positionCounter;
+		positionCounter += NUMBER_INTERVENTION_DEMAND_ALLOWED;
+		
+		Collection<JComboBox<String>> interventionMonths = new LinkedList<JComboBox<String>>();
+		Collection<JTextField> interventionNumbers = new LinkedList<JTextField>();
 				
 		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
-		constraint.gridx = 1;
-		positionCounter = ++positionCounter + 100;
-		constraint.gridy = positionCounter;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
 			public void actionPerformed(ActionEvent arg0) {	
-				constraint.insets = new Insets(7, 7, 3, 7); //marges autour de l'element
-						
+				
+				JPanel interventionDemand = new JPanel(new GridBagLayout());
+				interventionDemand.setBorder(BorderFactory.createTitledBorder("Demande d'intervention"));
+				
+				int currentPositionCounter = 0;
+				
+				GridBagConstraints interventionDemandConstraint = new GridBagConstraints();
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = currentPositionCounter;
+				interventionDemandConstraint.weightx = 1;
+				interventionDemandConstraint.fill = GridBagConstraints.BOTH;
+				
 				//mois
 				JLabel moisDI = new JLabel("Mois : ");
-				constraint.gridx = 0;
-				constraint.gridy = ++positionMoisDI;
-				conteneurPrincipal.add(moisDI, constraint); //ajout du label moisBP
-				String[] choixMois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"}; //liste differents choix de la duree du rapport d'activite
-				comboBoxMoisDI = new JComboBox<String>(choixMois); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+				
+				interventionDemandConstraint.insets = new Insets(3, 7, 0, 7); //marges autour de l'element
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemand.add(moisDI, interventionDemandConstraint); //ajout du label moisBP
+				
+				JComboBox<String> comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-				constraint.gridx = 1;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				moisDI.setLabelFor(comboBoxMoisDI); //attribution de la comboBox comboBoxMoisBP au label moisBP
-				conteneurPrincipal.add(comboBoxMoisDI, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
-						
-				constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+				moisDI.setLabelFor(comboBoxMoisDI); //attribution du label moisBP à la comboBox comboBoxMoisBP
+				interventionMonths.add(comboBoxMoisDI);
+				
+				interventionDemandConstraint.gridx = 1;
+				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+				interventionDemand.add(comboBoxMoisDI, interventionDemandConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 						
 				//nombre d'interventions
 				JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
-				constraint.gridx = 0;
-				constraint.gridy = ++positionMoisDI;
-				constraint.gridwidth = 1;
-				conteneurPrincipal.add(nbIntervention, constraint); //ajout du label nbBPOuverts
+				
+				interventionDemandConstraint.insets = new Insets(0, 7, 0, 7); //marges autour de l'element
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemandConstraint.gridwidth = 1;
+				interventionDemand.add(nbIntervention, interventionDemandConstraint); //ajout du label nbBPOuverts
+				
 				JTextField textFieldNbIntervention = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-				constraint.gridx = 1;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(textFieldNbIntervention, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+				interventionNumbers.add(textFieldNbIntervention);
+				
+				interventionDemandConstraint.gridx = 1;
+				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+				interventionDemand.add(textFieldNbIntervention, interventionDemandConstraint); //ajout de la zone de texte textFieldNbBPOuverts
+				
+				JButton deleteInterventionDemand = new JButton("- Supprimer mois");
+				
+				deleteInterventionDemand.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						interventionMonths.remove(comboBoxMoisDI);
+						interventionNumbers.remove(textFieldNbIntervention);
 						
-				fenetre.revalidate();
+						--positionMoisDI;
+						
+						conteneurPrincipal.remove(interventionDemand);
+						conteneurPrincipal.revalidate();
+					}
+				});
+				
+				interventionDemandConstraint.gridx = 0;
+				interventionDemandConstraint.gridy = ++currentPositionCounter;
+				interventionDemandConstraint.gridwidth = 1;
+				interventionDemand.add(deleteInterventionDemand, interventionDemandConstraint);
+				
+				constraint.gridx = 0;
+				constraint.gridy = ++positionMoisDI;
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				constraint.insets = new Insets(7, 7, 0, 7); //marges autour de l'element
+				conteneurPrincipal.add(interventionDemand, constraint);
+				
+				conteneurPrincipal.revalidate();
 			}
 		});
+		
+		constraint.gridx = 1;	
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 		
 		//commentaire DI
 	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
@@ -692,7 +733,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldNbEtat.setEnabled(etat.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			} );
 			
@@ -764,7 +805,7 @@ public class Formulaire extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldPourcentDI.setEnabled(diDomaine.isSelected());
-					fenetre.revalidate();
+					conteneurPrincipal.revalidate();
 				}
 			});
 			
@@ -824,27 +865,32 @@ public class Formulaire extends JFrame{
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
-				conteneurPrincipal.add(new FreeTree(conteneurPrincipal), constraint);
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(new FreeTree(conteneurPrincipal, freeTrees2Position), constraint);
 				
-				fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 			}
 		});
 	  	
 	    
-	  	constraint.gridx = 0;
+	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
-	  	constraint.gridwidth = 1;
+	  	constraint.gridwidth = GridBagConstraints.REMAINDER;
 	  	conteneurPrincipal.add(ajoutArboLibre2, constraint); //ajout du bouton ajoutArboLibre
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
 	    
-	  	freeTreesCompteurPosition = ++positionCounter;
+	  	JLabel meterTitle = new JLabel("Compteurs"); //titre de la parte rapport du formulaire
+	  	meterTitle.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
+	  	
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+	    conteneurPrincipal.add(meterTitle, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	  	new Meter(freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  	freeTreesCompteurPosition = ++positionCounter;
     
-	  	freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
-    
-	  	positionCounter += NUMBER_FREE_TREE_ALLOWED * NUMBER_ELEMENT_ALLOWED;
+	  	positionCounter += NUMBER_METER_ALLOWED;
     
 	  	//bouton d'ajout d'arborescence libre
 	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
@@ -852,16 +898,22 @@ public class Formulaire extends JFrame{
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
-	  			new Meter(++freeTreesCompteurPosition, NUMBER_ELEMENT_ALLOWED, conteneurPrincipal);
+	  			
+	  			JPanel meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition);
+	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
+	  			
+	  			constraint.gridx = 0;
+				constraint.gridy = ++freeTreesCompteurPosition;
+				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
+				constraint.gridwidth = GridBagConstraints.REMAINDER;
+				conteneurPrincipal.add(meter, constraint);
 			
-	  			freeTreesCompteurPosition += NUMBER_ELEMENT_ALLOWED + 6;
-			
-	  			fenetre.revalidate();
+				conteneurPrincipal.revalidate();
 	  		}
 	  	});
 	  	
     
-	  	constraint.gridx = 0;
+	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
 	  	constraint.gridwidth = 1;
 	  	conteneurPrincipal.add(ajoutCompteur, constraint); //ajout du bouton ajoutCompteur
@@ -870,8 +922,9 @@ public class Formulaire extends JFrame{
 		
 		JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
-		positionCounter = positionCounter + 100;
-		constraint.gridy = positionCounter;
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    constraint.insets = new Insets(40, 0, 0, 0); //marges autour de l'element
 	    conteneurPrincipal.add(valideForm, constraint); //ajout du bouton de validation
@@ -885,7 +938,7 @@ public class Formulaire extends JFrame{
 		    	System.out.println(titreRedacteur.getText()); 						//affichage console du titre de la partie du formulare 	
 		    	System.out.println(nom.getText() + textFieldNom.getText()); 		//affichage console des données nom
 		    	System.out.println(adr.getText() + textAreaAdr.getText()); 			//affichage console des données adr
-		    	System.out.println(tel.getText() + textFieldTelRedac.getText()); 	//affichage console des données tel
+		    	//System.out.println(tel.getText() + textFieldTelRedac.getText()); 	//affichage console des données tel
 		    	System.out.println(email.getText() + textFieldEmail.getText()); 	//affichage console des données email
 		    	System.out.println(nomCA.getText() + textFieldNomCA.getText());		//affichage console des données nomCA
 		    	//partie client
@@ -893,15 +946,15 @@ public class Formulaire extends JFrame{
 		    	System.out.println(nomSite.getText() + textFieldNomSite.getText()); 		//affichage console des données nomSite
 		    	System.out.println(code.getText() + textFieldCode.getText()); 				//affichage console des données code
 		    	System.out.println(adrCl.getText() + textAreaAdrCl.getText()); 				//affichage console des données adrCl
-		    	System.out.println(codePostal.getText() + textFieldCodePostal.getText()); 	//affichage console des données codePostal
+		    	System.out.println(codePostal.getText() + finalTtextFieldCodePostal.getText()); 	//affichage console des données codePostal
 		    	System.out.println(ville.getText() + textFieldVille.getText()); 			//affichage console des données ville
-		    	System.out.println(telCl.getText() + textFieldTelCl.getText()); 			//affichage console des données telCl
+		    	System.out.println(telCl.getText() + finalTextFieldTelCl.getText()); 			//affichage console des données telCl
 		    	System.out.println(emailCl.getText() + textFieldEmailCl.getText()); 		//affichage console des données emailCl  
 		    	//partie rapport
 		    	System.out.println(titreRapport.getText()); 													//affichage console du titre de la partie du formulaire
 		    	System.out.println(rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//affichage console des données duree rapport d'activite
-		    	System.out.println(dateDebut.getText() + textFieldDateDebut.getText()); 						//affichage console des données code
-		    	System.out.println(dateFin.getText() + textFieldDateFin.getText()); 							//affichage console des données adr
+		    	System.out.println(dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//affichage console des données code
+		    	System.out.println(dateFin.getText() + finalTextFieldDateFin.getText()); 							//affichage console des données adr
 		    	//partie bons preventifs
 		    	System.out.println(titreBP.getText()); 												//affichage console du titre de la partie du formulaire
 		    	/*System.out.println(moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString()); //affichage console des données mois
@@ -954,7 +1007,7 @@ public class Formulaire extends JFrame{
 		    	fw.println (titreRedacteur.getText()); 					 	//ecriture du titre de la partie du formulare 	
 		    	fw.println (nom.getText() + textFieldNom.getText()); 	 	//ecriture des donnees nom
 		    	fw.println (adr.getText() + textAreaAdr.getText()); 	 	//ecriture des donnees adr
-		    	fw.println (tel.getText() + textFieldTelRedac.getText()); 	//ecriture des donnees tel
+		    	fw.println (tel.getText() + finalTextFieldTelRedac.getText()); 	//ecriture des donnees tel
 		    	fw.println (email.getText() + textFieldEmail.getText()); 	//ecriture des donnees email
 		    	fw.println (nomCA.getText() + textFieldNomCA.getText()); 	//ecriture des donnees nomCA
 		    	//partie client
@@ -962,15 +1015,15 @@ public class Formulaire extends JFrame{
 			    fw.println (nomSite.getText() + textFieldNomSite.getText());		//ecriture des données nomSite
 			    fw.println (code.getText() + textFieldCode.getText()); 				//ecriture des données code
 			    fw.println (adrCl.getText() + textAreaAdrCl.getText()); 		    //ecriture des données adrCl
-			    fw.println (codePostal.getText() + textFieldCodePostal.getText());  //ecriture des données codePostal
+			    fw.println (codePostal.getText() + finalTtextFieldCodePostal.getText());  //ecriture des données codePostal
 			    fw.println (ville.getText() + textFieldVille.getText()); 			//ecriture des données ville
-			    fw.println (telCl.getText() + textFieldTelCl.getText()); 			//ecriture des données telCl
+			    fw.println (telCl.getText() + finalTextFieldTelCl.getText()); 			//ecriture des données telCl
 			    fw.println (emailCl.getText() + textFieldEmailCl.getText()); 		//ecriture des données emailCl
 		    	//partie rapport
 			    fw.println (titreRapport.getText()); 													//ecriture du titre de la partie du formulaire
 		    	fw.println (rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//ecriture console des données rpportActivite
-		    	fw.println (dateDebut.getText() + textFieldDateDebut.getText()); 						//ecriture console des données codeDebut
-		    	fw.println (dateFin.getText() + textFieldDateFin.getText()); 							//ecriture console des données dateFin
+		    	fw.println (dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//ecriture console des données codeDebut
+		    	fw.println (dateFin.getText() + finalTextFieldDateFin.getText()); 							//ecriture console des données dateFin
 		    	//partie bons preventifs
 			    fw.println (titreBP.getText()); 												//ecriture du titre de la partie du formulaire
 		    	/*fw.println (moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString());	//ecriture des données moisBP
@@ -1012,707 +1065,980 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Ecriture du PDF-----------------*/
 		    	
-		    	// On prepare les donnees
-		    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
+		    	ProgressBarFrame pBarFrame = new ProgressBarFrame();
 		    	
-				/*-----------------Partie Redacteur-----------------*/
-		    	
-		    	/*IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
-				
-		    	if (textFieldNom.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		writerPart.addString(textFieldNom.getText(), nom.getText());   // nom
-		    	}
-		    	
-		    	if (textAreaAdr.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
-		    	}
-		    	
-		    	if (textFieldTelRedac.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		writerPart.addString(textFieldTelRedac.getText(), tel.getText());   // telephone 
-		    	}
-		    	
-		    	if (textFieldEmail.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		writerPart.addString(textFieldEmail.getText(), email.getText()); // email
-		    	}
-		    	
-		    	if (textFieldNomCA.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		writerPart.addString(textFieldNomCA.getText(),    nomCA.getText()); // nom du chage d'affaire
-		    	}
-		    	
-		    	datas.add(writerPart);
-		    	
-		    	/*-----------------Partie client-----------------*/
-		    	
-		    	/*IDataHandler clientPart = new DefaultDataHandler(titreClient.getText());
-		    	
-		    	if (textFieldNomSite.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldNomSite.getText(), nomSite.getText());    // nom
-		    	}
-		    	
-		    	if (textFieldCode.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldCode.getText(), code.getText());       // code
-		    	}
-		    	
-		    	if (textAreaAdrCl.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + adrCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
-		    	}
-		    	
-		    	if (textFieldCodePostal.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldCodePostal.getText(), codePostal.getText()); // code postal
-		    	}
-		    	
-		    	if (textFieldVille.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldVille.getText(),      ville.getText());      // ville
-		    	}
-		    	
-		    	if (textFieldTelCl.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldTelCl.getText(),      telCl.getText());      // telephone client
-		    	}
-		    	
-		    	if (textFieldEmailCl.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		clientPart.addString(textFieldEmailCl.getText(),    emailCl.getText());    // email client
-		    	}
-		    	
-		    	datas.add(clientPart);
-		    	
-		    	/*-----------------Partie Rapport-----------------*/
-		    	
-		    	/*IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
-				
-				reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
-				
-		    	if (textFieldDateDebut.getText().equals("  /  /    ")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		reportPart.addString(textFieldDateDebut.getText(), dateDebut.getText());
-		    	}
-		    	
-		    	if (textFieldDateFin.getText().equals("  /  /    ")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		reportPart.addString(textFieldDateFin.getText(), dateFin.getText());
-		    	}
-		    	
-		    	datas.add(reportPart);
+		    	SwingWorker<Void, Integer> pdfCreation = new SwingWorker<Void, Integer>() {
+										
+					@Override
+					protected Void doInBackground() throws Exception {
+						
+						mainFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				    	mainFrame.setEnabled(false);
+				    	
+				    	final int incrementUnit = 5;
+				    	
+				    	// On prepare les donnees
+				    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
+				    	
+						/*-----------------Partie Redacteur-----------------*/
+				    	
+				    	IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
+						
+				    	if (textFieldNom.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textFieldNom.getText(), nom.getText());   // nom
+				    	}
+				    	
+				    	if (textAreaAdr.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
+				    	}
+				    	
+				    	if (finalTextFieldTelRedac.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(finalTextFieldTelRedac.getText(), tel.getText());   // telephone 
+				    	}
+				    	
+				    	if (textFieldEmail.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textFieldEmail.getText(), email.getText()); // email
+				    	}
+				    	
+				    	if (textFieldNomCA.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textFieldNomCA.getText(),    nomCA.getText()); // nom du chage d'affaire
+				    	}
+				    	
+				    	datas.add(writerPart);
+				    	
+				    	publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+				    	/*-----------------Partie client-----------------*/
+				    	
+				    	IDataHandler clientPart = new DefaultDataHandler(titreClient.getText());
+				    	
+				    	if (textFieldNomSite.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nomSite.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(textFieldNomSite.getText(), nomSite.getText());    // nom
+				    	}
+				    	
+				    	if (textFieldCode.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + code.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(textFieldCode.getText(), code.getText());       // code
+				    	}
+				    	
+				    	if (textAreaAdrCl.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + adrCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
+				    	}
+				    	
+				    	if (finalTtextFieldCodePostal.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(finalTtextFieldCodePostal.getText(), codePostal.getText()); // code postal
+				    	}
+				    	
+				    	if (textFieldVille.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + ville.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(textFieldVille.getText(),      ville.getText());      // ville
+				    	}
+				    	
+				    	if (finalTextFieldTelCl.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(finalTextFieldTelCl.getText(), telCl.getText());      // telephone client
+				    	}
+				    	
+				    	if (textFieldEmailCl.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + emailCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(textFieldEmailCl.getText(),    emailCl.getText());    // email client
+				    	}
+				    	
+				    	datas.add(clientPart);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+				    	/*-----------------Partie Rapport-----------------*/
+				    	
+				    	IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
+						
+						reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
+						
+				    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
+				    	}
+				    	
+				    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
+				    	}
+				    	
+				    	datas.add(reportPart);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
 
-		    	/*-----------------Partie Bons preventifs-----------------*/
-		    	
-		    	IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
-		    	
-		    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter   = preventivesVouchersMonths.iterator();
-		    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter = nbPreventivesVouchersOpened.iterator();
-		    	Iterator<JTextField>        nbPreventivesVouchersClosedIter = nbPreventivesVouchersClosed.iterator();
-		    	Iterator<JTextArea>         commentsPreventivesVouchersIter = commentsPreventivesVouchers.iterator();
-		    	
-		    	int counter = 1;
-		    	while (preventivesVouchersMonthsIter.hasNext()) {
-		    		
-		    		JComboBox<String> comboBoxMoisBP        = preventivesVouchersMonthsIter.next();
-		    		JTextField        textFieldNbBPOuverts  = nbPreventivesVouchersOpenedIter.next();
-		    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
-		    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
- 
-					if (counter <= 1) {
-		    		
-			    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
-						
-				    	if (textFieldNbBPOuverts.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else {
-							preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+				    	/*-----------------Partie Bons preventifs-----------------*/
+				    	
+				    	IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
+				    	
+				    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter   = preventivesVouchersMonths.iterator();
+				    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter = nbPreventivesVouchersOpened.iterator();
+				    	Iterator<JTextField>        nbPreventivesVouchersClosedIter = nbPreventivesVouchersClosed.iterator();
+				    	Iterator<JTextArea>         commentsPreventivesVouchersIter = commentsPreventivesVouchers.iterator();
+				    	
+				    	int counter = 1;
+				    	
+				    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
+				    	IChartGenerator chartGenerator = new DefaultChartGenerator();
+				    	
+				    	while (preventivesVouchersMonthsIter.hasNext()) {
+				    		
+				    		JComboBox<String> comboBoxMoisBP        = preventivesVouchersMonthsIter.next();
+				    		JTextField        textFieldNbBPOuverts  = nbPreventivesVouchersOpenedIter.next();
+				    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
+				    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
+		 
+							if (counter <= 1) {
+				    		
+					    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
+								
+						    	if (textFieldNbBPOuverts.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else {
+									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+									
+									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", comboBoxMoisBP.getSelectedItem().toString());
+						    	}
+						    	
+						    	if (textFieldNbBPFermes.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else {
+						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
+						    	}
+						    	
+						    	if (!textAreaCommentaireBP.getText().equals("")) {
+									preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+									stopPdfCreation(pBarFrame);
+								}
+						    	
+						    	++counter;
+							}
+							else if (!textFieldNbBPOuverts.getText().equals("") ||
+									!textAreaCommentaireBP.getText().equals("") ||
+									!textFieldNbBPFermes.getText().equals("")) {
+								
+								preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
+								
+						    	if (textFieldNbBPOuverts.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				" du mois numéro " + counter + " doit être un nombre"
+						    						+ " (Les bons préventifs completement vides seront ignorés)", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else {
+									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
+											comboBoxMoisBP.getSelectedItem().toString());
+						    	}
+						    	
+						    	if (textFieldNbBPFermes.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
+						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+						    	else {
+						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", 
+						    				comboBoxMoisBP.getSelectedItem().toString());
+						    	}
+						    	
+						    	if (!textAreaCommentaireBP.getText().equals("")) {
+									preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+									stopPdfCreation(pBarFrame);
+								}
+						    	
+						    	++counter;
+							}
 				    	}
 				    	
-				    	if (textFieldNbBPFermes.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else {
-				    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
-				    	}
-				    	
-				    	if (!textAreaCommentaireBP.getText().equals("")) {
-							preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
-						}
-				    	
-				    	++counter;
-					}
-					else if (!textFieldNbBPOuverts.getText().equals("") ||
-							!textAreaCommentaireBP.getText().equals("") ||
-							!textFieldNbBPFermes.getText().equals("")) {
-						preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
-						
-				    	if (textFieldNbBPOuverts.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
-				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
-				    				" du mois numéro " + counter + " doit être un nombre"
-				    						+ " (Les bons préventifs completement vides seront ignorés)", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else {
-							preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
-				    	}
-				    	
-				    	if (textFieldNbBPFermes.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
-				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
-				    				" du mois numéro " + counter + " doit être remplis avec un nombre "
-				    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-				    	}
-				    	else {
-				    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
-				    	}
-				    	
-				    	if (!textAreaCommentaireBP.getText().equals("")) {
-							preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
-						}
-				    	
-				    	++counter;
-					}
-		    	}
-		    	
-		    	datas.add(preventivesVouchers);
-		    
-		    	/*-----------------Partie Bons preventifs par domaines-----------------*/
-		    	
-		    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
-		    	
-		    	// On obtient l'iterator des domaines
-		    	Iterator<JCheckBox> domainsIter = domainesBP.iterator();
-		    	
-		    	// On obtient l'iterator des pourcentages correspondant
-		    	Iterator<JFormattedTextField> pourcentsIter = textFieldPourcentsBP.iterator();
-		    	
-		    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
-		    	DefaultPieDataset      pieChartDatas = new DefaultPieDataset();
-		    	
-		    	Map<String, Double> pourcentages = new HashMap<String, Double>();
-		    	Double total = new Double (0f);
-		    	
-		    	boolean continueAbove100 = false;
-		    	
-		    	// On itere sur les domaines
-		    	while (domainsIter.hasNext()) {
-		    		// On obtient le JCheckBox courrant
-		    		JCheckBox currentDomain = domainsIter.next();
-		    		
-		    		// On obtient le JFormattedTextField courant correspondant
-		    		JFormattedTextField currentPourcent = pourcentsIter.next();
-		    		// Si la case est coché 
-		    		if (currentDomain.isSelected()) {
-		    			
-		    			// Mais le pourcentage n'est pas renseigné
-		    			if (currentPourcent.getText().equals("  .  %")) {
-			    			JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
-				    				" doit être remplis si la case a été cochée", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-		    			}
-		    			else {		    				
-		    				domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
-		    				
-		    				double currentPourcentage = 0;
-		    				
-		    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
-		    				
-		    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
+				    	//if (!preventivesVouchers.isEmpty()) {
+					    	try {
+								JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
+										"Mois", "Nombre de bons préventifs", barChartDatas, true);
+								
+								preventivesVouchers.addJFreeChart(barChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
+										+ titreBP.getText() + " : \n"
+										+ e.getMessage(), "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				try {
-		    					currentPourcentage = Double.parseDouble(pourcentageNumber);
-		    				}
-		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
-										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				barChartDatas.addValue(currentPourcentage, "Pourcentage d'avancement", currentDomain.getText());
-		    				
-		    				total += currentPourcentage;
-		    				
-		    				if (total > 100 && !continueAbove100) {
-		    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
-		    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont supérieurs"
-		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
-		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+							}
+				    	//}
+				    	
+				    	datas.add(preventivesVouchers);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				    
+				    	/*-----------------Partie Bons preventifs par domaines-----------------*/
+				    	
+				    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
+				    	
+				    	// On obtient l'iterator des domaines
+				    	Iterator<JCheckBox> domainsIter = domainesBP.iterator();
+				    	
+				    	// On obtient l'iterator des pourcentages correspondant
+				    	Iterator<JFormattedTextField> pourcentsIter = textFieldPourcentsBP.iterator();
+				    	
+				    	barChartDatas = new DefaultCategoryDataset();
+				    	DefaultPieDataset      pieChartDatas = new DefaultPieDataset();
+				    	
+				    	Map<String, Double> pourcentages = new HashMap<String, Double>();
+				    	Double total = new Double (0f);
+				    	
+				    	boolean continueAbove100 = false;
+				    	
+				    	// On itere sur les domaines
+				    	while (domainsIter.hasNext()) {
+				    		// On obtient le JCheckBox courrant
+				    		JCheckBox currentDomain = domainsIter.next();
+				    		
+				    		// On obtient le JFormattedTextField courant correspondant
+				    		JFormattedTextField currentPourcent = pourcentsIter.next();
+				    		// Si la case est coché 
+				    		if (currentDomain.isSelected()) {
+				    			
+				    			// Mais le pourcentage n'est pas renseigné
+				    			if (currentPourcent.getText().equals("  .  %")) {
+					    			JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
+						    				" doit être remplis si la case a été cochée", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+					    			stopPdfCreation(pBarFrame);
+					    			return null;
+				    			}
+				    			else {		    				
+				    				domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				
+				    				double currentPourcentage = 0;
+				    				
+				    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
+				    				
+				    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				try {
+				    					currentPourcentage = Double.parseDouble(pourcentageNumber);
+				    				}
+				    				catch (NumberFormatException e) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreBPDomaine.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				barChartDatas.addValue(currentPourcentage, "Pourcentage d'avancement", currentDomain.getText());
+				    				
+				    				total += currentPourcentage;
+				    				
+				    				if (total > 100 && !continueAbove100) {
+				    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+				    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont supérieurs"
+				    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
+				    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+				    							"Erreur", JOptionPane.YES_NO_OPTION);
+				    					if(dialogResult == JOptionPane.NO_OPTION){
+				    						stopPdfCreation(pBarFrame);
+				    						return null;
+				    					}
+				    					else {
+				    						continueAbove100 = true;
+				    						pBarFrame.toFront();
+				    					}
+				    				}
+				    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
+				    			}
+				    		}
+				    	}		
+				    	
+				    	if (!domainPreventivesVouchers.isEmpty()) {
+				    		
+				    		if (total < 100) {
+				    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+		    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont inférieurs"
+		    							+ " à 100% (" + total + "%).\n "
+		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
 		    							"Erreur", JOptionPane.YES_NO_OPTION);
 		    					if(dialogResult == JOptionPane.NO_OPTION){
-		    						return;
+		    						stopPdfCreation(pBarFrame);
+		    						return null;
 		    					}
 		    					else {
-		    						continueAbove100 = true;
+		    						pBarFrame.toFront();
 		    					}
-		    				}
-		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
-		    			}
-		    		}
-		    	}		
-		    	
-		    	if (!domainPreventivesVouchers.isEmpty()) {
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
-		    		
-		    		if (total < 100) {
-		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
-    							"Les pourcentages obtenus dans la parties " + titreBPDomaine.getText() + " sont inférieurs"
-    							+ " à 100% (" + total + "%).\n "
-    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
-    							"Erreur", JOptionPane.YES_NO_OPTION);
-    					if(dialogResult == JOptionPane.NO_OPTION){
-    						return;
-    					}
-		    		}
-		    		
-		    		try {
-						JFreeChart barChart = chartGenerator.generateBarChart(titreBPDomaine.getText(), 
-								"Domaines techniques", "Pourcentages d'avancement", barChartDatas);
-						
-						domainPreventivesVouchers.addJFreeChart(barChart);
-		    		} 
-		    		catch (Exception e) {
-		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
-								+ titreBPDomaine.getText() + " : \n"
-								+ e.getMessage(), "Erreur", 
-								JOptionPane.WARNING_MESSAGE);
-					}
-		    		
-		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
-		    		
-		    		while (mapIter.hasNext()) {
-		    			Map.Entry<String, Double> currentEntry = mapIter.next();
-		    			
-		    			double currentRelativePourcentage = currentEntry.getValue() / total;
-		    			pieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
-		    					currentRelativePourcentage);
-		    		}
-		    		
-		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
-						
-						domainPreventivesVouchers.addJFreeChart(pieChart);
-		    		} 
-		    		catch (Exception e) {
-		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
-								titreBPDomaine.getText() + ": \n"
-								+ e.getMessage(), "Erreur", 
-								JOptionPane.WARNING_MESSAGE);
-					}
-		    		
-		    		datas.add(domainPreventivesVouchers);
-		    	}
-		    	
-		    	/*-----------------Partie arborescence libre 1-----------------*/
-		    	
-		    	/*if (!textFieldTitre.getText().equals("")) {
-		    		
-			    	Iterator<JTextField> elementsIter = elements1.iterator();
-			    	Iterator<JTextField> elementNumbersIter = elementNumbers1.iterator();
-			    	
-			    	while (elementsIter.hasNext()) {
-			    		JTextField currentElem = elementsIter.next();	
-				    	JTextField currentElemNumber = elementNumbersIter.next();
+				    		}
+				    		
+				    		try {
+								JFreeChart barChart = chartGenerator.generateBarChart(titreBPDomaine.getText(), 
+										"Domaines techniques", "Pourcentages d'avancement", barChartDatas, false);
+								
+								domainPreventivesVouchers.addJFreeChart(barChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
+										+ titreBPDomaine.getText() + " : \n"
+										+ e.getMessage(), "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+							}
+				    		
+				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+				    		
+				    		while (mapIter.hasNext()) {
+				    			Map.Entry<String, Double> currentEntry = mapIter.next();
+				    			
+				    			double currentRelativePourcentage = currentEntry.getValue() / total;
+				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					currentRelativePourcentage);
+				    		}
+				    		
+				    		try {
+								JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
+								
+								domainPreventivesVouchers.addJFreeChart(pieChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
+										titreBPDomaine.getText() + ": \n"
+										+ e.getMessage(), "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+							}
+				    		
+				    		datas.add(domainPreventivesVouchers);
+				    		
+							publish(pBarFrame.getProgress() + incrementUnit);
+				    	}
 				    	
-				    	if (!currentElem.getText().equals("") && currentElemNumber.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"Elément : \" de la partie " + textFieldTitre.getText() + 
-				    				" n'est pas un nombre valide", "Erreur", 
+				    	/*-----------------Partie arborescence libre 1-----------------*/
+				    	
+				    	Iterator<FreeTree> freeTrees1Iter = freeTrees1.iterator();
+				    	
+				    	while (freeTrees1Iter.hasNext()) {
+				    		Boolean isElement = false;
+				    		
+				    		FreeTree currentTree = freeTrees1Iter.next();
+				    		
+				    		if (currentTree.titleTextField().getText().equals("")) {
+				    			JOptionPane.showMessageDialog(fenetre, 
+					    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+					    				" doit être remplis", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		stopPdfCreation(pBarFrame);
+					    		return null;
+				    		}
+				    		
+				    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.titleTextField().getText());
+				    		
+				    		barChartDatas = new DefaultCategoryDataset();
+				    		
+				    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
+				    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+				    		
+				    		while (currentTreeElementIter.hasNext()) {
+				    			JTextField currentElement = currentTreeElementIter.next();
+				    			JTextField currentElementNumber = currentTreeElementNumber.next();
+				    			
+				    			if (currentElement.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+						    				" doit être remplis", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+				    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+				    				JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
+						    				" de la partie " + currentTree.titleTextField().getText() + 
+						    				" doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+				    			}
+				    			else {
+				    				freeTree1.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
+				    				
+				    				isElement = true;
+				    			}
+				    		}
+				    		
+				    		if (!currentTree.textAreaComment().getText().equals("")) {
+				    			freeTree1.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+				    		}
+				    		
+				    		if (isElement) {
+					    		try {
+									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+											"Element", "Nombre", barChartDatas, true);
+									
+									freeTree1.addJFreeChart(barchart);
+								} 
+					    		catch (Exception e) {
+					    			e.printStackTrace();
+									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
+											currentTree.titleTextField().getText() + ": \n"
+											+ e.getMessage(), "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+								}
+				    		}
+				    		
+				    		datas.add(freeTree1);
+				    	}
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				
+				    	/*-----------------Partie demande d'intervention-----------------*/
+				    	/*
+				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
+				    	
+				    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
+				    	
+				    	if (textFieldNbIntervention.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nbIntervention.getText() + "\" de la partie " + titreDI.getText() + 
+				    				" doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
 				    		return;
 				    	}
-			    	}
-			    	
-			    	IDataHandler freeTree1 = new DefaultDataHandler(textFieldTitre.getText());   	
-		    	}
-		
-		    	/*-----------------Partie demande d'intervention-----------------*/
-		    	
-		    	/*IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
-		    	
-		    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
-		    	
-		    	if (textFieldNbIntervention.getText().equals("")) {
-		    		JOptionPane.showMessageDialog(mainFrame, 
-		    				"le champs \"" + nbIntervention.getText() + "\" de la partie " + titreDI.getText() + 
-		    				" doit être remplis", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-		    		return;
-		    	}
-		    	else {
-		    		interventionDemand.addString(textFieldNbIntervention.getText(), nbIntervention.getText());
-		    	}
-		    	
-		    	if (!textAreaCommentaireDI.getText().equals("")) {
-		    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
-		    	}
-		    	
-		    	datas.add(interventionDemand);
-		    	
-		    	/*-----------------Partie demande d'intervention par etat-----------------*/
-		    	
-		    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
-		    	
-		    	
-		    	pieChartDatas = new DefaultPieDataset();
-		    	
-		    	pourcentages = new HashMap<String, Double>();
-		    	total = new Double (0f);
-		    	
-		    	Iterator<JCheckBox> stateJComboBoxIter = states.iterator();
-		    	Iterator<JTextField> nbStatesJTextFieldIter = nbStates.iterator();
-		    	
-		    	while (stateJComboBoxIter.hasNext()) {
-		    		JCheckBox currentState = stateJComboBoxIter.next();
-		    		JTextField currentNbState = nbStatesJTextFieldIter.next();
-		    		
-		    		if (currentState.isSelected()) {
-		    			if (currentNbState.getText().equals("")) {
-		    				JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
-				    				" doit être remplis avec un nombre si la case est cochée", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-		    			}
-		    			else if (!OperationUtilities.isNumeric(currentNbState.getText())) {
-		    				JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
-				    				" doit être un nombre si la case est cochée", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-		    			}
-		    			else {
-		    				stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
-		    				
-		    				Integer currentNumber = 0;
-		    				
-		    				String parsedNumber = currentNbState.getText();
-		    				
-		    				if (!OperationUtilities.isNumeric(parsedNumber)) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
+				    	else {
+				    		interventionDemand.addString(textFieldNbIntervention.getText(), nbIntervention.getText());
+				    	}
+				    	
+				    	if (!textAreaCommentaireDI.getText().equals("")) {
+				    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+				    	}
+				    	
+				    	datas.add(interventionDemand);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+				    	/*-----------------Partie demande d'intervention par etat-----------------*/
+				    	
+				    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
+				    	
+				    	
+				    	pieChartDatas = new DefaultPieDataset();
+				    	
+				    	pourcentages = new HashMap<String, Double>();
+				    	total = new Double (0f);
+				    	
+				    	Iterator<JCheckBox> stateJComboBoxIter = states.iterator();
+				    	Iterator<JTextField> nbStatesJTextFieldIter = nbStates.iterator();
+				    	
+				    	while (stateJComboBoxIter.hasNext()) {
+				    		JCheckBox currentState = stateJComboBoxIter.next();
+				    		JTextField currentNbState = nbStatesJTextFieldIter.next();
+				    		
+				    		if (currentState.isSelected()) {
+				    			if (currentNbState.getText().equals("")) {
+				    				JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+						    				" doit être remplis avec un nombre si la case est cochée", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+				    				stopPdfCreation(pBarFrame);
+				    				return null;
+				    			}
+				    			else if (!OperationUtilities.isNumeric(currentNbState.getText())) {
+				    				JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+						    				" doit être un nombre si la case est cochée", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+				    				stopPdfCreation(pBarFrame);
+				    				return null;
+				    			}
+				    			else {
+				    				stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
+				    				
+				    				Integer currentNumber = 0;
+				    				
+				    				String parsedNumber = currentNbState.getText();
+				    				
+				    				if (!OperationUtilities.isNumeric(parsedNumber)) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				try {
+				    					currentNumber = Integer.parseInt(parsedNumber);
+				    				}
+				    				catch (NumberFormatException e) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				total += currentNumber;
+				    				pourcentages.put(currentState.getText(), new Double(currentNumber));
+				    			}
+				    		}
+				    	}
+				    	
+				    	if (!stateInterventionDemand.isEmpty()) {
+				    		
+				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+				    		
+				    		while (mapIter.hasNext()) {
+				    			Map.Entry<String, Double> currentEntry = mapIter.next();
+				    			
+				    			double currentRelativePourcentage = currentEntry.getValue() / total;
+				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + 
+				    					OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					currentRelativePourcentage);
+				    		}
+				    		
+				    		try {
+								JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
+								
+								stateInterventionDemand.addJFreeChart(pieChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie "
+										+ titreDIEtat.getText() + " : \n"
+										+ e.getMessage(), "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				try {
-		    					currentNumber = Integer.parseInt(parsedNumber);
-		    				}
-		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentState.getText() + "\" de la partie " + titreDIEtat.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
-										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				total += currentNumber;
-		    				pourcentages.put(currentState.getText(), new Double(currentNumber));
-		    			}
-		    		}
-		    	}
-		    	
-		    	if (!stateInterventionDemand.isEmpty()) {
-		    		
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
-		    		
-		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
-		    		
-		    		while (mapIter.hasNext()) {
-		    			Map.Entry<String, Double> currentEntry = mapIter.next();
-		    			
-		    			double currentRelativePourcentage = currentEntry.getValue() / total;
-		    			pieChartDatas.setValue(currentEntry.getKey() + " : " + 
-		    					OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
-		    					currentRelativePourcentage);
-		    		}
-		    		
-		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas);
-						
-						stateInterventionDemand.addJFreeChart(pieChart);
-		    		} 
-		    		catch (Exception e) {
-		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie "
-								+ titreDIEtat.getText() + " : \n"
-								+ e.getMessage(), "Erreur", 
-								JOptionPane.WARNING_MESSAGE);
-					}
-		    		
-		    		datas.add(stateInterventionDemand);
-		    	}
-		    	
-		    	/*-----------------Partie demande d'intervention par domaine-----------------*/
-		    	
-		    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
-		    	
-		    	// On obtient l'iterator des domaines
-		    	Iterator<JCheckBox> interventionDomainsIter = interventionDomains.iterator();
-		    	
-		    	// On obtient l'iterator des pourcentages correspondant
-		    	Iterator<JFormattedTextField> interventionPourcentsIter = interventionPourcents.iterator();
-		    	
-		    	DefaultPieDataset interventionPieChartDatas = new DefaultPieDataset();
-		    	
-		    	pourcentages = new HashMap<String, Double>();
-		    	total = new Double (0f);
-		    	
-		    	continueAbove100 = false;
-		    	
-		    	// On itere sur les domaines
-		    	while (interventionDomainsIter.hasNext()) {
-		    		// On obtient le JCheckBox courrant
-		    		JCheckBox currentDomain = interventionDomainsIter.next();
-		    		
-		    		// On obtient le JFormattedTextField courant correspondant
-		    		JFormattedTextField currentPourcent = interventionPourcentsIter.next();
-		    		
-		    		// Si la case est coché 
-		    		if (currentDomain.isSelected()) {
-		    			
-		    			// Mais le pourcentage n'est pas renseigné
-		    			if (currentPourcent.getText().equals("  .  %")) {
-			    			JOptionPane.showMessageDialog(fenetre, 
-				    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
-				    				" doit être remplis si la case a été cochée", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		return;
-		    			}
-		    			else {		    				
-		    				domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
-		    				
-		    				double currentPourcentage = 0;
-		    				
-		    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
-		    				
-		    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
-										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				try {
-		    					currentPourcentage = Double.parseDouble(pourcentageNumber);
-		    				}
-		    				catch (NumberFormatException e) {
-		    					JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
-					    				" n'est pas un nombre valide", "Erreur", 
-										JOptionPane.WARNING_MESSAGE);
-					    		return;
-		    				}
-		    				
-		    				total += currentPourcentage;
-		    				
-		    				if (total > 100 && !continueAbove100) {
-		    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
-		    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont supérieurs"
-		    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
-		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+								stopPdfCreation(pBarFrame);
+							}
+				    		
+				    		datas.add(stateInterventionDemand);
+				    		
+							publish(pBarFrame.getProgress() + incrementUnit);
+				    	}
+				    	
+				    	/*-----------------Partie demande d'intervention par domaine-----------------*/
+				    	
+				    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
+				    	
+				    	// On obtient l'iterator des domaines
+				    	Iterator<JCheckBox> interventionDomainsIter = interventionDomains.iterator();
+				    	
+				    	// On obtient l'iterator des pourcentages correspondant
+				    	Iterator<JFormattedTextField> interventionPourcentsIter = interventionPourcents.iterator();
+				    	
+				    	DefaultPieDataset interventionPieChartDatas = new DefaultPieDataset();
+				    	
+				    	pourcentages = new HashMap<String, Double>();
+				    	total = new Double (0f);
+				    	
+				    	continueAbove100 = false;
+				    	
+				    	// On itere sur les domaines
+				    	while (interventionDomainsIter.hasNext()) {
+				    		// On obtient le JCheckBox courrant
+				    		JCheckBox currentDomain = interventionDomainsIter.next();
+				    		
+				    		// On obtient le JFormattedTextField courant correspondant
+				    		JFormattedTextField currentPourcent = interventionPourcentsIter.next();
+				    		
+				    		// Si la case est coché 
+				    		if (currentDomain.isSelected()) {
+				    			
+				    			// Mais le pourcentage n'est pas renseigné
+				    			if (currentPourcent.getText().equals("  .  %")) {
+					    			JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
+						    				" doit être remplis si la case a été cochée", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+					    			stopPdfCreation(pBarFrame);
+					    			return null;
+				    			}
+				    			else {		    				
+				    				domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				
+				    				double currentPourcentage = 0;
+				    				
+				    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
+				    				
+				    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				try {
+				    					currentPourcentage = Double.parseDouble(pourcentageNumber);
+				    				}
+				    				catch (NumberFormatException e) {
+				    					JOptionPane.showMessageDialog(fenetre, 
+							    				"le champs \"" + currentDomain.getText() + "\" de la partie " + titreDIDomaine.getText() + 
+							    				" n'est pas un nombre valide", "Erreur", 
+												JOptionPane.WARNING_MESSAGE);
+				    					stopPdfCreation(pBarFrame);
+				    					return null;
+				    				}
+				    				
+				    				total += currentPourcentage;
+				    				
+				    				if (total > 100 && !continueAbove100) {
+				    					int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+				    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont supérieurs"
+				    							+ " à 100% (" + total + "%) à partir du champ \"" + currentDomain.getText() + "\".\n "
+				    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?",
+				    							"Erreur", JOptionPane.YES_NO_OPTION);
+				    					if(dialogResult == JOptionPane.NO_OPTION){
+				    						stopPdfCreation(pBarFrame);
+				    						return null;
+				    					}
+				    					else {
+				    						continueAbove100 = true;
+				    						pBarFrame.toFront();
+				    					}
+				    				}
+				    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
+				    			}
+				    		}
+				    	}		
+				    	
+				    	if (!domainInterventionDemand.isEmpty()) {
+				    		
+				    		if (total < 100) {
+				    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+		    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont inférieurs"
+		    							+ " à 100% (" + total + "%).\n "
+		    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
 		    							"Erreur", JOptionPane.YES_NO_OPTION);
 		    					if(dialogResult == JOptionPane.NO_OPTION){
-		    						return;
+		    						stopPdfCreation(pBarFrame);
+		    						return null;
 		    					}
 		    					else {
-		    						continueAbove100 = true;
+		    						pBarFrame.toFront();
 		    					}
-		    				}
-		    				pourcentages.put(currentDomain.getText(), new Double(currentPourcentage));
-		    			}
-		    		}
-		    	}		
-		    	
-		    	if (!domainInterventionDemand.isEmpty()) {
-		    		IChartGenerator chartGenerator = new DefaultChartGenerator();
-		    		
-		    		if (total < 100) {
-		    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
-    							"Les pourcentages obtenus dans la parties " + titreDIDomaine.getText() + " sont inférieurs"
-    							+ " à 100% (" + total + "%).\n "
-    							+ "Voulez-vous continuer tout de même (les pourcentages seront recalculés de manière relative)?", 
-    							"Erreur", JOptionPane.YES_NO_OPTION);
-    					if(dialogResult == JOptionPane.NO_OPTION){
-    						return;
-    					}
-		    		}
-		    		
-		    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
-		    		
-		    		while (mapIter.hasNext()) {
-		    			Map.Entry<String, Double> currentEntry = mapIter.next();
-		    			
-		    			double currentRelativePourcentage = currentEntry.getValue() / total;
-		    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
-		    					currentRelativePourcentage);
-		    		}
-		    		
-		    		try {
-						JFreeChart pieChart = chartGenerator.generatePieChart(titreDIDomaine.getText(), interventionPieChartDatas);
-						
-						domainInterventionDemand.addJFreeChart(pieChart);
-		    		} 
-		    		catch (Exception e) {
-		    			e.printStackTrace();
-						JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
-								titreDIDomaine.getText() + ": \n"
-								+ e.getMessage(), "Erreur", 
-								JOptionPane.WARNING_MESSAGE);
+				    		}
+				    		
+				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+				    		
+				    		while (mapIter.hasNext()) {
+				    			Map.Entry<String, Double> currentEntry = mapIter.next();
+				    			
+				    			double currentRelativePourcentage = currentEntry.getValue() / total;
+				    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					currentRelativePourcentage);
+				    		}
+				    		
+				    		try {
+								JFreeChart pieChart = chartGenerator.generatePieChart(titreDIDomaine.getText(), interventionPieChartDatas, false);
+								
+								domainInterventionDemand.addJFreeChart(pieChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en camembert dans la partie " +
+										titreDIDomaine.getText() + ": \n"
+										+ e.getMessage(), "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+								stopPdfCreation(pBarFrame);
+							}
+				    		
+				    		datas.add(domainInterventionDemand);
+				    		
+							publish(pBarFrame.getProgress() + incrementUnit);
+				    	}
+				    	
+				    	/*-----------------Partie arborescence libre 2-----------------*/
+				    	
+				    	Iterator<FreeTree> freeTrees2Iter = freeTrees1.iterator();
+				    	
+				    	while (freeTrees2Iter.hasNext()) {
+				    		Boolean isElement = false;
+				    		
+				    		FreeTree currentTree = freeTrees2Iter.next();
+				    		
+				    		if (currentTree.titleTextField().getText().equals("")) {
+				    			JOptionPane.showMessageDialog(fenetre, 
+					    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+					    				" doit être remplis", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		stopPdfCreation(pBarFrame);
+					    		return null;
+				    		}
+				    		
+				    		IDataHandler freeTree = new DefaultDataHandler(currentTree.titleTextField().getText());
+				    		
+				    		barChartDatas = new DefaultCategoryDataset();
+				    		
+				    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
+				    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+				    		
+				    		while (currentTreeElementIter.hasNext()) {
+				    			JTextField currentElement = currentTreeElementIter.next();
+				    			JTextField currentElementNumber = currentTreeElementNumber.next();
+				    			
+				    			if (currentElement.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+						    				" doit être remplis", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+				    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+				    				JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
+						    				" de la partie " + currentTree.titleTextField().getText() + 
+						    				" doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+				    			}
+				    			else {
+				    				freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
+				    				
+				    				isElement = true;
+				    			}
+				    		}
+				    		
+				    		if (!currentTree.textAreaComment().getText().equals("")) {
+				    			freeTree.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+				    		}
+				    		
+				    		if (isElement) {
+					    		try {
+									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+											"Element", "Nombre", barChartDatas, true);
+									
+									freeTree.addJFreeChart(barchart);
+								} 
+					    		catch (Exception e) {
+					    			e.printStackTrace();
+									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
+											currentTree.titleTextField().getText() + ": \n"
+											+ e.getMessage(), "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+								}
+				    		}
+				    		
+				    		datas.add(freeTree);
+				    	}
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+						try {
+							if (!datas.isEmpty()) {
+								// Finallement on creer le document
+								CreateReportDocument.createPdf(datas, pBarFrame);
+								JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
+										JOptionPane.INFORMATION_MESSAGE);
+								pBarFrame.updateBar(ProgressBarFrame.MY_MAXIMUM);
+								stopPdfCreation(pBarFrame);
+
+							}
+							else {
+								JOptionPane.showMessageDialog(fenetre, 
+					    				"Aucune donnée à rédiger dans le rapport", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+								stopPdfCreation(pBarFrame);
+							}
+						} 
+						catch (Exception e) {
+							e.printStackTrace();
+							JOptionPane.showMessageDialog(fenetre, e.getMessage(), "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+							stopPdfCreation(pBarFrame);
+						}
+
+				    	return null;
 					}
-		    		
-		    		datas.add(domainInterventionDemand);
-		    	}
-		    	
-				try {
-					if (!datas.isEmpty()) {
-						// Finallement on creer le document
-						CreateReportDocument.createPdf(datas);
-						JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
-								JOptionPane.INFORMATION_MESSAGE);
+					
+					@Override
+					protected void process(List<Integer> chunks) {
+				        for (Integer i : chunks){
+				        	pBarFrame.updateBar(i);
+				        }
+				    }
+					
+					@Override
+			        public void done() {
+			            mainFrame.setEnabled(true);
+			            mainFrame.setCursor(null); //turn off the wait cursor
+			        }
+
+				};
+				
+				/*pdfCreation.addPropertyChangeListener(new PropertyChangeListener() {
+					
+					@SuppressWarnings("null")
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if ("progress" == evt.getPropertyName()) {
+				            int progress = (Integer) evt.getNewValue();
+				            pBarFrame.updateBar(progress);
+				        } 						
 					}
-					else {
-						JOptionPane.showMessageDialog(fenetre, 
-			    				"Aucune donnée à rédiger dans le rapport", "Erreur", 
-								JOptionPane.WARNING_MESSAGE);
-					}
-				} 
-				catch (Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(fenetre, e.getMessage(), "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-				}
-		    	
+				});
+				*/
+				
+				pdfCreation.execute();
 		    }
 		});
 	    
@@ -1735,33 +2061,43 @@ public class Formulaire extends JFrame{
 	    
 	}	
 
-	private void createPreventiveVoucherMonth (GridBagConstraints constraint, JComponent mainContainer, final String[] monthsList,
-			Collection<JComboBox<String>> preventivesVouchersMonths, Collection<JTextField> nbPreventivesVouchersOpened,
-			Collection<JTextField> nbPreventivesVouchersClosed, Collection<JTextArea> commentsPreventivesVouchers) {
+	private JPanel createPreventiveVoucherMonth (JComponent mainContainer, Collection<JComboBox<String>> preventivesVouchersMonths, 
+			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed,
+			Collection<JTextArea> commentsPreventivesVouchers) {
+		
+		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
+		
+		int preventiveVoucherMonthPosition = 0;
+		
+		GridBagConstraints constraint = new GridBagConstraints();
+		
+		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+		
+		constraint.gridx = 0;
+		constraint.gridy = preventiveVoucherMonthPosition;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.weightx = 1;
+		constraint.fill = GridBagConstraints.BOTH;
 		
 		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
 		
-		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
-		
-		constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
-		mainContainer.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
+		thisPreventiveVoucherMonthPanel.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
-		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(monthsList); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+		JComboBox<String> comboBoxMoisBP = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
 		comboBoxMoisBP.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
 		preventivesVouchersMonths.add(comboBoxMoisBP);
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		preventivVoucherMonthJLabel.setLabelFor(comboBoxMoisBP); //attribution de la comboBox comboBoxMoisBP au label moisBP
-		mainContainer.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+		thisPreventiveVoucherMonthPanel.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
 	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
 	    constraint.gridx = 0;
-	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
-	    mainContainer.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
+	    thisPreventiveVoucherMonthPanel.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
 	    
 	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
 	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
@@ -1769,23 +2105,23 @@ public class Formulaire extends JFrame{
 		
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
+	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
 	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
 		
 	    constraint.gridx = 0;
-	    constraint.gridy = ++preventiveVoucherLastMonthPosition;
+	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
-	    
-		mainContainer.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+	    thisPreventiveVoucherMonthPanel.add(nbBPFermes, constraint); //ajout du label nbBPFermes
+		
 	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
 	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
 	    nbPreventivesVouchersClosed.add(textFieldNbBPFermes);
 		
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
+	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
 		
 		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
@@ -1821,18 +2157,56 @@ public class Formulaire extends JFrame{
 	    JLabel commentaireBP = new JLabel(preventiveVoucherMonthLabels[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
+		constraint.gridy = ++preventiveVoucherMonthPosition;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		thisPreventiveVoucherMonthPanel.add(commentaireBP, constraint);
 	    
 		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
 	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
 	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
 	    commentsPreventivesVouchers.add(textAreaCommentaireBP);
 	    
-		constraint.gridy = ++preventiveVoucherLastMonthPosition;
+		constraint.gridy = ++preventiveVoucherMonthPosition;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		mainContainer.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+		thisPreventiveVoucherMonthPanel.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
+		
+		JButton deleteMonthButton = new JButton("Supprimer mois");
+		deleteMonthButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {	
+				
+				preventivesVouchersMonths.remove(comboBoxMoisBP);
+				nbPreventivesVouchersOpened.remove(textFieldNbBPOuverts);
+				nbPreventivesVouchersClosed.remove(textFieldNbBPFermes);
+				commentsPreventivesVouchers.remove(textAreaCommentaireBP);
+				
+				ajoutMoisBP.setEnabled(true);
+				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+				
+				--preventiveVoucherLastMonthPosition;
+				
+				mainContainer.remove(thisPreventiveVoucherMonthPanel);
+				
+				mainContainer.revalidate();
+			}
+		});
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++preventiveVoucherMonthPosition;
+		constraint.gridwidth = 1;
+		thisPreventiveVoucherMonthPanel.add(deleteMonthButton, constraint);
+		
+		return thisPreventiveVoucherMonthPanel;
+	}
+	
+	private void stopPdfCreation(ProgressBarFrame pBFrame) {
+		
+		this.setCursor(null);
+		this.setEnabled(true);
+		
+		pBFrame.setVisible(false);
 	}
 
 }
