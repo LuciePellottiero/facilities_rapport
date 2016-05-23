@@ -50,6 +50,9 @@ public class ProgressBarFrame extends JFrame{
 	
 	public void updateBar(int newValue) {
 		pbar.setValue(newValue);
+		
+		this.repaint();
+		this.revalidate();
 	}
 	
 	public int getProgress() {

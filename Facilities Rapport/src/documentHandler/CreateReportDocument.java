@@ -10,7 +10,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import dataHandler.IDataHandler;
-import documentHandler.writeStrategieFactory.WriteStrategieFactory;
+import documentHandler.writeStrategies.DefaultWriteStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
 import ihm.ProgressBarFrame;
 import utilities.FileUtilities;
@@ -21,6 +21,8 @@ import utilities.FileUtilities;
  *
  */
 public class CreateReportDocument {
+	
+	public static final int DEFAULT_STRATEGIE = 0;
 	
 	/**
 	 * Cette String est le chemin par defaut vers lequel doit etre creer le rapport PDF
@@ -49,7 +51,7 @@ public class CreateReportDocument {
 		PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
+		IWriteStrategie writeStrategie = new DefaultWriteStrategie();
 		
 		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
@@ -66,7 +68,7 @@ public class CreateReportDocument {
 	}
 	
 	/**
-	 * Cette fonction permet de creer le document PDF du rapport a l'emplacement specifie
+	 * Cette fonction permet de creer le document PDF du rapport a l'emplacement specifie avec une strategie particuliere
 	 * @param filePathName L'emplacement dans lequel doit etre creer le template
 	 * @param writeStrategieNumber La strategie d'edition choisie (voir WriteStrategieFactory pour la liste).
 	 * @return true si reussi, false sinon
@@ -84,8 +86,17 @@ public class CreateReportDocument {
 		// Le PdfWriter precise que le document doit etre au format PDF.
 		PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
+		IWriteStrategie writeStrategie;
+		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(writeStrategieNumber);
+		switch (writeStrategieNumber) {
+			case DEFAULT_STRATEGIE :
+				writeStrategie = new DefaultWriteStrategie();
+				break;
+			default :
+				throw new Exception ("Unknown strategie type, use final static attributs from Create ReportDocument class.");
+		}
+		 
 		
 		// On effectue l'edition du PDF par défaut
 		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);

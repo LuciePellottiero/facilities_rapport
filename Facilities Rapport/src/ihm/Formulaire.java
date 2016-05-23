@@ -1398,7 +1398,7 @@ public class Formulaire extends JFrame{
 							}
 				    	}
 				    	
-				    	//if (!preventivesVouchers.isEmpty()) {
+				    	if (!preventivesVouchers.isEmpty()) {
 					    	try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
 										"Mois", "Nombre de bons préventifs", barChartDatas, true);
@@ -1412,7 +1412,7 @@ public class Formulaire extends JFrame{
 										+ e.getMessage(), "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
 							}
-				    	//}
+				    	}
 				    	
 				    	datas.add(preventivesVouchers);
 				    	
@@ -1646,28 +1646,57 @@ public class Formulaire extends JFrame{
 						publish(pBarFrame.getProgress() + incrementUnit);
 				
 				    	/*-----------------Partie demande d'intervention-----------------*/
-				    	/*
+				    	
 				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 				    	
-				    	interventionDemand.addString(comboBoxMoisDI.getSelectedItem().toString(), moisDI.getText());
+				    	barChartDatas = new DefaultCategoryDataset();
 				    	
-				    	if (textFieldNbIntervention.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + nbIntervention.getText() + "\" de la partie " + titreDI.getText() + 
-				    				" doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return;
-				    	}
-				    	else {
-				    		interventionDemand.addString(textFieldNbIntervention.getText(), nbIntervention.getText());
-				    	}
+				    	Iterator<JComboBox<String>> interventionMonthsIter = interventionMonths.iterator();
+				    	Iterator<JTextField> interventionNumbersIter = interventionNumbers.iterator();
 				    	
-				    	if (!textAreaCommentaireDI.getText().equals("")) {
-				    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+				    	while (interventionMonthsIter.hasNext()) {
+				    		JComboBox<String> currentInterventionMonths = interventionMonthsIter.next();
+				    		JTextField currentInterventionNumber = interventionNumbersIter.next();
+				    		
+				    		interventionDemand.addString(currentInterventionMonths.getSelectedItem().toString(), "Mois : ");
+					    	
+					    	if (currentInterventionNumber.getText().equals("") ||
+					    			!OperationUtilities.isNumeric(currentInterventionNumber.getText())) {
+					    		JOptionPane.showMessageDialog(mainFrame, 
+					    				"le champs \"Nombre d'interventions : \" de la partie " + titreDI.getText() + 
+					    				" du mois " + currentInterventionMonths.getSelectedItem().toString() +
+					    				" doit être remplis avec un nombre", "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+					    		stopPdfCreation(pBarFrame);
+					    		return null;
+					    	}
+					    	else {
+					    		interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
+					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", "Mois");
+					    	}
+					    	
+					    	if (!textAreaCommentaireDI.getText().equals("")) {
+					    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+					    	}
+					    	
+					    	if (!interventionDemand.isEmpty()) {
+						    	try {
+									JFreeChart barChart = chartGenerator.generateBarChart(titreDI.getText(), 
+											"Mois", "Nombre d'intervention", barChartDatas, true);
+									
+									interventionDemand.addJFreeChart(barChart);
+					    		} 
+					    		catch (Exception e) {
+					    			e.printStackTrace();
+									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
+											+ titreDI.getText() + " : \n"
+											+ e.getMessage(), "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+								}
+					    	}
+					    	
+					    	datas.add(interventionDemand);
 				    	}
-				    	
-				    	datas.add(interventionDemand);
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    	
@@ -1989,7 +2018,7 @@ public class Formulaire extends JFrame{
 								CreateReportDocument.createPdf(datas, pBarFrame);
 								JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
 										JOptionPane.INFORMATION_MESSAGE);
-								pBarFrame.updateBar(ProgressBarFrame.MY_MAXIMUM);
+								publish(ProgressBarFrame.MY_MAXIMUM);
 								stopPdfCreation(pBarFrame);
 
 							}

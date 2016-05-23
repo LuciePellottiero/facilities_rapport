@@ -165,10 +165,10 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 			// Enfin, on ajoute le tableau au paragraphe
 			para.add(table);
 			*/
-			para.add(Chunk.NEWLINE);
 			
 			// On ajout le paragraphe au document
 			document.add(para);
+			document.newPage();
 		}
 		
 		// A la fin, on ferme tous les flux
@@ -212,9 +212,9 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 					para.add(Chunk.NEWLINE);
 					
 					// On cree un tableau a 2 colonnes : titre donnee
-					PdfPTable table = new PdfPTable(2);
+					//PdfPTable table = new PdfPTable(2);
 					// On enleve les bordures (ne fonctionne pas mais bon...)
-					table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+					//table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 					
 					/*
 					// On creer des float pour determiner la largeur que doivent prendre les colonnes
@@ -309,6 +309,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 					
 					// On ajout le paragraphe au document
 					document.add(para);
+					document.newPage();
 					
 					final int finalCounter = counter + progressIncrement;
 
