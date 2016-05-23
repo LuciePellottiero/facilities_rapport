@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,11 +25,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,6 +45,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileView;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -103,9 +111,9 @@ public class Formulaire extends JFrame{
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
 		
-		JPanel fenetre = new JPanel(); //creation de la fenetre principale
+		final JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
-		Formulaire mainFrame = this;
+		final Formulaire mainFrame = this;
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
 		this.setSize(700, 600); //taille fenetre
@@ -114,91 +122,105 @@ public class Formulaire extends JFrame{
 	    fenetre.setBackground(Color.white); //couleur de fond de la fenetre
 	    fenetre.setLayout(new BorderLayout()); 
 	    
-	    JLabel titreFacilitiesRapport = new JLabel("Facilities Rapport", SwingConstants.CENTER); //titre formulaire
+	    final JLabel titreFacilitiesRapport = new JLabel("Facilities Rapport", SwingConstants.CENTER); //titre formulaire
 		titreFacilitiesRapport.setFont(new Font("Arial",Font.BOLD,18)); //police + taille du titre formulaire
 		
-		JPanel conteneur = new JPanel();
-		JPanel conteneurPrincipal = new JPanel(new GridBagLayout());
-		GridBagConstraints constraint = new GridBagConstraints();
+		final JPanel conteneur = new JPanel();
+		final JPanel conteneurPrincipal = new JPanel(new GridBagLayout());
+		final GridBagConstraints constraint = new GridBagConstraints();
 		constraint.fill = GridBagConstraints.BOTH;   
 		
 		positionCounter = 0;
 		
 		/*-----------------------------------------formulaire redacteur--------------------------------------------*/
 	    
-		JLabel titreRedacteur = new JLabel("Redacteur"); //titre de la partie redacteur du formulaire
+		final JLabel titreRedacteur = new JLabel("Redacteur"); //titre de la partie redacteur du formulaire
 		titreRedacteur.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRedacteur
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(titreRedacteur, constraint); //ajout du titreRedacteur dans conteneurPrincipal
 		
-	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		//nom
-		JLabel nom = new JLabel("Nom : "); //creation du label nom
+		final JLabel nom = new JLabel("Nom : "); //creation du label nom
+		
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 		conteneurPrincipal.add(nom, constraint); //ajout du label
-		JTextField textFieldNom = new JTextField(15); //creation de la zone de texte adr de taille 15
+		
+		final JTextField textFieldNom = new JTextField(15); //creation de la zone de texte adr de taille 15
+		nom.setLabelFor(textFieldNom); //attribution de la zone de texte au label adr
+		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		nom.setLabelFor(textFieldNom); //attribution de la zone de texte au label adr
 		conteneurPrincipal.add(textFieldNom, constraint); //ajout de la zone de texte adr
 		
 		//adresse 
-		JLabel adr = new JLabel("Adresse : "); //creation du label adr
+		final JLabel adr = new JLabel("Adresse : "); //creation du label adr
+		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(adr, constraint); //ajout du label adr
-	    JTextArea textAreaAdr = new JTextArea(3, 15); //creation de la zone de texte adr de taille 3 en hauteur et 15 en largeur
-	    JScrollPane scrollPaneAdr = new JScrollPane(textAreaAdr);
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    
+	    final JTextArea textAreaAdr = new JTextArea(3, 15); //creation de la zone de texte adr de taille 3 en hauteur et 15 en largeur
+	    
+	    final JScrollPane scrollPaneAdr = new JScrollPane(textAreaAdr);
 	    adr.setLabelFor(textAreaAdr); //attribution de la zone de texte au label adr
+		
+	    constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(scrollPaneAdr, constraint); //ajout de la zone de texte adr
 	    
 	    //telephone
-	    JLabel tel = new JLabel("Téléphone : "); //creation du label tel
-		constraint.gridx = 0;
+	    final JLabel tel = new JLabel("Téléphone : "); //creation du label tel
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(tel, constraint); //ajout du label tel
 	    
 	    JFormattedTextField textFieldTelRedac = null;
+	   
 	    try{
-			MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
+			final MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
 		}
 	    tel.setLabelFor(textFieldTelRedac); //attribution de la zone de texte au label tel
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelRedac, constraint); //ajout de la zone de texte tel
 		
 		final JFormattedTextField finalTextFieldTelRedac = textFieldTelRedac;
 	   
 	    //email
-	    JLabel email = new JLabel("Email : "); //creation du label email
+	    final JLabel email = new JLabel("Email : "); //creation du label email
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(email, constraint); //ajout du label nom
-	    JTextField textFieldEmail = new JTextField(15); //creation de la zone de texte email de taille 15
+	    
+	    final JTextField textFieldEmail = new JTextField(15); //creation de la zone de texte email de taille 15
 	    email.setLabelFor(textFieldEmail); //attribution de la zone de texte au label email
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(textFieldEmail, constraint); //ajout de la zone de texte email au panel redacteur 
 	    
 	    //nom charge d'affaire
-	    JLabel nomCA = new JLabel("Nom du chargé d'affaire : "); //creation du label nomCA
-		constraint.gridx = 0;
+	    final JLabel nomCA = new JLabel("Nom du chargé d'affaire : "); //creation du label nomCA
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(nomCA, constraint); //ajout du label nomCA au panel redacteur
-	    JTextField textFieldNomCA = new JTextField(15); //creation de la zone de texte nomCA de taille 15
+	   
+	    final JTextField textFieldNomCA = new JTextField(15); //creation de la zone de texte nomCA de taille 15
 	    nomCA.setLabelFor(textFieldNomCA); //attribution de la zone de texte au label nomCA
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -208,53 +230,65 @@ public class Formulaire extends JFrame{
 		/*-------------------------------------------formulaire client-------------------------------------------------*/
 		
 		
-		JLabel titreClient = new JLabel("Client"); //titre de la partie client du formulaire
+		final JLabel titreClient = new JLabel("Client"); //titre de la partie client du formulaire
 		titreClient.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreClient
+		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 		conteneurPrincipal.add(titreClient, constraint); //ajout du titreClient dans le panel conteneurPrincpal
+	
+		//nom
+		final JLabel nomSite = new JLabel("Nom du site : "); //creation du label nomSite
 		
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		//nom
-		JLabel nomSite = new JLabel("Nom du site : "); //creation du label nomSite
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 		conteneurPrincipal.add(nomSite, constraint); //ajout du label nomSite
-		JTextField textFieldNomSite = new JTextField(15); //creation de la zone de texte nomSite de taille 15
+		
+		final JTextField textFieldNomSite = new JTextField(15); //creation de la zone de texte nomSite de taille 15
 		nomSite.setLabelFor(textFieldNomSite); //attribution de la zone de texte au label nomSite
+		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldNomSite, constraint); //ajout de la zone de texte nomSite
 		
 		//code
-	    JLabel code = new JLabel("Code : "); //creation du label code
-		constraint.gridx = 0;
+	    final JLabel code = new JLabel("Code : "); //creation du label code
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(code, constraint); //ajout du label code
-	    JTextField textFieldCode = new JTextField(15); //création de la zone de texte code
+	    
+	    final JTextField textFieldCode = new JTextField(15); //création de la zone de texte code
 	    code.setLabelFor(textFieldCode); //attribution de la zone de texte au label code
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldCode, constraint); //ajout de la zone de texte code
 		
 		//adresse client
-		JLabel adrCl = new JLabel("Adresse : "); //creation du label adrCl
+		final JLabel adrCl = new JLabel("Adresse : "); //creation du label adrCl
+		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(adrCl, constraint); //ajout du label adrCl
-	    JTextArea textAreaAdrCl = new JTextArea(3, 15); //creation de la zone de texte adrCl de taille 3 en hauteur et 15 en largeur
-	    JScrollPane scrollPaneAdrCl = new JScrollPane(textAreaAdrCl);
-		constraint.gridx = 1;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
+	    
+	    final JTextArea textAreaAdrCl = new JTextArea(3, 15); //creation de la zone de texte adrCl de taille 3 en hauteur et 15 en largeur
+	   
+	    final JScrollPane scrollPaneAdrCl = new JScrollPane(textAreaAdrCl);
 	    adrCl.setLabelFor(textAreaAdrCl); //attribution de la zone de texte au label adrCl
+	    
+	    constraint.gridx = 1;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;  
 	    conteneurPrincipal.add(scrollPaneAdrCl, constraint); //ajout de la zone de texte adrCl
 	    
 	    //code postal
-	    JLabel codePostal = new JLabel("Code postal : "); //creation du label codePostal
-		constraint.gridx = 0;
+	    final JLabel codePostal = new JLabel("Code postal : "); //creation du label codePostal
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(codePostal, constraint); //ajout du label codePostal
@@ -269,44 +303,53 @@ public class Formulaire extends JFrame{
 		}
 	    
 	    codePostal.setLabelFor(textFieldCodePostal); //attribution de la zone de texte au label codePostal
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldCodePostal, constraint); //ajout de la zone de texte codePostal
 		
 		final JFormattedTextField finalTtextFieldCodePostal = textFieldCodePostal;
 		
 		//ville
-		JLabel ville = new JLabel("Ville : "); //creation du label ville
+		final JLabel ville = new JLabel("Ville : "); //creation du label ville
+		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 		conteneurPrincipal.add(ville, constraint); //ajout du label ville
-		JTextField textFieldVille = new JTextField(15); //creation de la zone de texte ville de taille 15
+		
+		final JTextField textFieldVille = new JTextField(15); //creation de la zone de texte ville de taille 15
+		ville.setLabelFor(textFieldVille); //attribution de la zone de texte au label ville
+		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		ville.setLabelFor(textFieldVille); //attribution de la zone de texte au label ville
 		conteneurPrincipal.add(textFieldVille, constraint); //ajout de la zone de texte ville
 		
 		//nom du client
-	    JLabel nomClient = new JLabel("Nom du client : "); //creation du label nomCl
-		constraint.gridx = 0;
+	    final JLabel nomClient = new JLabel("Nom du client : "); //creation du label nomCl
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(nomClient, constraint); //ajout du label nomCl
-	    JTextField textFieldNomClient = new JTextField(15); //creation de la zone de texte nomCl de taille 15
+	   
+	    final JTextField textFieldNomClient = new JTextField(15); //creation de la zone de texte nomCl de taille 15
 	    nomClient.setLabelFor(textFieldNomClient); //attribution de la zone de texte au label nomCl
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(textFieldNomClient, constraint); //ajout de la zone de texte nomCl 
 	    
 	    //telephone client
-	    JLabel telCl = new JLabel("Téléphone : "); //creation du label telCl
-		constraint.gridx = 0;
+	    final JLabel telCl = new JLabel("Téléphone : "); //creation du label telCl
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(telCl, constraint); //ajout du label telCl
 	   
 	    JFormattedTextField textFieldTelCl = null;
+	   
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
@@ -316,24 +359,93 @@ public class Formulaire extends JFrame{
 		}
 	    
 	    telCl.setLabelFor(textFieldTelCl); //attribution de la zone de texte au label telCl
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(textFieldTelCl, constraint); //ajout de la zone de texte telCl
 		
 		final JFormattedTextField finalTextFieldTelCl = textFieldTelCl;
 	   
 	    //email client
-	    JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
-		constraint.gridx = 0;
+	    final JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 	    conteneurPrincipal.add(emailCl, constraint); //ajout du label emailCl
-	    JTextField textFieldEmailCl = new JTextField(15); //creation de la zone de texte emailCl de taille 15
+	   
+	    final JTextField textFieldEmailCl = new JTextField(15); //creation de la zone de texte emailCl de taille 15
 	    emailCl.setLabelFor(textFieldEmailCl); //attribution de la zone de texte au label emailCl
-		constraint.gridx = 1;
+		
+	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(textFieldEmailCl, constraint); //ajout de la zone de texte emailCl
 	    
+	    final JLabel customerLogo = new JLabel ("Logo client : ");
+	    
+	    constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = 1;
+		conteneurPrincipal.add(customerLogo, constraint);
+	    
+		final JLabel customorLogoFile = new JLabel();
+		constraint.gridx = 1;
+		conteneurPrincipal.add(customorLogoFile, constraint);
+		
+	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	            "Fichiers images", ImageIO.getReaderFileSuffixes());
+
+	    final JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setFileFilter(filter);
+	    fileChooser.setAccessory(new ImagePreview(fileChooser));
+	    
+	    JButton addLogo = new JButton("Choisir logo...");
+	    addLogo.addActionListener(new  ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				int returnVal = fileChooser.showOpenDialog(conteneurPrincipal);
+			    
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					try {
+						File file = fileChooser.getSelectedFile();
+						Image tmpImage = null;
+				        try {
+				        	tmpImage = ImageIO.read(file);
+						} 
+				        catch (IOException e) {
+							e.printStackTrace();
+						}
+				        
+				        ImageIcon logoIcon = new ImageIcon(tmpImage);
+				        
+				        if (logoIcon != null) {
+				            if (logoIcon.getIconWidth() > 90) {
+				            	logoIcon = new ImageIcon(logoIcon.getImage().
+				                                          getScaledInstance(90, -1,
+				                                                      Image.SCALE_DEFAULT));
+				            } 
+				        }
+				        
+				        customorLogoFile.setIcon(logoIcon);
+					}
+					catch (Exception e) {
+						JOptionPane.showMessageDialog(mainFrame, 
+			    				"L'image choisi est invalide", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+					customorLogoFile.setText(fileChooser.getSelectedFile().getName());
+					
+					conteneurPrincipal.repaint();
+			    }
+			}
+		});
+	    
+	    constraint.gridx = 2;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(addLogo, constraint);
+
 		
 		/*----------------------------------------------formulaire rapport----------------------------------------------------------*/
 	    
