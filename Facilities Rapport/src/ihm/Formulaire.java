@@ -854,6 +854,8 @@ public class Formulaire extends JFrame{
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
+	    Collection<FreeTree> freeTrees2 = new LinkedList<FreeTree>();
+	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
 	  	
@@ -862,11 +864,15 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				FreeTree freeTree2 = new FreeTree(conteneurPrincipal, freeTrees2Position);
+				
+				freeTrees2.add(freeTree2);
+				
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(new FreeTree(conteneurPrincipal, freeTrees2Position), constraint);
+				conteneurPrincipal.add(freeTree2, constraint);
 				
 				conteneurPrincipal.revalidate();
 			}
@@ -888,6 +894,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
 	    conteneurPrincipal.add(meterTitle, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
+	    Collection<Meter> meters = new LinkedList<Meter>();
+	    
 	  	freeTreesCompteurPosition = ++positionCounter;
     
 	  	positionCounter += NUMBER_METER_ALLOWED;
@@ -899,8 +907,10 @@ public class Formulaire extends JFrame{
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
 	  			
-	  			JPanel meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition);
+	  			Meter meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition, meters);
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
+	  			
+	  			meters.add(meter);
 	  			
 	  			constraint.gridx = 0;
 				constraint.gridy = ++freeTreesCompteurPosition;
@@ -1412,9 +1422,9 @@ public class Formulaire extends JFrame{
 										+ e.getMessage(), "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
 							}
-				    	}
-				    	
-				    	datas.add(preventivesVouchers);
+					    	
+					    	datas.add(preventivesVouchers);
+				    	}			    	
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    
@@ -1935,10 +1945,10 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie arborescence libre 2-----------------*/
 				    	
-				    	Iterator<FreeTree> freeTrees2Iter = freeTrees1.iterator();
+				    	Iterator<FreeTree> freeTrees2Iter = freeTrees2.iterator();
 				    	
 				    	while (freeTrees2Iter.hasNext()) {
-				    		Boolean isElement = false;
+				    		Boolean isThereElements = false;
 				    		
 				    		FreeTree currentTree = freeTrees2Iter.next();
 				    		
@@ -1970,7 +1980,8 @@ public class Formulaire extends JFrame{
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
 						    	}
-				    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+				    			else if (currentElementNumber.getText().equals("") || 
+				    					!OperationUtilities.isNumeric(currentElementNumber.getText())) {
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
 						    				" de la partie " + currentTree.titleTextField().getText() + 
@@ -1981,9 +1992,10 @@ public class Formulaire extends JFrame{
 				    			}
 				    			else {
 				    				freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
-				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
+				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", 
+				    						currentElement.getText());
 				    				
-				    				isElement = true;
+				    				isThereElements = true;
 				    			}
 				    		}
 				    		
@@ -1991,7 +2003,7 @@ public class Formulaire extends JFrame{
 				    			freeTree.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
 				    		}
 				    		
-				    		if (isElement) {
+				    		if (isThereElements) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
 											"Element", "Nombre", barChartDatas, true);
@@ -2011,6 +2023,86 @@ public class Formulaire extends JFrame{
 				    	}
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
+						
+						/*-----------------Partie compteurs-----------------*/
+						
+						Iterator<Meter> meterIter = meters.iterator();
+						
+						while (meterIter.hasNext()) {
+							
+							IDataHandler currentMeterData = new DefaultDataHandler(meterTitle.getText());
+							
+							barChartDatas = new DefaultCategoryDataset();
+							
+							Boolean isThereMonths = false;
+							
+							Meter currentMeter = meterIter.next();
+							
+							currentMeterData.addString(currentMeter.comboBoxTypeCompteur().getSelectedItem().toString(),
+									"Type du compteur : ");
+							
+							Iterator<JComboBox<String>> currentMonthIter = currentMeter.monthComboBoxes().iterator();
+							Iterator<JTextField> currentConsumptionIter = currentMeter.monthConsumptions().iterator();
+							Iterator<String> currentUnitIter = currentMeter.monthUnits().iterator();
+							
+							while (currentMonthIter.hasNext()) {
+								
+								isThereMonths = true;
+								
+								JComboBox<String> currentMonth = currentMonthIter.next();
+								JTextField currentConsumption = currentConsumptionIter.next();
+								String currentUnit = currentUnitIter.next();
+								
+								if (currentConsumption.getText().equals("")) {
+						    		JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Consommation : \" de la partie " + 
+						    				" Compteur doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+						    	}
+				    			else if (currentConsumption.getText().equals("") || 
+				    					!OperationUtilities.isNumeric(currentConsumption.getText())) {
+				    				JOptionPane.showMessageDialog(fenetre, 
+						    				"le champs \"Consommation : \" (" + currentConsumption.getText() + 
+						    				") de la partie Compteur " + 
+						    				" doit être remplis avec un nombre", "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+						    		stopPdfCreation(pBarFrame);
+						    		return null;
+				    			}
+				    			else {
+				    				currentMeterData.addString(currentConsumption.getText() + " " + currentUnit,
+				    						currentMonth.getSelectedItem().toString() + " : ");
+				    				
+				    				barChartDatas.addValue(Double.parseDouble(currentConsumption.getText()), currentUnit, 
+				    						currentMonth.getSelectedItem().toString());
+				    			}
+								
+							}
+							
+							if (!currentMeter.textAreaCommentaire().getText().equals("")) {
+								currentMeterData.addString(currentMeter.textAreaCommentaire().getText(), "Commentaire : ");
+							}
+								
+							if (isThereMonths) {
+					    		try {
+									JFreeChart barchart = chartGenerator.generateBarChart("Compteur",
+											"Mois", "Consommation", barChartDatas, true);
+									
+									currentMeterData.addJFreeChart(barchart);
+								} 
+					    		catch (Exception e) {
+					    			e.printStackTrace();
+									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en"
+											+ " barre dans la partie Compteur : \n"
+											+ e.getMessage(), "Erreur", 
+											JOptionPane.WARNING_MESSAGE);
+								}
+					    		
+					    		datas.add(currentMeterData);
+				    		}
+						}
 				    	
 						try {
 							if (!datas.isEmpty()) {
@@ -2235,7 +2327,7 @@ public class Formulaire extends JFrame{
 		this.setCursor(null);
 		this.setEnabled(true);
 		
-		pBFrame.setVisible(false);
+		pBFrame.dispose();
 	}
 
 }
