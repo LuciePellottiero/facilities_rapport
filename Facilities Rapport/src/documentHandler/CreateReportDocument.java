@@ -10,7 +10,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import dataHandler.IDataHandler;
-import documentHandler.writeStrategieFactory.WriteStrategieFactory;
+import documentHandler.writeStrategies.DefaultWriteStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
 import ihm.ProgressBarFrame;
 import utilities.FileUtilities;
@@ -49,7 +49,7 @@ public class CreateReportDocument {
 		PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(WriteStrategieFactory.DEFAULT_STRATEGIE);
+		IWriteStrategie writeStrategie = new DefaultWriteStrategie();
 		
 		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
@@ -85,7 +85,7 @@ public class CreateReportDocument {
 		PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		IWriteStrategie writeStrategie = WriteStrategieFactory.getStrategie(writeStrategieNumber);
+		IWriteStrategie writeStrategie = new DefaultWriteStrategie();
 		
 		// On effectue l'edition du PDF par défaut
 		boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
