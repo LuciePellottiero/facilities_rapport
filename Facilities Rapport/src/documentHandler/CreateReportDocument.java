@@ -12,6 +12,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import dataHandler.IDataHandler;
 import documentHandler.writeStrategies.DefaultWriteStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
+import documentHandler.writeStrategies.NewStrategie;
 import ihm.ProgressBarFrame;
 import utilities.FileUtilities;
 
@@ -49,7 +50,7 @@ public class CreateReportDocument {
 		PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		IWriteStrategie writeStrategie = new DefaultWriteStrategie();
+		IWriteStrategie writeStrategie = new NewStrategie();
 		
 		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
