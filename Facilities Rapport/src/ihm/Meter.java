@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -28,14 +27,15 @@ public class Meter extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private int lastMonthPosition;
-	private int elementCounter = 0;
 	
-	private Integer thisYPosition;
+	final GridBagConstraints constraint;
 	
 	private JComboBox<String> comboBoxTypeCompteur;
 	private JTextArea textAreaCommentaire;
 	
-	private static final int NUMBER_MONTH_ALLOWED = 100;
+	private final JButton ajoutMois;
+	
+	private static final int NUMBER_MONTH_ALLOWED = 30;
 	
 	private static final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
@@ -44,20 +44,18 @@ public class Meter extends JPanel{
 	private Collection<JTextField>        monthConsumptions;
 	private ArrayList<String>             monthUnits;
 
-	public Meter(JComponent mainContainer, Integer yPosition, Collection<Meter> meters) {
+	public Meter() {
 		
 		super (new GridBagLayout());
-		
-		this.thisYPosition = yPosition;
 		
 		monthComboBoxes   = new LinkedList<JComboBox<String>>();
 		monthConsumptions = new LinkedList<JTextField>();
 		monthUnits        = new ArrayList<String>();
 		
 		int positionCounter = 0;
-		Meter thisMeter = this;
+		final Meter thisMeter = this;
 		
-		GridBagConstraints constraint = new GridBagConstraints();
+		constraint = new GridBagConstraints();
 		constraint.gridx = 0;
 		constraint.weightx = 1;
 		constraint.gridy = positionCounter;
@@ -85,7 +83,7 @@ public class Meter extends JPanel{
 
 		//bouton d'ajout de mois
 		
-		JButton ajoutMois = new JButton("+ Ajouter un mois");
+		ajoutMois = new JButton("+ Ajouter un mois");
 		
 		positionCounter += NUMBER_MONTH_ALLOWED;
 		
@@ -97,25 +95,20 @@ public class Meter extends JPanel{
 		ajoutMois.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {	
-		    	
-		    	if (lastMonthPosition >= startMonthPosition + NUMBER_MONTH_ALLOWED) {
-					JOptionPane.showMessageDialog(mainContainer, 
-		    				"Impossible d'ajouter un mois supplémentaire dans la partie \"Compteurs\"", "Erreur", 
-							JOptionPane.WARNING_MESSAGE);
-					ajoutMois.setEnabled(false);
-					return;
-				}
-				else {
-					ajoutMois.setEnabled(true);
-				}
 		    		
-		    	JPanel elementPanel = addMois(elementCounter++);
+		    	JPanel elementPanel = addMois(lastMonthPosition - startMonthPosition);
 		    	
 		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
 		    	constraint.gridx = 0;
 				constraint.gridy = ++lastMonthPosition;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				thisMeter.add(elementPanel, constraint);
+				
+				if (lastMonthPosition >= startMonthPosition + NUMBER_MONTH_ALLOWED) {
+					
+					ajoutMois.setEnabled(false);
+					ajoutMois.setText("Impossible d'ajouter un mois supplémentaire");
+				}
 				
 				thisMeter.revalidate();
 		    }
@@ -138,30 +131,6 @@ public class Meter extends JPanel{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    this.add(scrollPaneCom, constraint); //ajout de la zone de texte
-	    
-	    // Bouton supprimer
-	    JButton delete = new JButton("- Supprimer");
-	    
-	    delete.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				--elementCounter;
-				--thisYPosition;
-				
-				meters.remove(thisMeter);
-				
-				mainContainer.remove(thisMeter);
-				mainContainer.revalidate();
-			}
-		});
-	    
-	    constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
-		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -311,8 +280,12 @@ public class Meter extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				thisPanel.remove(monthPanel);
+				--lastMonthPosition;
 				
+				ajoutMois.setEnabled(true);
+				ajoutMois.setText("+ Ajouter un mois");
+				
+				thisPanel.remove(monthPanel);
 				thisPanel.revalidate();
 			}
 		});
@@ -338,5 +311,9 @@ public class Meter extends JPanel{
 
 	public ArrayList<String> monthUnits() {
 		return monthUnits;
+	}
+	
+	public GridBagConstraints constraint() {
+		return this.constraint;
 	}
 }

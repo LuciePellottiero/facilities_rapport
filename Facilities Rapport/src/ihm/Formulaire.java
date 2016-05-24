@@ -111,7 +111,7 @@ public class Formulaire extends JFrame{
 	private int positionMoisDI;
 	private int freeTrees1Position;
 	private int freeTrees2Position;
-	private int freeTreesCompteurPosition;
+	private int meterPosition;
 	
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
@@ -1142,7 +1142,7 @@ public class Formulaire extends JFrame{
 	    
 	    final Collection<Meter> meters = new LinkedList<Meter>();
 	    
-	  	freeTreesCompteurPosition = ++positionCounter;
+	  	meterPosition = ++positionCounter;
     
 	  	positionCounter += NUMBER_METER_ALLOWED;
     
@@ -1153,13 +1153,36 @@ public class Formulaire extends JFrame{
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
 	  			
-	  			final Meter meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition, meters);
+	  			final Meter meter = new Meter();
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
+	  			
+	  		    // Bouton supprimer
+	  		    JButton delete = new JButton("- Supprimer");
+	  		    
+	  		    delete.addActionListener(new ActionListener() {
+
+	  				@Override
+	  				public void actionPerformed(ActionEvent e) {
+	  					--meterPosition;
+	  					
+	  					meters.remove(meter);
+	  					
+	  					conteneurPrincipal.remove(meter);
+	  					conteneurPrincipal.revalidate();
+	  				}
+	  			});
+	  		    
+	  		    GridBagConstraints meterConstraint = meter.constraint;
+	  		    meterConstraint.gridx = 0;
+	  			++meterConstraint.gridy;
+	  			meterConstraint.gridwidth = 1;
+	  			meterConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+	  			meter.add(delete, meterConstraint); //ajout du bouton supprimer dans conteneurPrincipal
 	  			
 	  			meters.add(meter);
 	  			
 	  			constraint.gridx = 0;
-				constraint.gridy = ++freeTreesCompteurPosition;
+				constraint.gridy = ++meterPosition;
 				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(meter, constraint);
