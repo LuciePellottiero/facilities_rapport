@@ -148,6 +148,12 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 			            para.add(Chunk.NEWLINE);
 						break;
 						
+					case IDataHandler.DATA_TYPE_IMAGE :
+						
+						java.awt.Image image = (java.awt.Image) datasIter.next();
+						
+						para.add(Image.getInstance(image, null));
+						break;
 					default:
 						throw new Exception ("data type not handled");
 				}
@@ -287,6 +293,13 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 					            para.add(chartImage);
 					            para.add(Chunk.NEWLINE);
 								break;
+								
+							case IDataHandler.DATA_TYPE_IMAGE :
+								
+								java.awt.Image image = (java.awt.Image) datasIter.next();
+								
+								para.add(Image.getInstance(image, null));
+								break;	
 								
 							default:
 								throw new Exception ("data type not handled");

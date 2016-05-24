@@ -46,8 +46,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileView;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.text.MaskFormatter;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -77,6 +75,8 @@ public class Formulaire extends JFrame{
 	 * Declaration de la Collection<JCheckBox> des domaines de bon de prevention remplis au dessus du try
 	 */
 	private Collection<JCheckBox> domainesBP;
+	
+	private ImageIcon logoIcon;
 	
 	/**
 	 * String utilisees pour chaque JLable de mois de bons preventifs
@@ -388,9 +388,28 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = 1;
 		conteneurPrincipal.add(customerLogo, constraint);
 	    
-		final JLabel customorLogoFile = new JLabel();
+		final JLabel customerLogoFile = new JLabel();
+		
 		constraint.gridx = 1;
-		conteneurPrincipal.add(customorLogoFile, constraint);
+		conteneurPrincipal.add(customerLogoFile, constraint);
+		
+		final JButton deleteLogo = new JButton("X");
+		deleteLogo.setVisible(false);
+		deleteLogo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				logoIcon = null;
+				customerLogoFile.setText("");
+				customerLogoFile.setIcon(null);
+				deleteLogo.setVisible(false);
+				
+				conteneurPrincipal.repaint();
+			}
+		});
+		
+		constraint.gridx = 2;
+		conteneurPrincipal.add(deleteLogo, constraint);
 		
 	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	            "Fichiers images", ImageIO.getReaderFileSuffixes());
@@ -398,6 +417,8 @@ public class Formulaire extends JFrame{
 	    final JFileChooser fileChooser = new JFileChooser();
 	    fileChooser.setFileFilter(filter);
 	    fileChooser.setAccessory(new ImagePreview(fileChooser));
+	    
+	    
 	    
 	    JButton addLogo = new JButton("Choisir logo...");
 	    addLogo.addActionListener(new  ActionListener() {
@@ -410,15 +431,8 @@ public class Formulaire extends JFrame{
 				if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						File file = fileChooser.getSelectedFile();
-						Image tmpImage = null;
-				        try {
-				        	tmpImage = ImageIO.read(file);
-						} 
-				        catch (IOException e) {
-							e.printStackTrace();
-						}
-				        
-				        ImageIcon logoIcon = new ImageIcon(tmpImage);
+						Image tmpImage = ImageIO.read(file);  
+				        logoIcon = new ImageIcon(tmpImage);
 				        
 				        if (logoIcon != null) {
 				            if (logoIcon.getIconWidth() > 90) {
@@ -428,21 +442,23 @@ public class Formulaire extends JFrame{
 				            } 
 				        }
 				        
-				        customorLogoFile.setIcon(logoIcon);
+				        customerLogoFile.setIcon(logoIcon);
+				        customerLogoFile.setText(fileChooser.getSelectedFile().getName());
+						
+				        deleteLogo.setVisible(true);
+				        
+						conteneurPrincipal.repaint();
 					}
 					catch (Exception e) {
 						JOptionPane.showMessageDialog(mainFrame, 
 			    				"L'image choisi est invalide", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
-					}
-					customorLogoFile.setText(fileChooser.getSelectedFile().getName());
-					
-					conteneurPrincipal.repaint();
+					}		
 			    }
 			}
 		});
 	    
-	    constraint.gridx = 2;
+	    constraint.gridx = 3;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		conteneurPrincipal.add(addLogo, constraint);
 
@@ -1344,6 +1360,10 @@ public class Formulaire extends JFrame{
 				    	}
 				    	else {
 				    		clientPart.addString(textFieldEmailCl.getText(),    emailCl.getText());    // email client
+				    	}
+				    	
+				    	if (logoIcon != null) {
+				    		clientPart.addImage(logoIcon.getImage());
 				    	}
 				    	
 				    	datas.add(clientPart);
