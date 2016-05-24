@@ -100,7 +100,7 @@ public class Formulaire extends JFrame{
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 100;
 
-	private static final int NUMBER_FREE_TREE_ALLOWED = 3;
+	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
 	
 	private static final int NUMBER_METER_ALLOWED = 30;
 	
@@ -109,8 +109,8 @@ public class Formulaire extends JFrame{
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
 	private int positionMoisDI;
-	private Position freeTrees1Position;
-	private Position freeTrees2Position;
+	private int freeTrees1Position;
+	private int freeTrees2Position;
 	private int freeTreesCompteurPosition;
 	
 	public Formulaire() throws IOException{
@@ -119,9 +119,6 @@ public class Formulaire extends JFrame{
 		final JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
 		final Formulaire mainFrame = this;
-		
-		freeTrees1Position = new Position();
-		freeTrees2Position = new Position();
 		
 		positionCounter = 0;
 		
@@ -698,8 +695,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees1Position.position = positionCounter;
-	    final int startFreeTree1Position = freeTrees1Position.position;
+	    freeTrees1Position = positionCounter;
+	    final int startFreeTree1Position = freeTrees1Position;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
@@ -712,9 +709,33 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			    
-			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position, freeTrees1);
+			    FreeTree arboLibre = new FreeTree();
 			    
 			    freeTrees1.add(arboLibre);
+			    
+			    // Bouton supprimer
+			    final JButton delete = new JButton("- Supprimer");
+			    
+			    delete.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						--freeTrees1Position;
+						
+						freeTrees1.remove(arboLibre);
+						
+						conteneurPrincipal.remove(arboLibre);
+						conteneurPrincipal.revalidate();
+					}
+				});
+			    
+			    GridBagConstraints freeTreeConstraint = arboLibre.constraint();
+			    freeTreeConstraint.gridx = 0;
+			    ++freeTreeConstraint.gridy;
+			    freeTreeConstraint.gridwidth = 1;
+				freeTreeConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+				arboLibre.add(delete, freeTreeConstraint); //ajout du bouton supprimer dans conteneurPrincipal
 			    
 			    arboLibre.addAncestorListener(new AncestorListener() {
 					
@@ -736,14 +757,14 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = ++freeTrees1Position.position;
+				constraint.gridy = ++freeTrees1Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(arboLibre, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
-			    if (freeTrees1Position.position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
+			    if (freeTrees1Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
 			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre.setEnabled(false);
 			    }
@@ -1026,8 +1047,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees2Position.position = ++positionCounter;
-	    Integer startFreeTree2Position = freeTrees2Position.position;
+	    freeTrees2Position = ++positionCounter;
+	    Integer startFreeTree2Position = freeTrees2Position;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
@@ -1041,9 +1062,33 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				FreeTree freeTree = new FreeTree(conteneurPrincipal, freeTrees2Position, freeTrees2);
+				FreeTree freeTree = new FreeTree();
 			    
 			    freeTrees2.add(freeTree);
+			    
+			    // Bouton supprimer
+			    final JButton delete = new JButton("- Supprimer");
+			    
+			    delete.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						--freeTrees2Position;
+						
+						freeTrees2.remove(freeTree);
+						
+						conteneurPrincipal.remove(freeTree);
+						conteneurPrincipal.revalidate();
+					}
+				});
+			    
+			    GridBagConstraints freeTreeConstraint = freeTree.constraint();
+			    freeTreeConstraint.gridx = 0;
+			    ++freeTreeConstraint.gridy;
+			    freeTreeConstraint.gridwidth = 1;
+				freeTreeConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+				freeTree.add(delete, freeTreeConstraint); //ajout du bouton supprimer dans conteneurPrincipal
 			    
 			    freeTree.addAncestorListener(new AncestorListener() {
 					
@@ -1065,14 +1110,14 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = ++freeTrees2Position.position;
+				constraint.gridy = ++freeTrees2Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(freeTree, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
-			    if (freeTrees2Position.position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+			    if (freeTrees2Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
 			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre2.setEnabled(false);
 			    }

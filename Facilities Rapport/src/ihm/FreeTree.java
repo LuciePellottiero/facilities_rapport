@@ -10,7 +10,6 @@ import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +30,8 @@ public class FreeTree extends JPanel{
 	private static final String[] ADD_ELEMENT_TEXT = {"+ Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
 	
+	private final GridBagConstraints constraint;
+	
 	private final Collection<JTextField> elements;
 	private final Collection<JTextField> elementNumbers;
 	private final JTextField titleTextField;
@@ -40,7 +41,7 @@ public class FreeTree extends JPanel{
 
 	private int lastElementPosition;
 
-	public FreeTree(JComponent container, Position yPostion, Collection<FreeTree> freeTrees){
+	public FreeTree(){
 
 		super (new GridBagLayout());
 		
@@ -50,7 +51,7 @@ public class FreeTree extends JPanel{
 		
 		int positionCounter = 0;
 		
-		final GridBagConstraints constraint = new GridBagConstraints();
+		constraint = new GridBagConstraints();
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
 		constraint.weightx = 1;
@@ -152,29 +153,6 @@ public class FreeTree extends JPanel{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 		this.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
-	    
-	    // Bouton supprimer
-	    final JButton delete = new JButton("- Supprimer");
-	    
-	    delete.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				yPostion.setPosition(--yPostion.position);
-				
-				freeTrees.remove(thisFreeTree);
-				
-				container.remove(thisFreeTree);
-				container.revalidate();
-			}
-		});
-	    
-	    constraint.gridx = 0;
-		constraint.gridy = ++positionCounter;
-		constraint.gridwidth = 1;
-		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
-		this.add(delete, constraint); //ajout du bouton supprimer dans conteneurPrincipal
 	}
 	
 	public JPanel addElement() {
@@ -298,5 +276,9 @@ public class FreeTree extends JPanel{
 	
 	public JTextArea textAreaComment() {
 		return textAreaComment;
+	}
+	
+	public GridBagConstraints constraint() {
+		return constraint;
 	}
 }
