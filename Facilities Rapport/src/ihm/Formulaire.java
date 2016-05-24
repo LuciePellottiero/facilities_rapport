@@ -123,6 +123,17 @@ public class Formulaire extends JFrame{
 		positionCounter = 0;
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
+		
+		ImageIcon img = null;
+		try {
+			img = new ImageIcon("Facilities Rapport/Files/Icons/vinciFacilitesIcon.png");
+			this.setIconImage(img.getImage());
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		this.setSize(700, 600); //taille fenetre
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //pour fermer la fenetre
 	    this.setLocationRelativeTo(null); //position de la fenetre
