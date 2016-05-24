@@ -132,13 +132,16 @@ public class Formulaire extends JFrame{
 		
 		positionCounter = 0;
 		
+		Insets titleInset = new Insets(20, 0, 5, 0); //marges autour des titres
+		
 		/*-----------------------------------------formulaire redacteur--------------------------------------------*/
 	    
 		final JLabel titreRedacteur = new JLabel("Redacteur"); //titre de la partie redacteur du formulaire
 		titreRedacteur.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRedacteur
+		
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreRedacteur, constraint); //ajout du titreRedacteur dans conteneurPrincipal
 		
 		//nom
@@ -235,7 +238,7 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 		conteneurPrincipal.add(titreClient, constraint); //ajout du titreClient dans le panel conteneurPrincpal
 	
 		//nom
@@ -382,6 +385,8 @@ public class Formulaire extends JFrame{
 	    conteneurPrincipal.add(textFieldEmailCl, constraint); //ajout de la zone de texte emailCl
 	    
 	    final JLabel customerLogo = new JLabel ("Logo client : ");
+	    customerLogo.setHorizontalTextPosition(JLabel.CENTER);
+	    customerLogo.setVerticalTextPosition(JLabel.BOTTOM);
 	    
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
@@ -409,6 +414,7 @@ public class Formulaire extends JFrame{
 		});
 		
 		constraint.gridx = 2;
+		constraint.weighty = 0;
 		conteneurPrincipal.add(deleteLogo, constraint);
 		
 	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -420,13 +426,13 @@ public class Formulaire extends JFrame{
 	    
 	    
 	    
-	    JButton addLogo = new JButton("Choisir logo...");
+	    final JButton addLogo = new JButton("Choisir logo...");
 	    addLogo.addActionListener(new  ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int returnVal = fileChooser.showOpenDialog(conteneurPrincipal);
+				int returnVal = fileChooser.showOpenDialog(mainFrame);
 			    
 				if(returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -469,7 +475,7 @@ public class Formulaire extends JFrame{
 		titreRapport.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRapport
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreRapport, constraint); //ajout du titreRapport dans conteneurPrincipal
 		
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
@@ -545,7 +551,7 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(3, 0, 3, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 		conteneurPrincipal.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 	    
 	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
@@ -606,7 +612,7 @@ public class Formulaire extends JFrame{
 		constraint.gridx = 0; //position horizontale
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreBPDomaine, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    String[] listeDomaines = {"Clos et ouvert", "Aménagement intérieur", "Ascenseur, monte-charge", "CVC", "Plomberie sanitaire",
@@ -656,16 +662,19 @@ public class Formulaire extends JFrame{
 	    }
 	  
 		//commentaire BP par domaine
-	    JLabel commentaireBPDomaine = new JLabel("Commentaire : "); //creation du label emailCl
-		constraint.gridx = 0;
-		positionCounter = positionCounter + 11;
-		constraint.gridy = positionCounter;
+	    final JLabel commentaireBPDomaine = new JLabel("Commentaire : "); //creation du label emailCl
+		
+	    constraint.gridx = 0;
+		positionCounter += 11;
+		constraint.gridy += positionCounter;
 		constraint.gridwidth = 1;
-		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBPDomaine, constraint); //ajout du label emailCl
-	    JTextArea textAreaCommentaireBPDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneComBPDomaine = new JScrollPane(textAreaCommentaireBPDomaine);
+	    
+	    final JTextArea textAreaCommentaireBPDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    final JScrollPane scrollPaneComBPDomaine = new JScrollPane(textAreaCommentaireBPDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaCommentaireBPDomaine); //attribution de la zone de texte au label emailCl
+	    
 	    constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
@@ -678,7 +687,7 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
 	    freeTrees1Position = ++positionCounter;
@@ -693,14 +702,16 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+			    
+			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position);
+			    
+			    freeTrees1.add(arboLibre);
 				
-				constraint.gridx = 0;
+			    constraint.gridx = 0;
 				constraint.gridy = ++freeTrees1Position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
-			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position);
-			    freeTrees1.add(arboLibre);
-				conteneurPrincipal.add(arboLibre, constraint);
+			    conteneurPrincipal.add(arboLibre, constraint);
 				
 				conteneurPrincipal.revalidate();
 			}
@@ -718,7 +729,7 @@ public class Formulaire extends JFrame{
 		titreDI.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
 		//bouton d'ajout de mois pour les BP
@@ -815,14 +826,17 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(ajoutMoisDI, constraint); //ajout du bouton ajoutElement
 		
 		//commentaire DI
-	    JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
-		constraint.gridx = 0;
+	    final JLabel commentaireDI = new JLabel("Commentaire : "); //creation du label emailCl
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		 constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireDI, constraint); //ajout du label emailCl
-	    JTextArea textAreaCommentaireDI = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneComDI = new JScrollPane(textAreaCommentaireDI);
+	    
+	    final JTextArea textAreaCommentaireDI = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    final JScrollPane scrollPaneComDI = new JScrollPane(textAreaCommentaireDI);
 	    commentaireDI.setLabelFor(textAreaCommentaireDI); //attribution de la zone de texte au label emailCl
+	    
 	    constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
@@ -831,12 +845,13 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
 	   
-	    JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
+	    final JLabel titreDIEtat = new JLabel("Demandes d'intervention par états"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIEtat.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
-		constraint.gridx = 0;
+		
+	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreDIEtat, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    String[] listeEtats = {"Attente de lecture avant exécution", "Attente de lecture par validateur",
@@ -879,10 +894,10 @@ public class Formulaire extends JFrame{
 	    }
 	    
 		//commentaire DI par etat
-	    JLabel commentaireDIEtat = new JLabel("Commentaire : "); //creation du label commentaireDIEtat
+	    final JLabel commentaireDIEtat = new JLabel("Commentaire : "); //creation du label commentaireDIEtat
 	    
-	    JTextArea textAreaCommentaireDIEtat = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireDIEtat
-	    JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
+	    final JTextArea textAreaCommentaireDIEtat = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireDIEtat
+	    final JScrollPane scrollPaneComDIEtat = new JScrollPane(textAreaCommentaireDIEtat); //creation de la scrollPane scrollPaneComDIEtat contenant textAreaCommentaireDIEtat
 	    commentaireDIEtat.setLabelFor(textAreaCommentaireDIEtat); //attribution de la zone de texte textAreaCommentaireDIEtat au label commentaireDIEtat
 	    	   
 		constraint.gridx = 0;
@@ -899,22 +914,22 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par domaine------------------------------------------------*/
 	    
-	    JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
+	    final JLabel titreDIDomaine = new JLabel("Demandes d'intervention par domaines"); //titre de la partie Bons preventifs par domaine du formulaire
 	    titreDIDomaine.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		
 	    constraint.gridx = 0; //position horizontale
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1; //nombre de cases occupees à partir de sa postion horizontale
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreDIDomaine, constraint); //ajout du titreBPDomaine dans conteneurPrincipal
 	    
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    
-	    Collection<JCheckBox>  interventionDomains = new ArrayList<JCheckBox>();
-	    Collection<JFormattedTextField> interventionPourcents = new ArrayList<JFormattedTextField>();
+	    final Collection<JCheckBox>  interventionDomains = new ArrayList<JCheckBox>();
+	    final Collection<JFormattedTextField> interventionPourcents = new ArrayList<JFormattedTextField>();
 	    
 	    for(int i = 0; i < nbDomaines; i++){
-	    	JCheckBox diDomaine = new JCheckBox(listeDomaines[i]);
+	    	final JCheckBox diDomaine = new JCheckBox(listeDomaines[i]);
 	    	
 	    	MaskFormatter maskPourcent = null;
 			
@@ -925,7 +940,7 @@ public class Formulaire extends JFrame{
 				e.printStackTrace(); //exception
 			}
 			
-			JFormattedTextField textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+			final JFormattedTextField textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
 			textFieldPourcentDI.setEnabled(false);
 			
 			diDomaine.addActionListener(new ActionListener() {
@@ -951,14 +966,14 @@ public class Formulaire extends JFrame{
 	    }
 	  
 		//commentaire BP par domaine
-	    JLabel commentaireDIDomaine = new JLabel("Commentaire : "); //creation du label emailCl
+	    final JLabel commentaireDIDomaine = new JLabel("Commentaire : "); //creation du label emailCl
 	    
-	    JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
+	    final JTextArea textAreaComDIDomaine = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
+	    final JScrollPane scrollPaneComDIDomaine = new JScrollPane(textAreaComDIDomaine);
 	    commentaireBPDomaine.setLabelFor(textAreaComDIDomaine); //attribution de la zone de texte au label emailCl
 	    
 		constraint.gridx = 0;
-		positionCounter = positionCounter + 11;
+		positionCounter += 11;
 		constraint.gridy = positionCounter;
 		constraint.gridwidth = 1;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
@@ -975,30 +990,30 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
 	    freeTrees2Position += positionCounter;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
-	    Collection<FreeTree> freeTrees2 = new LinkedList<FreeTree>();
+	    final Collection<FreeTree> freeTrees2 = new LinkedList<FreeTree>();
 	    
 	    //bouton d'ajout d'arborescence libre
-	  	JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
+	  	final JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
 	  	
 	  	ajoutArboLibre2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				FreeTree freeTree2 = new FreeTree(conteneurPrincipal, freeTrees2Position);
+				final FreeTree freeTree2 = new FreeTree(conteneurPrincipal, freeTrees2Position);
 				
 				freeTrees2.add(freeTree2);
 				
 				constraint.gridx = 0;
 				constraint.gridy = ++freeTrees2Position;
-				constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+				constraint.insets = titleInset; //marges autour de l'element
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(freeTree2, constraint);
 				
@@ -1014,28 +1029,28 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire compteurs----------------------------------------------------------*/
 	    
-	  	JLabel meterTitle = new JLabel("Compteurs"); //titre de la parte rapport du formulaire
-	  	meterTitle.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreCompteurs
+	  	final JLabel meterTitle = new JLabel("Compteurs"); //titre de la parte rapport du formulaire
+	  	meterTitle.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
 	  	
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(meterTitle, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    Collection<Meter> meters = new LinkedList<Meter>();
+	    final Collection<Meter> meters = new LinkedList<Meter>();
 	    
 	  	freeTreesCompteurPosition = ++positionCounter;
     
 	  	positionCounter += NUMBER_METER_ALLOWED;
     
 	  	//bouton d'ajout d'arborescence libre
-	  	JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
+	  	final JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
   	
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
 	  			
-	  			Meter meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition, meters);
+	  			final Meter meter = new Meter(conteneurPrincipal, freeTreesCompteurPosition, meters);
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
 	  			
 	  			meters.add(meter);
@@ -1058,7 +1073,7 @@ public class Formulaire extends JFrame{
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
-		JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
+		final JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
 		
 		constraint.gridx = 0;
@@ -1719,7 +1734,7 @@ public class Formulaire extends JFrame{
 				    		
 				    		if (currentTree.titleTextField().getText().equals("")) {
 				    			JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+					    				"le champs \"Titre : \" de la partie Arborescence Libre 1" +
 					    				" doit être remplis", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
 					    		stopPdfCreation(pBarFrame);
@@ -1740,16 +1755,17 @@ public class Formulaire extends JFrame{
 				    			if (currentElement.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
-						    				" doit être remplis", "Erreur", 
+						    				" (Arboresence libre 1) doit être remplis", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
 						    	}
-				    			else if (currentElementNumber.getText().equals("") || !OperationUtilities.isNumeric(currentElementNumber.getText())) {
+				    			else if (currentElementNumber.getText().equals("") || 
+				    					!OperationUtilities.isNumeric(currentElementNumber.getText())) {
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
 						    				" de la partie " + currentTree.titleTextField().getText() + 
-						    				" doit être remplis avec un nombre", "Erreur", 
+						    				" (Arboresence libre 1) doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
@@ -1776,7 +1792,7 @@ public class Formulaire extends JFrame{
 					    		catch (Exception e) {
 					    			e.printStackTrace();
 									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
-											currentTree.titleTextField().getText() + ": \n"
+											currentTree.titleTextField().getText() + " (Arboresence libre 1) : \n"
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}
@@ -2086,7 +2102,7 @@ public class Formulaire extends JFrame{
 				    		
 				    		if (currentTree.titleTextField().getText().equals("")) {
 				    			JOptionPane.showMessageDialog(fenetre, 
-					    				"le champs \"Titre : \" de la partie Arborescence Libre" +
+					    				"le champs \"Titre : \" de la partie Arborescence Libre 2" +
 					    				" doit être remplis", "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
 					    		stopPdfCreation(pBarFrame);
@@ -2107,7 +2123,7 @@ public class Formulaire extends JFrame{
 				    			if (currentElement.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
-						    				" doit être remplis", "Erreur", 
+						    				" (Arboresence libre 2) doit être remplis", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
@@ -2117,7 +2133,7 @@ public class Formulaire extends JFrame{
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
 						    				" de la partie " + currentTree.titleTextField().getText() + 
-						    				" doit être remplis avec un nombre", "Erreur", 
+						    				" (Arboresence libre 2) doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
@@ -2145,7 +2161,7 @@ public class Formulaire extends JFrame{
 					    		catch (Exception e) {
 					    			e.printStackTrace();
 									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
-											currentTree.titleTextField().getText() + ": \n"
+											currentTree.titleTextField().getText() + " (Arboresence libre 2) : \n"
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}

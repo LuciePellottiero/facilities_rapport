@@ -26,30 +26,34 @@ public class FreeTree extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unused")
-	private int thisYPosition;
+	private Integer thisYPosition;
 	
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
 	
-	private Collection<JTextField> elements;
-	private Collection<JTextField> elementNumbers;
-	private JTextField titleTextField;
-	private JTextArea textAreaComment;
+	private static final String[] ADD_ELEMENT_TEXT = {"+ Ajouter un élément", "Remplissez la partie Titre", 
+			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
+	
+	private final Collection<JTextField> elements;
+	private final Collection<JTextField> elementNumbers;
+	private final JTextField titleTextField;
+	private final JTextArea textAreaComment;
+	
+	final JButton addElement;
 
 	private int lastElementPosition;
 
-	public FreeTree(JComponent container, int yPosition){
+	public FreeTree(JComponent container, Integer yPosition){
 
 		super (new GridBagLayout());
 		
-		JPanel thisPanel = this;
+		final JPanel thisPanel = this;
 		this.thisYPosition = yPosition;
 		
 		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
 		int positionCounter = 0;
 		
-		GridBagConstraints constraint = new GridBagConstraints();
+		final GridBagConstraints constraint = new GridBagConstraints();
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
 		constraint.weightx = 1;
@@ -61,7 +65,7 @@ public class FreeTree extends JPanel{
 	    
 	    constraint.insets = new Insets(20, 0, 3, 0); //marges autour de l'element
 		//titre
-	    JLabel title = new JLabel("Titre : "); //creation du label titre
+	    final JLabel title = new JLabel("Titre : "); //creation du label titre
 	    
 	    constraint.gridx = 0;
 	    constraint.gridy = ++positionCounter;
@@ -69,13 +73,6 @@ public class FreeTree extends JPanel{
 		
 		titleTextField = new JTextField(15); //creation de la zone de texte textFieldTitre2de taille 15
 		title.setLabelFor(titleTextField); //attribution de la zone de texte textFieldTitre au label titre
-		titleTextField.getDocument().addDocumentListener(new PersonnalDocumentListener() {
-			
-			@Override
-			public void update(DocumentEvent arg0) {
-				thisPanel.setBorder(BorderFactory.createTitledBorder(titleTextField.getText()));
-			}
-		});
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -87,14 +84,16 @@ public class FreeTree extends JPanel{
 
 		//bouton d'ajout d'element
 		
-		JButton ajoutElement = new JButton("+ Ajouter un élément");
+		addElement = new JButton(ADD_ELEMENT_TEXT[1]);
+		addElement.setEnabled(false);
+		
 		constraint.gridx = 1;
 		positionCounter += NUMBER_ELEMENT_ALLOWED;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		this.add(ajoutElement, constraint); //ajout du bouton ajoutElement
+		this.add(addElement, constraint); //ajout du bouton ajoutElement
 		
-		ajoutElement.addActionListener(new ActionListener() {
+		addElement.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
 		    	
@@ -102,14 +101,17 @@ public class FreeTree extends JPanel{
 					JOptionPane.showMessageDialog(thisPanel, 
 		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titleTextField.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
-					ajoutElement.setEnabled(false);
+					
+					addElement.setEnabled(false);
+					addElement.setText(ADD_ELEMENT_TEXT[3]);
+					
 					return;
 				}
-				else {
-					ajoutElement.setEnabled(true);
-				}
+
+		    	addElement.setText(ADD_ELEMENT_TEXT[2]);
+				addElement.setEnabled(false);
 		    	
-		    	JPanel elementPanel = addElement();
+		    	final JPanel elementPanel = addElement();
 		    	
 		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
 		    	constraint.gridx = 0;
@@ -121,16 +123,32 @@ public class FreeTree extends JPanel{
 		    }
 		});
 		
+		titleTextField.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+			
+			@Override
+			public void update(DocumentEvent arg0) {
+				thisPanel.setBorder(BorderFactory.createTitledBorder(titleTextField.getText()));
+				
+				if (titleTextField.getText().equals("")) {
+					addElement.setText(ADD_ELEMENT_TEXT[1]);
+					addElement.setEnabled(false);
+				}
+				else {
+					addElement.setText(ADD_ELEMENT_TEXT[0]);
+					addElement.setEnabled(true);
+				}
+			}
+		});
 		
 		//commentaire
-	    JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
+	    final JLabel commentaire = new JLabel("Commentaire : "); //creation du label emailCl
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 	    this.add(commentaire, constraint); //ajout du label emailCl
 	    
 	    textAreaComment = new JTextArea(4, 15); //creation de la zone de texte emailCl de taille 15
-	    JScrollPane scrollPaneCom = new JScrollPane(textAreaComment);
+	    final JScrollPane scrollPaneCom = new JScrollPane(textAreaComment);
 	    commentaire.setLabelFor(textAreaComment); //attribution de la zone de texte au label emailCl
 
 		constraint.gridy = ++positionCounter;
@@ -139,7 +157,7 @@ public class FreeTree extends JPanel{
 		this.add(scrollPaneCom, constraint); //ajout de la zone de texte emailCl
 	    
 	    // Bouton supprimer
-	    JButton delete = new JButton("- Supprimer");
+	    final JButton delete = new JButton("- Supprimer");
 	    
 	    delete.addActionListener(new ActionListener() {
 			
@@ -162,11 +180,11 @@ public class FreeTree extends JPanel{
 	
 	public JPanel addElement() {
 		
-		JPanel elementPanel = new JPanel();
+		final JPanel elementPanel = new JPanel();
 		
 		int positionCounter = 0;
 		
-		GridBagConstraints constraint = new GridBagConstraints();
+		final GridBagConstraints constraint = new GridBagConstraints();
 		constraint.gridx = 0;
 		constraint.weightx = 1;
 		constraint.gridy = positionCounter;
@@ -175,11 +193,11 @@ public class FreeTree extends JPanel{
 		constraint.fill = GridBagConstraints.BOTH;
     	
 		//element
-	    JLabel element = new JLabel("Elément : "); //creation du label dateDebut
+	    final JLabel element = new JLabel("Elément : "); //creation du label dateDebut
 		
 		elementPanel.add(element, constraint); //ajout du label nbBPOuverts
 		
-	    JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
+	    final JTextField textFieldElement = new JTextField(15); //initialisation de la zone de texte textFieldNbBPOuverts
 	    elements.add(textFieldElement);
 	    
 	    element.setLabelFor(textFieldElement); //attribution de la zone de texte au label nbBPOuverts
@@ -187,22 +205,52 @@ public class FreeTree extends JPanel{
 		elementPanel.add(textFieldElement, constraint); //ajout de la zone de texte textFieldNbBPOuverts	
 		
 		//nombre
-	    JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
+	    final JLabel nombre = new JLabel("Nombre : "); //creation du label dateDebut
 		
 	    constraint.gridx = 2;
 		elementPanel.add(nombre, constraint); //ajout du label dateDebut
 		
-	    JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
+	    final JTextField textFieldNombre = new JTextField(2); //initialisation de la zone de texte dateFin formattee par le masque
 	    nombre.setLabelFor(textFieldNombre); //attribution de la zone de texte au label dateFin
 	    elementNumbers.add(textFieldNombre);
+	    
+	    textFieldElement.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+			
+			@Override
+			public void update(DocumentEvent arg0) {
+				if (textFieldElement.getText().equals("") || textFieldNombre.getText().equals("")) {
+					addElement.setText(ADD_ELEMENT_TEXT[2]);
+					addElement.setEnabled(false);
+				}
+				else {
+					addElement.setText(ADD_ELEMENT_TEXT[0]);
+					addElement.setEnabled(true);
+				}
+			}
+		});
+	    
+	    textFieldNombre.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+			
+			@Override
+			public void update(DocumentEvent arg0) {
+				if (textFieldElement.getText().equals("") || textFieldNombre.getText().equals("")) {
+					addElement.setText(ADD_ELEMENT_TEXT[2]);
+					addElement.setEnabled(false);
+				}
+				else {
+					addElement.setText(ADD_ELEMENT_TEXT[0]);
+					addElement.setEnabled(true);
+				}
+			}
+		});
 	    
 	    constraint.gridx = 3;
 		constraint.gridwidth = 2;
 		elementPanel.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
 			
-		JPanel thisPanel = this;
+		final JPanel thisPanel = this;
 		
-		JButton deleteElementButton = new JButton("X");
+		final JButton deleteElementButton = new JButton("X");
 		deleteElementButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -211,6 +259,16 @@ public class FreeTree extends JPanel{
 				
 				elements.remove(textFieldElement);
 				elementNumbers.remove(textFieldNombre);
+				
+				--lastElementPosition;
+				
+				if (addElement.getText().equals(ADD_ELEMENT_TEXT[2]) || 
+						addElement.getText().equals(ADD_ELEMENT_TEXT[3])) {
+					
+					addElement.setEnabled(true);
+					addElement.setText(ADD_ELEMENT_TEXT[0]);
+					
+				}
 				
 				thisPanel.revalidate();
 			}
@@ -222,6 +280,10 @@ public class FreeTree extends JPanel{
 		
 		return elementPanel;
 	}
+	
+	/*public boolean isValid () {
+		return addElement.isEnabled();
+	}*/
 	
 	public Collection<JTextField> elements() {
 		return elements;
