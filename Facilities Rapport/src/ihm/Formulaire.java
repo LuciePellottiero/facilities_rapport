@@ -44,6 +44,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.MaskFormatter;
@@ -81,21 +83,24 @@ public class Formulaire extends JFrame{
 	/**
 	 * String utilisees pour chaque JLable de mois de bons preventifs
 	 */
-	private final String[] preventiveVoucherMonthLabels    = {"Mois : ", "Nombre de bons préventifs ouverts : ", 
+	private final static String[] PREVENTIVE_VOUCHER_MONTH_LABELS = {"Mois : ", "Nombre de bons préventifs ouverts : ", 
 			"Nombre de bons préventifs fermés : ", "Commentaire : "};
     
 	/**
 	 * liste differents choix de la duree du rapport d'activite
 	 */
-	private final String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
+	private final static String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
-	private final String[] ADD_MONTH_BUTTON_TEXT = {"+ Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
+	private final static String[] ADD_MONTH_BUTTON_TEXT = {"+ Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
 			"Remplissez les mois précedents"};
 	
-	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 1000;
+	private final static String[] ADD_FREE_TREE_TEXT = {"+ Ajouter arborescence libre", 
+			"Impossible d'ajouter une arborescence libre supplémentaire"};
+	
+	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 100;
 
-	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
+	private static final int NUMBER_FREE_TREE_ALLOWED = 3;
 	
 	private static final int NUMBER_METER_ALLOWED = 30;
 	
@@ -104,8 +109,8 @@ public class Formulaire extends JFrame{
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
 	private int positionMoisDI;
-	private int freeTrees1Position;
-	private int freeTrees2Position;
+	private Position freeTrees1Position;
+	private Position freeTrees2Position;
 	private int freeTreesCompteurPosition;
 	
 	public Formulaire() throws IOException{
@@ -114,6 +119,11 @@ public class Formulaire extends JFrame{
 		final JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
 		final Formulaire mainFrame = this;
+		
+		freeTrees1Position = new Position();
+		freeTrees2Position = new Position();
+		
+		positionCounter = 0;
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
 		this.setSize(700, 600); //taille fenetre
@@ -129,8 +139,6 @@ public class Formulaire extends JFrame{
 		final JPanel conteneurPrincipal = new JPanel(new GridBagLayout());
 		final GridBagConstraints constraint = new GridBagConstraints();
 		constraint.fill = GridBagConstraints.BOTH;   
-		
-		positionCounter = 0;
 		
 		Insets titleInset = new Insets(20, 0, 5, 0); //marges autour des titres
 		
@@ -571,7 +579,7 @@ public class Formulaire extends JFrame{
 				
 				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
-		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
+		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + PREVENTIVE_VOUCHER_MONTH_LABELS[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[1]);
@@ -690,7 +698,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees1Position = ++positionCounter;
+	    freeTrees1Position.position = positionCounter;
+	    final int startFreeTree1Position = freeTrees1Position.position;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
@@ -703,17 +712,41 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			    
-			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position);
+			    FreeTree arboLibre = new FreeTree(conteneurPrincipal, freeTrees1Position, freeTrees1);
 			    
 			    freeTrees1.add(arboLibre);
+			    
+			    arboLibre.addAncestorListener(new AncestorListener() {
+					
+					@Override
+					public void ancestorRemoved(AncestorEvent event) {
+						ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[0]);
+				    	ajoutArboLibre.setEnabled(true);
+					}
+					
+					@Override
+					public void ancestorMoved(AncestorEvent event) {	
+						
+					}
+					
+					@Override
+					public void ancestorAdded(AncestorEvent event) {
+						
+					}
+				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = ++freeTrees1Position;
+				constraint.gridy = ++freeTrees1Position.position;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(arboLibre, constraint);
 				
 				conteneurPrincipal.revalidate();
+				
+			    if (freeTrees1Position.position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
+			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
+			    	ajoutArboLibre.setEnabled(false);
+			    }
 			}
 		});
 	  	
@@ -993,7 +1026,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees2Position += positionCounter;
+	    freeTrees2Position.position = ++positionCounter;
+	    Integer startFreeTree2Position = freeTrees2Position.position;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
 	    
@@ -1007,17 +1041,41 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				final FreeTree freeTree2 = new FreeTree(conteneurPrincipal, freeTrees2Position);
+				FreeTree freeTree = new FreeTree(conteneurPrincipal, freeTrees2Position, freeTrees2);
+			    
+			    freeTrees2.add(freeTree);
+			    
+			    freeTree.addAncestorListener(new AncestorListener() {
+					
+					@Override
+					public void ancestorRemoved(AncestorEvent event) {
+						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
+						ajoutArboLibre2.setEnabled(true);
+					}
+					
+					@Override
+					public void ancestorMoved(AncestorEvent event) {	
+						
+					}
+					
+					@Override
+					public void ancestorAdded(AncestorEvent event) {
+						
+					}
+				});
 				
-				freeTrees2.add(freeTree2);
-				
-				constraint.gridx = 0;
-				constraint.gridy = ++freeTrees2Position;
-				constraint.insets = titleInset; //marges autour de l'element
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(freeTree2, constraint);
+			    constraint.gridx = 0;
+				constraint.gridy = ++freeTrees2Position.position;
+				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
+			    constraint.gridwidth = 4;
+			    conteneurPrincipal.add(freeTree, constraint);
 				
 				conteneurPrincipal.revalidate();
+				
+			    if (freeTrees2Position.position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
+			    	ajoutArboLibre2.setEnabled(false);
+			    }
 			}
 		});
 	  	
@@ -1440,11 +1498,11 @@ public class Formulaire extends JFrame{
 		 
 							if (counter <= 1) {
 				    		
-					    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
+					    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 								
 						    	if (textFieldNbBPOuverts.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				"le champs \"" +  PREVENTIVE_VOUCHER_MONTH_LABELS[1] + "\" de la partie " + titreBP.getText() + 
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -1452,21 +1510,21 @@ public class Formulaire extends JFrame{
 						    	}
 						    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[1] + "\" de la partie " + titreBP.getText() + 
 						    				" du mois numéro " + counter + " doit être un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
 						    	}
 						    	else {
-									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
 									
 									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	if (textFieldNbBPFermes.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[2] + "\" de la partie " + titreBP.getText() +
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -1474,19 +1532,19 @@ public class Formulaire extends JFrame{
 						    	}
 						    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[2] + "\" de la partie " + titreBP.getText() +
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
 						    	}
 						    	else {
-						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
 						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	if (!textAreaCommentaireBP.getText().equals("")) {
-									preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+									preventivesVouchers.addString(textAreaCommentaireBP.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[3]);
 									stopPdfCreation(pBarFrame);
 								}
 						    	
@@ -1496,11 +1554,11 @@ public class Formulaire extends JFrame{
 									!textAreaCommentaireBP.getText().equals("") ||
 									!textFieldNbBPFermes.getText().equals("")) {
 								
-								preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), preventiveVoucherMonthLabels[0]);
+								preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 								
 						    	if (textFieldNbBPOuverts.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" +  preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				"le champs \"" +  PREVENTIVE_VOUCHER_MONTH_LABELS[1] + "\" de la partie " + titreBP.getText() + 
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
@@ -1509,7 +1567,7 @@ public class Formulaire extends JFrame{
 						    	}
 						    	else if (!OperationUtilities.isNumeric(textFieldNbBPOuverts.getText())) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[1] + "\" de la partie " + titreBP.getText() + 
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[1] + "\" de la partie " + titreBP.getText() + 
 						    				" du mois numéro " + counter + " doit être un nombre"
 						    						+ " (Les bons préventifs completement vides seront ignorés)", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
@@ -1517,14 +1575,14 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), preventiveVoucherMonthLabels[1]);
+									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
 									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
 											comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	if (textFieldNbBPFermes.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[2] + "\" de la partie " + titreBP.getText() +
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
@@ -1533,7 +1591,7 @@ public class Formulaire extends JFrame{
 						    	}
 						    	else if (!OperationUtilities.isNumeric(textFieldNbBPFermes.getText())) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"" + preventiveVoucherMonthLabels[2] + "\" de la partie " + titreBP.getText() +
+						    				"le champs \"" + PREVENTIVE_VOUCHER_MONTH_LABELS[2] + "\" de la partie " + titreBP.getText() +
 						    				" du mois numéro " + counter + " doit être remplis avec un nombre "
 						    						+ "(Les bons préventifs completement vides seront ignorés)", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
@@ -1541,13 +1599,13 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), preventiveVoucherMonthLabels[2]);
+						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
 						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", 
 						    				comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	if (!textAreaCommentaireBP.getText().equals("")) {
-									preventivesVouchers.addString(textAreaCommentaireBP.getText(), preventiveVoucherMonthLabels[3]);
+									preventivesVouchers.addString(textAreaCommentaireBP.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[3]);
 									stopPdfCreation(pBarFrame);
 								}
 						    	
@@ -2348,7 +2406,7 @@ public class Formulaire extends JFrame{
 		constraint.weightx = 1;
 		constraint.fill = GridBagConstraints.BOTH;
 		
-		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
+		JLabel preventivVoucherMonthJLabel = new JLabel (PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 		
 		thisPreventiveVoucherMonthPanel.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
@@ -2362,7 +2420,7 @@ public class Formulaire extends JFrame{
 		thisPreventiveVoucherMonthPanel.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
-	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
+	    JLabel nbBPOuverts = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[1]); //creation du label nbBPOuverts
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
@@ -2377,7 +2435,7 @@ public class Formulaire extends JFrame{
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
-	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
+	    JLabel nbBPFermes = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[2]); //creation du label nbBPFermes
 		
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
@@ -2423,7 +2481,7 @@ public class Formulaire extends JFrame{
 		});
 		
 		//commentaire BP
-	    JLabel commentaireBP = new JLabel(preventiveVoucherMonthLabels[3]); //creation du label commentaireBP
+	    JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherMonthPosition;
@@ -2477,5 +2535,4 @@ public class Formulaire extends JFrame{
 		
 		pBFrame.dispose();
 	}
-
 }

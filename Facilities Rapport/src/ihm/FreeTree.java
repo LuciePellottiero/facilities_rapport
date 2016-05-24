@@ -25,8 +25,6 @@ public class FreeTree extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private Integer thisYPosition;
 	
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
 	
@@ -42,12 +40,11 @@ public class FreeTree extends JPanel{
 
 	private int lastElementPosition;
 
-	public FreeTree(JComponent container, Integer yPosition){
+	public FreeTree(JComponent container, Position yPostion, Collection<FreeTree> freeTrees){
 
 		super (new GridBagLayout());
 		
-		final JPanel thisPanel = this;
-		this.thisYPosition = yPosition;
+		final JPanel thisFreeTree = this;
 		
 		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
@@ -98,7 +95,7 @@ public class FreeTree extends JPanel{
 		    public void actionPerformed(ActionEvent arg0) {	
 		    	
 		    	if (lastElementPosition >= startElementPosition + NUMBER_ELEMENT_ALLOWED) {
-					JOptionPane.showMessageDialog(thisPanel, 
+					JOptionPane.showMessageDialog(thisFreeTree, 
 		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titleTextField.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					
@@ -117,9 +114,9 @@ public class FreeTree extends JPanel{
 		    	constraint.gridx = 0;
 				constraint.gridy = ++lastElementPosition;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
-		    	thisPanel.add(elementPanel, constraint);
+		    	thisFreeTree.add(elementPanel, constraint);
 		    	
-		    	thisPanel.revalidate();
+		    	thisFreeTree.revalidate();
 		    }
 		});
 		
@@ -127,7 +124,7 @@ public class FreeTree extends JPanel{
 			
 			@Override
 			public void update(DocumentEvent arg0) {
-				thisPanel.setBorder(BorderFactory.createTitledBorder(titleTextField.getText()));
+				thisFreeTree.setBorder(BorderFactory.createTitledBorder(titleTextField.getText()));
 				
 				if (titleTextField.getText().equals("")) {
 					addElement.setText(ADD_ELEMENT_TEXT[1]);
@@ -164,9 +161,11 @@ public class FreeTree extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				--thisYPosition;
+				yPostion.setPosition(--yPostion.position);
 				
-				container.remove(thisPanel);
+				freeTrees.remove(thisFreeTree);
+				
+				container.remove(thisFreeTree);
 				container.revalidate();
 			}
 		});
@@ -281,9 +280,9 @@ public class FreeTree extends JPanel{
 		return elementPanel;
 	}
 	
-	/*public boolean isValid () {
+	public boolean isFilled () {
 		return addElement.isEnabled();
-	}*/
+	}
 	
 	public Collection<JTextField> elements() {
 		return elements;
