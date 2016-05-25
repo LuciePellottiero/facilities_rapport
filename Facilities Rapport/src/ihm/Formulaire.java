@@ -2566,9 +2566,9 @@ public class Formulaire extends JFrame{
 	    
 	}	
 
+	private Collection<JTextArea> commentsPreventivesVouchers;
 	private JPanel createPreventiveVoucherMonth (JComponent mainContainer, Collection<JComboBox<String>> preventivesVouchersMonths, 
-			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed,
-			Collection<JTextArea> commentsPreventivesVouchers) {
+			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed) {
 		
 		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
 		
@@ -2584,7 +2584,7 @@ public class Formulaire extends JFrame{
 		constraint.weightx = 1;
 		constraint.fill = GridBagConstraints.BOTH;
 		
-		JLabel preventivVoucherMonthJLabel = new JLabel (PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
+		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
 		
 		thisPreventiveVoucherMonthPanel.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
@@ -2598,7 +2598,7 @@ public class Formulaire extends JFrame{
 		thisPreventiveVoucherMonthPanel.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
-	    JLabel nbBPOuverts = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[1]); //creation du label nbBPOuverts
+	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
@@ -2613,7 +2613,7 @@ public class Formulaire extends JFrame{
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
-	    JLabel nbBPFermes = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[2]); //creation du label nbBPFermes
+	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
 		
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
@@ -2627,14 +2627,6 @@ public class Formulaire extends JFrame{
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
-	    
-	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
-	    
-	    int iconHeight = ajoutMoisBP.getHeight() - ajoutMoisBP.getHeight() / 3;
-	    int iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
-	    
-	    Image tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addIcon.setImage(tmpImg);
 		
 		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
@@ -2643,12 +2635,10 @@ public class Formulaire extends JFrame{
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-					ajoutMoisBP.setIcon(null);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-					ajoutMoisBP.setIcon(addIcon);
 				}
 			}
 		});
@@ -2660,45 +2650,16 @@ public class Formulaire extends JFrame{
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-					ajoutMoisBP.setIcon(null);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-					ajoutMoisBP.setIcon(addIcon);
 				}
 			}
 		});
 		
-		//commentaire BP
-	    JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
-		
-	    constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherMonthPosition;
-		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-		thisPreventiveVoucherMonthPanel.add(commentaireBP, constraint);
-	    
-		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
-	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
-	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
-	    commentsPreventivesVouchers.add(textAreaCommentaireBP);
-	    
-		constraint.gridy = ++preventiveVoucherMonthPosition;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		thisPreventiveVoucherMonthPanel.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
-		
+				
 		JButton deleteMonthButton = new JButton("Supprimer mois");
-		
-		final ImageIcon deleteIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
-		
-		iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - deleteMonthButton.getPreferredSize().getHeight() / 3);
-	    iconWidth  = deleteIcon.getIconWidth() / (deleteIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = deleteIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-		deleteIcon.setImage(tmpImg);
-		
-		deleteMonthButton.setIcon(deleteIcon);
 		deleteMonthButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -2707,11 +2668,9 @@ public class Formulaire extends JFrame{
 				preventivesVouchersMonths.remove(comboBoxMoisBP);
 				nbPreventivesVouchersOpened.remove(textFieldNbBPOuverts);
 				nbPreventivesVouchersClosed.remove(textFieldNbBPFermes);
-				commentsPreventivesVouchers.remove(textAreaCommentaireBP);
 				
 				ajoutMoisBP.setEnabled(true);
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
-				ajoutMoisBP.setIcon(addIcon);
 				
 				--preventiveVoucherLastMonthPosition;
 				
@@ -2734,6 +2693,7 @@ public class Formulaire extends JFrame{
 		this.setCursor(null);
 		this.setEnabled(true);
 		
-		pBFrame.dispose();
+		pBFrame.setVisible(false);
 	}
+
 }
