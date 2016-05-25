@@ -600,7 +600,7 @@ public class Formulaire extends JFrame{
 				
 				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
-		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + preventiveVoucherMonthLabels[0], "Erreur", 
+		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + PREVENTIVE_VOUCHER_MONTH_LABELS[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[1]);
@@ -637,7 +637,7 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
 		
 		//commentaire BP
-	    JLabel commentaireBP = new JLabel(preventiveVoucherMonthLabels[3]); //creation du label commentaireBP
+	    JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
@@ -961,6 +961,8 @@ public class Formulaire extends JFrame{
 				conteneurPrincipal.revalidate();
 			}
 		});
+		
+		ajoutMoisDI.doClick();
 		
 		constraint.gridx = 1;	
 		constraint.gridy = ++positionCounter;
@@ -2607,7 +2609,7 @@ public class Formulaire extends JFrame{
 		constraint.weightx = 1;
 		constraint.fill = GridBagConstraints.BOTH;
 		
-		JLabel preventivVoucherMonthJLabel = new JLabel (preventiveVoucherMonthLabels[0]);
+		JLabel preventivVoucherMonthJLabel = new JLabel (PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 		
 		thisPreventiveVoucherMonthPanel.add(preventivVoucherMonthJLabel, constraint); //ajout du label moisBP
 			
@@ -2621,7 +2623,7 @@ public class Formulaire extends JFrame{
 		thisPreventiveVoucherMonthPanel.add(comboBoxMoisBP, constraint); //ajout de la zone de texte comboBox comboBoxMoisBP
 		
 	    //nombre BP ouverts
-	    JLabel nbBPOuverts = new JLabel(preventiveVoucherMonthLabels[1]); //creation du label nbBPOuverts
+	    JLabel nbBPOuverts = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[1]); //creation du label nbBPOuverts
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
 	    constraint.gridwidth = 1;
@@ -2636,7 +2638,7 @@ public class Formulaire extends JFrame{
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPOuverts, constraint); //ajout de la zone de texte textFieldNbBPOuverts
 		
 		//nombre BP fermes
-	    JLabel nbBPFermes = new JLabel(preventiveVoucherMonthLabels[2]); //creation du label nbBPFermes
+	    JLabel nbBPFermes = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[2]); //creation du label nbBPFermes
 		
 	    constraint.gridx = 0;
 	    constraint.gridy = ++preventiveVoucherMonthPosition;
