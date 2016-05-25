@@ -69,6 +69,12 @@ public class Formulaire extends JFrame{
 
 	private JButton ajoutMoisBP;
 	
+	private final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
+			"Files" + File.separator + "Icons";
+	
+	private final static String[] ICONS_NAME = {"vinciFacilitiesIcon.png", "addIcon.png", "addPictureIcon.png", 
+			"pdfIcon.png", "removeIcon.png"};
+	
 	/**
 	 * Declaration de la Collection<JFormattedTextField> des Pourcents date fin remplis dans le try
 	 */
@@ -124,15 +130,7 @@ public class Formulaire extends JFrame{
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
 		
-		ImageIcon img = null;
-		try {
-			img = new ImageIcon("Facilities Rapport/Files/Icons/vinciFacilitesIcon.png");
-			this.setIconImage(img.getImage());
-
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		setIconImage(new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[0]).getImage());
 		
 		this.setSize(700, 600); //taille fenetre
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //pour fermer la fenetre
@@ -440,9 +438,15 @@ public class Formulaire extends JFrame{
 	    fileChooser.setFileFilter(filter);
 	    fileChooser.setAccessory(new ImagePreview(fileChooser));
 	    
-	    
-	    
 	    final JButton addLogo = new JButton("Choisir logo...");
+	    final ImageIcon addPictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[2]);
+	    
+	    int iconHeight = (int) (addLogo.getPreferredSize().getHeight() - addLogo.getPreferredSize().getHeight() / 3);
+	    int iconWidth  = addPictureIcon.getIconWidth() / (addPictureIcon.getIconHeight() / iconHeight);
+	    
+	    Image tmpImg = addPictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addPictureIcon.setImage(tmpImg);
+	    addLogo.setIcon(addPictureIcon);
 	    addLogo.addActionListener(new  ActionListener() {
 			
 			@Override
@@ -460,7 +464,7 @@ public class Formulaire extends JFrame{
 				            if (logoIcon.getIconWidth() > 90) {
 				            	logoIcon = new ImageIcon(logoIcon.getImage().
 				                                          getScaledInstance(90, -1,
-				                                                      Image.SCALE_DEFAULT));
+				                                                      Image.SCALE_SMOOTH));
 				            } 
 				        }
 				        
@@ -580,6 +584,14 @@ public class Formulaire extends JFrame{
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
 	    ajoutMoisBP = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
+	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	    
+	    iconHeight = (int) (ajoutMoisBP.getPreferredSize().getHeight() - ajoutMoisBP.getPreferredSize().getHeight() / 3);
+	    iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
+	    
+	    tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addIcon.setImage(tmpImg);
+	    ajoutMoisBP.setIcon(addIcon);
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
@@ -591,11 +603,8 @@ public class Formulaire extends JFrame{
 							JOptionPane.WARNING_MESSAGE);
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[1]);
+					ajoutMoisBP.setIcon(null);
 					return;
-				}
-				else {
-					ajoutMoisBP.setEnabled(true);
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				}
 				
 				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
@@ -612,6 +621,7 @@ public class Formulaire extends JFrame{
 				
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
 				ajoutMoisBP.setEnabled(false);
+				ajoutMoisBP.setIcon(null);
 			}
 		});	 
 	    
@@ -2528,6 +2538,14 @@ public class Formulaire extends JFrame{
 	    constraint.gridx = 1;
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
+	    
+	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	    
+	    int iconHeight = ajoutMoisBP.getHeight() - ajoutMoisBP.getHeight() / 3;
+	    int iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
+	    
+	    Image tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addIcon.setImage(tmpImg);
 		
 		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
@@ -2536,10 +2554,12 @@ public class Formulaire extends JFrame{
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisBP.setIcon(null);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+					ajoutMoisBP.setIcon(addIcon);
 				}
 			}
 		});
@@ -2551,10 +2571,12 @@ public class Formulaire extends JFrame{
 				if (textFieldNbBPOuverts.getText().equals("") || textFieldNbBPFermes.getText().equals("")) {
 					ajoutMoisBP.setEnabled(false);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisBP.setIcon(null);
 				}
 				else {
 					ajoutMoisBP.setEnabled(true);
 					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+					ajoutMoisBP.setIcon(addIcon);
 				}
 			}
 		});
@@ -2578,6 +2600,16 @@ public class Formulaire extends JFrame{
 		thisPreventiveVoucherMonthPanel.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
 		
 		JButton deleteMonthButton = new JButton("Supprimer mois");
+		
+		final ImageIcon deleteIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+		
+		iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - deleteMonthButton.getPreferredSize().getHeight() / 3);
+	    iconWidth  = deleteIcon.getIconWidth() / (deleteIcon.getIconHeight() / iconHeight);
+	    
+	    tmpImg = deleteIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		deleteIcon.setImage(tmpImg);
+		
+		deleteMonthButton.setIcon(deleteIcon);
 		deleteMonthButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -2590,6 +2622,7 @@ public class Formulaire extends JFrame{
 				
 				ajoutMoisBP.setEnabled(true);
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
+				ajoutMoisBP.setIcon(addIcon);
 				
 				--preventiveVoucherLastMonthPosition;
 				

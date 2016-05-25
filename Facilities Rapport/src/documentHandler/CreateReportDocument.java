@@ -27,7 +27,8 @@ public class CreateReportDocument {
 	/**
 	 * Cette String est le chemin par defaut vers lequel doit etre creer le rapport PDF
 	 */
-	private static String defaultPdfReportsPathName = "Facilities Rapport/Files/Reports/PdfRepport.pdf";
+	private final static String DEFAULT_REPORT_PATH = "Facilities Rapport" + File.separator + 
+			"Files" + File.separator + "Reports" + File.separator + "PdfRepport.pdf";
 	
 	/**
 	 * Cette fonction permet de creer le document PDF du rapport a l'emplacement par defaut
@@ -38,7 +39,7 @@ public class CreateReportDocument {
 	public static boolean createPdf (Collection<IDataHandler> datas, ProgressBarFrame pBFrame) throws Exception{
 		
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
-		File pdfReport = FileUtilities.getResource(defaultPdfReportsPathName);
+		File pdfReport = FileUtilities.getResource(DEFAULT_REPORT_PATH);
 		// Puis on creer le fichier a l'emplacement precise precedamment
 		pdfReport.createNewFile();
 		
