@@ -414,7 +414,22 @@ public class Formulaire extends JFrame{
 		constraint.gridx = 1;
 		conteneurPrincipal.add(customerLogoFile, constraint);
 		
-		final JButton deleteLogo = new JButton("X");
+		int iconHeight;
+	    int iconWidth;
+	    Image tmpImg;
+		
+		final JButton deleteLogo = new JButton();
+		
+		final ImageIcon removePictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+	    if (removePictureIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    iconHeight = (int) (deleteLogo.getPreferredSize().getHeight() - deleteLogo.getPreferredSize().getHeight() / 3);
+		    iconWidth  = removePictureIcon.getIconWidth() / (removePictureIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = removePictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    removePictureIcon.setImage(tmpImg);
+		    deleteLogo.setIcon(removePictureIcon);
+	    }
+		
 		deleteLogo.setVisible(false);
 		deleteLogo.addActionListener(new ActionListener() {
 			
@@ -441,10 +456,6 @@ public class Formulaire extends JFrame{
 	    fileChooser.setAccessory(new ImagePreview(fileChooser));
 	    
 	    final JButton addLogo = new JButton("Choisir logo...");
-	    
-	    int iconHeight;
-	    int iconWidth;
-	    Image tmpImg;
 	    
 	    final ImageIcon addPictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[2]);
 	    if (addPictureIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
@@ -734,7 +745,7 @@ public class Formulaire extends JFrame{
 	    Collection<FreeTree> freeTrees1 = new LinkedList<FreeTree>();
 	    
 	    //bouton d'ajout d'arborescence libre
-	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
+	  	JButton ajoutArboLibre = new JButton("Ajouter une arborescence libre");
 	  	
 	  	final ImageIcon addFreeTreeIcon1 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	  	

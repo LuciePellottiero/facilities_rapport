@@ -2,13 +2,17 @@ package ihm;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,7 +31,7 @@ public class FreeTree extends JPanel{
 	
 	private static final int NUMBER_ELEMENT_ALLOWED = 100;
 	
-	private static final String[] ADD_ELEMENT_TEXT = {"+ Ajouter un élément", "Remplissez la partie Titre", 
+	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
 	
 	private final GridBagConstraints constraint;
@@ -40,6 +44,8 @@ public class FreeTree extends JPanel{
 	final JButton addElement;
 
 	private int lastElementPosition;
+	
+	private final ImageIcon addElementIcon;
 
 	public FreeTree(){
 
@@ -83,6 +89,16 @@ public class FreeTree extends JPanel{
 		//bouton d'ajout d'element
 		
 		addElement = new JButton(ADD_ELEMENT_TEXT[1]);
+		
+		addElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[1]);
+	    if (addElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    final int iconHeight = (int) (addElement.getPreferredSize().getHeight() - addElement.getPreferredSize().getHeight() / 3);
+		    final int iconWidth  = addElementIcon.getIconWidth() / (addElementIcon.getIconHeight() / iconHeight);
+		    
+		    Image tmpImg = addElementIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addElementIcon.setImage(tmpImg);
+	    }
+		
 		addElement.setEnabled(false);
 		
 		constraint.gridx = 1;
@@ -102,12 +118,14 @@ public class FreeTree extends JPanel{
 					
 					addElement.setEnabled(false);
 					addElement.setText(ADD_ELEMENT_TEXT[3]);
+					addElement.setIcon(null);
 					
 					return;
 				}
 
 		    	addElement.setText(ADD_ELEMENT_TEXT[2]);
 				addElement.setEnabled(false);
+				addElement.setIcon(null);
 		    	
 		    	final JPanel elementPanel = addElement();
 		    	
@@ -130,10 +148,12 @@ public class FreeTree extends JPanel{
 				if (titleTextField.getText().equals("")) {
 					addElement.setText(ADD_ELEMENT_TEXT[1]);
 					addElement.setEnabled(false);
+					addElement.setIcon(null);
 				}
 				else {
 					addElement.setText(ADD_ELEMENT_TEXT[0]);
 					addElement.setEnabled(true);
+					addElement.setIcon(addElementIcon);
 				}
 			}
 		});
@@ -198,10 +218,12 @@ public class FreeTree extends JPanel{
 				if (textFieldElement.getText().equals("") || textFieldNombre.getText().equals("")) {
 					addElement.setText(ADD_ELEMENT_TEXT[2]);
 					addElement.setEnabled(false);
+					addElement.setIcon(null);
 				}
 				else {
 					addElement.setText(ADD_ELEMENT_TEXT[0]);
 					addElement.setEnabled(true);
+					addElement.setIcon(addElementIcon);
 				}
 			}
 		});
@@ -213,10 +235,12 @@ public class FreeTree extends JPanel{
 				if (textFieldElement.getText().equals("") || textFieldNombre.getText().equals("")) {
 					addElement.setText(ADD_ELEMENT_TEXT[2]);
 					addElement.setEnabled(false);
+					addElement.setIcon(null);
 				}
 				else {
 					addElement.setText(ADD_ELEMENT_TEXT[0]);
 					addElement.setEnabled(true);
+					addElement.setIcon(addElementIcon);
 				}
 			}
 		});
@@ -227,7 +251,17 @@ public class FreeTree extends JPanel{
 			
 		final JPanel thisPanel = this;
 		
-		final JButton deleteElementButton = new JButton("X");
+		final JButton deleteElementButton = new JButton();
+		
+		ImageIcon deleteElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[4]);
+	    if (deleteElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    final int iconHeight = (int) (deleteElementButton.getPreferredSize().getHeight() - deleteElementButton.getPreferredSize().getHeight() / 3);
+		    final int iconWidth  = deleteElementIcon.getIconWidth() / (deleteElementIcon.getIconHeight() / iconHeight);
+		    
+		    Image tmpImg = deleteElementIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    deleteElementIcon.setImage(tmpImg);
+	    }
+	    deleteElementButton.setIcon(deleteElementIcon);
 		deleteElementButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -244,6 +278,7 @@ public class FreeTree extends JPanel{
 					
 					addElement.setEnabled(true);
 					addElement.setText(ADD_ELEMENT_TEXT[0]);
+					addElement.setIcon(addElementIcon);
 					
 				}
 				

@@ -69,18 +69,20 @@ public class ImagePreview extends JComponent implements PropertyChangeListener{
         Image tmpImage = null;
         try {
         	tmpImage = ImageIO.read(file);
-		        
-	        ImageIcon tmpIcon = new ImageIcon(tmpImage);
-	        if (tmpIcon != null) {
-	            if (tmpIcon.getIconWidth() > 90) {
-	                thumbnail = new ImageIcon(tmpIcon.getImage().
-	                                          getScaledInstance(90, -1,
-	                                                      Image.SCALE_DEFAULT));
-	            } 
-	            else { //no need to miniaturize
-	                thumbnail = tmpIcon;
-	            }
-	        }
+		    
+        	if (tmpImage != null) {
+		        ImageIcon tmpIcon = new ImageIcon(tmpImage);
+		        if (tmpIcon != null) {
+		            if (tmpIcon.getIconWidth() > 90) {
+		                thumbnail = new ImageIcon(tmpIcon.getImage().
+		                                          getScaledInstance(90, -1,
+		                                                      Image.SCALE_DEFAULT));
+		            } 
+		            else { //no need to miniaturize
+		                thumbnail = tmpIcon;
+		            }
+		        }
+        	}
         } 
         catch (IOException e) {
 			e.printStackTrace();
