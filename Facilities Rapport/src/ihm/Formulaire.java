@@ -768,7 +768,18 @@ public class Formulaire extends JFrame{
 			    freeTrees1.add(arboLibre);
 			    
 			    // Bouton supprimer
-			    final JButton delete = new JButton("- Supprimer");
+			    final JButton delete = new JButton("Supprimer");
+			    
+			    final ImageIcon deleteFreeTreeIcon1 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+			  	
+			  	if (deleteFreeTreeIcon1.getImageLoadStatus() != MediaTracker.ERRORED) {
+				  	final int iconHeight = (int) (delete.getPreferredSize().getHeight() - delete.getPreferredSize().getHeight() / 3);
+				    final int iconWidth  = deleteFreeTreeIcon1.getIconWidth() / (deleteFreeTreeIcon1.getIconHeight() / iconHeight);
+				    
+				    final Image tmpImg = deleteFreeTreeIcon1.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+				    deleteFreeTreeIcon1.setImage(tmpImg);
+				    delete.setIcon(deleteFreeTreeIcon1);
+			  	}
 			    
 			    delete.addActionListener(new ActionListener() {
 					
@@ -1171,7 +1182,18 @@ public class Formulaire extends JFrame{
 			    freeTrees2.add(freeTree);
 			    
 			    // Bouton supprimer
-			    final JButton delete = new JButton("- Supprimer");
+			    final JButton delete = new JButton("Supprimer");
+			    
+			    final ImageIcon deleteFreeTreeIcon2 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+			  	
+			  	if (deleteFreeTreeIcon2.getImageLoadStatus() != MediaTracker.ERRORED) {
+				  	final int iconHeight = (int) (delete.getPreferredSize().getHeight() - delete.getPreferredSize().getHeight() / 3);
+				    final int iconWidth  = deleteFreeTreeIcon2.getIconWidth() / (deleteFreeTreeIcon2.getIconHeight() / iconHeight);
+				    
+				    final Image tmpImg = deleteFreeTreeIcon2.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+				    deleteFreeTreeIcon2.setImage(tmpImg);
+				    delete.setIcon(deleteFreeTreeIcon2);
+			  	}
 			    
 			    delete.addActionListener(new ActionListener() {
 					
@@ -1200,6 +1222,7 @@ public class Formulaire extends JFrame{
 					public void ancestorRemoved(AncestorEvent event) {
 						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
 						ajoutArboLibre2.setEnabled(true);
+						ajoutArboLibre2.setIcon(addFreeTreeIcon2);
 					}
 					
 					@Override
@@ -1224,6 +1247,7 @@ public class Formulaire extends JFrame{
 			    if (freeTrees2Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
 			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre2.setEnabled(false);
+			    	ajoutArboLibre2.setIcon(null);
 			    }
 			}
 		});

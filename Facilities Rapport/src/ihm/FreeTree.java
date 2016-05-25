@@ -1,5 +1,6 @@
 package ihm;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -29,7 +30,7 @@ public class FreeTree extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 100;
+	private static final int NUMBER_ELEMENT_ALLOWED = 3;
 	
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
@@ -51,7 +52,7 @@ public class FreeTree extends JPanel{
 
 		super (new GridBagLayout());
 		
-		final JPanel thisFreeTree = this;
+		final FreeTree thisFreeTree = this;
 		
 		this.setBorder(BorderFactory.createTitledBorder("Arborescence libre"));
 		
@@ -129,13 +130,24 @@ public class FreeTree extends JPanel{
 		    	
 		    	final JPanel elementPanel = addElement();
 		    	
-		    	constraint.insets = new Insets(3, 0, 0, 0); //marges autour de l'element
+		    	constraint.insets = new Insets(3, 0, 1, 0); //marges autour de l'element
 		    	constraint.gridx = 0;
-				constraint.gridy = ++lastElementPosition;
+				constraint.gridy = lastElementPosition++;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 		    	thisFreeTree.add(elementPanel, constraint);
 		    	
 		    	thisFreeTree.revalidate();
+		    	thisFreeTree.repaint();
+		    	
+		    	for (Component element : thisFreeTree.getComponents()) {
+		    		System.out.println(element);		    		
+		    	}
+		    	
+		    	System.out.println("[ajout : " + (lastElementPosition - 1));
+		    	for (JTextField element : thisFreeTree.elements) {
+		    		System.out.println("element" + ",");		    		
+		    	}
+		    	System.out.println("]");
 		    }
 		});
 		
@@ -249,7 +261,7 @@ public class FreeTree extends JPanel{
 		constraint.gridwidth = 2;
 		elementPanel.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
 			
-		final JPanel thisPanel = this;
+		final FreeTree thisFreeTree = this;
 		
 		final JButton deleteElementButton = new JButton();
 		
@@ -266,12 +278,10 @@ public class FreeTree extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				thisPanel.remove(elementPanel);
+				thisFreeTree.remove(elementPanel);
 				
 				elements.remove(textFieldElement);
 				elementNumbers.remove(textFieldNombre);
-				
-				--lastElementPosition;
 				
 				if (addElement.getText().equals(ADD_ELEMENT_TEXT[2]) || 
 						addElement.getText().equals(ADD_ELEMENT_TEXT[3])) {
@@ -282,7 +292,19 @@ public class FreeTree extends JPanel{
 					
 				}
 				
-				thisPanel.revalidate();
+				thisFreeTree.revalidate();
+				
+				--lastElementPosition;
+				
+				for (Component element : thisFreeTree.getComponents()) {
+		    		System.out.println(element);		    		
+		    	}
+				
+				System.out.println("[suppression : " + lastElementPosition);
+		    	for (JTextField element : thisFreeTree.elements) {
+		    		System.out.println("element" + ",");		    		
+		    	}
+		    	System.out.println("]");
 			}
 		});
 		
