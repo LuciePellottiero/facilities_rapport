@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -70,10 +71,10 @@ public class Formulaire extends JFrame{
 
 	private JButton ajoutMoisBP;
 	
-	private final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
+	public final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
 			"Files" + File.separator + "Icons";
 	
-	private final static String[] ICONS_NAME = {"vinciFacilitiesIcon.png", "addIcon.png", "addPictureIcon.png", 
+	public final static String[] ICONS_NAME = {"vinciFacilitiesIcon.png", "addIcon.png", "addPictureIcon.png", 
 			"pdfIcon.png", "removeIcon.png"};
 	
 	/**
@@ -440,14 +441,20 @@ public class Formulaire extends JFrame{
 	    fileChooser.setAccessory(new ImagePreview(fileChooser));
 	    
 	    final JButton addLogo = new JButton("Choisir logo...");
+	    
+	    int iconHeight;
+	    int iconWidth;
+	    Image tmpImg;
+	    
 	    final ImageIcon addPictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[2]);
-	    
-	    int iconHeight = (int) (addLogo.getPreferredSize().getHeight() - addLogo.getPreferredSize().getHeight() / 3);
-	    int iconWidth  = addPictureIcon.getIconWidth() / (addPictureIcon.getIconHeight() / iconHeight);
-	    
-	    Image tmpImg = addPictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addPictureIcon.setImage(tmpImg);
-	    addLogo.setIcon(addPictureIcon);
+	    if (addPictureIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    iconHeight = (int) (addLogo.getPreferredSize().getHeight() - addLogo.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addPictureIcon.getIconWidth() / (addPictureIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addPictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addPictureIcon.setImage(tmpImg);
+		    addLogo.setIcon(addPictureIcon);
+	    }
 	    addLogo.addActionListener(new  ActionListener() {
 			
 			@Override
@@ -587,12 +594,14 @@ public class Formulaire extends JFrame{
 	    ajoutMoisBP = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
 	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	    
-	    iconHeight = (int) (ajoutMoisBP.getPreferredSize().getHeight() - ajoutMoisBP.getPreferredSize().getHeight() / 3);
-	    iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addIcon.setImage(tmpImg);
-	    ajoutMoisBP.setIcon(addIcon);
+	    if (addIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    iconHeight = (int) (ajoutMoisBP.getPreferredSize().getHeight() - ajoutMoisBP.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addIcon.setImage(tmpImg);
+		    ajoutMoisBP.setIcon(addIcon);
+	    }
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
 			    	
@@ -729,12 +738,14 @@ public class Formulaire extends JFrame{
 	  	
 	  	final ImageIcon addFreeTreeIcon1 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	  	
-	  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
-	    iconWidth  = addFreeTreeIcon1.getIconWidth() / (addFreeTreeIcon1.getIconHeight() / iconHeight);
-	    
-	    tmpImg = addFreeTreeIcon1.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addFreeTreeIcon1.setImage(tmpImg);
-	    ajoutArboLibre.setIcon(addFreeTreeIcon1);
+	  	if (addFreeTreeIcon1.getImageLoadStatus() != MediaTracker.ERRORED) {
+		  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addFreeTreeIcon1.getIconWidth() / (addFreeTreeIcon1.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addFreeTreeIcon1.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addFreeTreeIcon1.setImage(tmpImg);
+		    ajoutArboLibre.setIcon(addFreeTreeIcon1);
+	  	}
 	    
 	  	ajoutArboLibre.addActionListener(new ActionListener() {
 			
@@ -831,13 +842,16 @@ public class Formulaire extends JFrame{
 		JButton ajoutMoisDI = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
 		
 		final ImageIcon addInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+		
+		if (addInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
 	  	
-	  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
-	    iconWidth  = addInterventionMonthIcon.getIconWidth() / (addInterventionMonthIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = addInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addInterventionMonthIcon.setImage(tmpImg);
-	    ajoutMoisDI.setIcon(addInterventionMonthIcon);
+		  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addInterventionMonthIcon.getIconWidth() / (addInterventionMonthIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addInterventionMonthIcon.setImage(tmpImg);
+		    ajoutMoisDI.setIcon(addInterventionMonthIcon);
+		}
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
@@ -891,12 +905,14 @@ public class Formulaire extends JFrame{
 				
 				final ImageIcon deleteInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
 			  	
-			  	final int iconHeight = (int) (deleteInterventionMonth.getPreferredSize().getHeight() - deleteInterventionMonth.getPreferredSize().getHeight() / 3);
-			    final int iconWidth  = deleteInterventionMonthIcon.getIconWidth() / (deleteInterventionMonthIcon.getIconHeight() / iconHeight);
-			    
-			    final Image tmpImg = deleteInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-			    deleteInterventionMonthIcon.setImage(tmpImg);
-			    deleteInterventionMonth.setIcon(deleteInterventionMonthIcon);
+				if (deleteInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+				  	final int iconHeight = (int) (deleteInterventionMonth.getPreferredSize().getHeight() - deleteInterventionMonth.getPreferredSize().getHeight() / 3);
+				    final int iconWidth  = deleteInterventionMonthIcon.getIconWidth() / (deleteInterventionMonthIcon.getIconHeight() / iconHeight);
+				    
+				    final Image tmpImg = deleteInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+				    deleteInterventionMonthIcon.setImage(tmpImg);
+				    deleteInterventionMonth.setIcon(deleteInterventionMonthIcon);
+				}
 				
 				deleteInterventionMonth.addActionListener(new ActionListener() {
 					
@@ -1125,12 +1141,14 @@ public class Formulaire extends JFrame{
 	  	
 	  	final ImageIcon addFreeTreeIcon2 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	  	
-	  	iconHeight = (int) (ajoutArboLibre2.getPreferredSize().getHeight() - ajoutArboLibre2.getPreferredSize().getHeight() / 3);
-	    iconWidth  = addFreeTreeIcon2.getIconWidth() / (addFreeTreeIcon2.getIconHeight() / iconHeight);
-	    
-	    tmpImg = addFreeTreeIcon2.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addFreeTreeIcon2.setImage(tmpImg);
-	    ajoutArboLibre2.setIcon(addFreeTreeIcon2);
+	  	if (addFreeTreeIcon2.getImageLoadStatus() != MediaTracker.ERRORED) {
+		  	iconHeight = (int) (ajoutArboLibre2.getPreferredSize().getHeight() - ajoutArboLibre2.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addFreeTreeIcon2.getIconWidth() / (addFreeTreeIcon2.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addFreeTreeIcon2.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addFreeTreeIcon2.setImage(tmpImg);
+		    ajoutArboLibre2.setIcon(addFreeTreeIcon2);
+	  	}
 	  	
 	  	ajoutArboLibre2.addActionListener(new ActionListener() {
 			
@@ -1226,12 +1244,14 @@ public class Formulaire extends JFrame{
 	  	
 	  	final ImageIcon addMeterIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	  	
-	  	iconHeight = (int) (ajoutCompteur.getPreferredSize().getHeight() - ajoutCompteur.getPreferredSize().getHeight() / 3);
-	    iconWidth  = addMeterIcon.getIconWidth() / (addMeterIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = addMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addMeterIcon.setImage(tmpImg);
-	    ajoutCompteur.setIcon(addMeterIcon);
+	  	if (addMeterIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		  	iconHeight = (int) (ajoutCompteur.getPreferredSize().getHeight() - ajoutCompteur.getPreferredSize().getHeight() / 3);
+		    iconWidth  = addMeterIcon.getIconWidth() / (addMeterIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addMeterIcon.setImage(tmpImg);
+		    ajoutCompteur.setIcon(addMeterIcon);
+	  	}
   	
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
@@ -1244,12 +1264,13 @@ public class Formulaire extends JFrame{
 	  		    JButton delete = new JButton("Supprimer");
 	  		    
 	  		    final ImageIcon deleteMeterIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
-	  	  	
-		  	  	final int iconHeight = (int) (delete.getPreferredSize().getHeight() - delete.getPreferredSize().getHeight() / 3);
-		  	    final int iconWidth  = deleteMeterIcon.getIconWidth() / (deleteMeterIcon.getIconHeight() / iconHeight);
-		  	    
-		  	    final Image tmpImg = deleteMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-		  	    deleteMeterIcon.setImage(tmpImg);
+	  	  	    if (deleteMeterIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+			  	  	final int iconHeight = (int) (delete.getPreferredSize().getHeight() - delete.getPreferredSize().getHeight() / 3);
+			  	    final int iconWidth  = deleteMeterIcon.getIconWidth() / (deleteMeterIcon.getIconHeight() / iconHeight);
+			  	    
+			  	    final Image tmpImg = deleteMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+			  	    deleteMeterIcon.setImage(tmpImg);
+	  	  	    }
 		  	    delete.setIcon(deleteMeterIcon);
 	  		    
 	  		    delete.addActionListener(new ActionListener() {
@@ -1299,12 +1320,14 @@ public class Formulaire extends JFrame{
 		
 		final ImageIcon generateReportIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[3]);
 	  	
-	  	iconHeight = (int) (valideForm.getPreferredSize().getHeight() - valideForm.getPreferredSize().getHeight() / 3);
-	    iconWidth  = generateReportIcon.getIconWidth() / (generateReportIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = generateReportIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    generateReportIcon.setImage(tmpImg);
-	    valideForm.setIcon(generateReportIcon);
+		if (generateReportIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		  	iconHeight = (int) (valideForm.getPreferredSize().getHeight() - valideForm.getPreferredSize().getHeight() / 3);
+		    iconWidth  = generateReportIcon.getIconWidth() / (generateReportIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = generateReportIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    generateReportIcon.setImage(tmpImg);
+		    valideForm.setIcon(generateReportIcon);
+		}
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
@@ -2628,13 +2651,19 @@ public class Formulaire extends JFrame{
 	    constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    thisPreventiveVoucherMonthPanel.add(textFieldNbBPFermes, constraint); //ajout de la zone de texte textFieldNbBPFermes
 	    
+	    int iconHeight;
+	    int iconWidth;
+	    Image tmpImg;
+	    
 	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	    
-	    int iconHeight = ajoutMoisBP.getHeight() - ajoutMoisBP.getHeight() / 3;
-	    int iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
-	    
-	    Image tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-	    addIcon.setImage(tmpImg);
+	    if (addIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		    iconHeight = ajoutMoisBP.getHeight() - ajoutMoisBP.getHeight() / 3;
+		    iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addIcon.setImage(tmpImg);
+	    }
 		
 		textFieldNbBPOuverts.getDocument().addDocumentListener(new PersonnalDocumentListener() {
 			
@@ -2692,13 +2721,15 @@ public class Formulaire extends JFrame{
 		
 		final ImageIcon deleteIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
 		
-		iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - deleteMonthButton.getPreferredSize().getHeight() / 3);
-	    iconWidth  = deleteIcon.getIconWidth() / (deleteIcon.getIconHeight() / iconHeight);
-	    
-	    tmpImg = deleteIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-		deleteIcon.setImage(tmpImg);
-		
-		deleteMonthButton.setIcon(deleteIcon);
+		if (deleteIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+			iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - deleteMonthButton.getPreferredSize().getHeight() / 3);
+		    iconWidth  = deleteIcon.getIconWidth() / (deleteIcon.getIconHeight() / iconHeight);
+		    
+		    tmpImg = deleteIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+			deleteIcon.setImage(tmpImg);
+			
+			deleteMonthButton.setIcon(deleteIcon);
+		}
 		deleteMonthButton.addActionListener(new ActionListener() {
 			
 			@Override
