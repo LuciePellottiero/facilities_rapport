@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -98,10 +99,10 @@ public class Formulaire extends JFrame{
 	private final static String[] MONTH_CHOICE = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
-	private final static String[] ADD_MONTH_BUTTON_TEXT = {"+ Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
+	private final static String[] ADD_MONTH_BUTTON_TEXT = {"Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
 			"Remplissez les mois précedents"};
 	
-	private final static String[] ADD_FREE_TREE_TEXT = {"+ Ajouter arborescence libre", 
+	private final static String[] ADD_FREE_TREE_TEXT = {"Ajouter arborescence libre", 
 			"Impossible d'ajouter une arborescence libre supplémentaire"};
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 100;
@@ -110,7 +111,7 @@ public class Formulaire extends JFrame{
 	
 	private static final int NUMBER_METER_ALLOWED = 30;
 	
-	private static final int NUMBER_INTERVENTION_DEMAND_ALLOWED = 100;
+	private static final int NUMBER_INTERVENTION_DEMAND_ALLOWED = 30;
 	
 	private int positionCounter;
 	private int preventiveVoucherLastMonthPosition;
@@ -692,7 +693,7 @@ public class Formulaire extends JFrame{
 		
 	    constraint.gridx = 0;
 		positionCounter += 11;
-		constraint.gridy += positionCounter;
+		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
 	    conteneurPrincipal.add(commentaireBPDomaine, constraint); //ajout du label emailCl
@@ -725,6 +726,16 @@ public class Formulaire extends JFrame{
 	    
 	    //bouton d'ajout d'arborescence libre
 	  	JButton ajoutArboLibre = new JButton("+ Ajouter une arborescence libre");
+	  	
+	  	final ImageIcon addFreeTreeIcon1 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	  	
+	  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
+	    iconWidth  = addFreeTreeIcon1.getIconWidth() / (addFreeTreeIcon1.getIconHeight() / iconHeight);
+	    
+	    tmpImg = addFreeTreeIcon1.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addFreeTreeIcon1.setImage(tmpImg);
+	    ajoutArboLibre.setIcon(addFreeTreeIcon1);
+	    
 	  	ajoutArboLibre.addActionListener(new ActionListener() {
 			
 			@Override
@@ -764,6 +775,7 @@ public class Formulaire extends JFrame{
 					public void ancestorRemoved(AncestorEvent event) {
 						ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[0]);
 				    	ajoutArboLibre.setEnabled(true);
+				    	ajoutArboLibre.setIcon(addFreeTreeIcon1);
 					}
 					
 					@Override
@@ -788,6 +800,7 @@ public class Formulaire extends JFrame{
 			    if (freeTrees1Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
 			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre.setEnabled(false);
+			    	ajoutArboLibre.setIcon(null);
 			    }
 			}
 		});
@@ -809,12 +822,22 @@ public class Formulaire extends JFrame{
 		
 		//bouton d'ajout de mois pour les BP
 		positionMoisDI = ++positionCounter;
-		positionCounter += NUMBER_INTERVENTION_DEMAND_ALLOWED;
+		final int startInterventionDemandP = positionMoisDI;
+		positionCounter += NUMBER_INTERVENTION_DEMAND_ALLOWED;		
 		
 		Collection<JComboBox<String>> interventionMonths = new LinkedList<JComboBox<String>>();
 		Collection<JTextField> interventionNumbers = new LinkedList<JTextField>();
 				
-		JButton ajoutMoisDI = new JButton("+ Ajouter un mois");
+		JButton ajoutMoisDI = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
+		
+		final ImageIcon addInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	  	
+	  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
+	    iconWidth  = addInterventionMonthIcon.getIconWidth() / (addInterventionMonthIcon.getIconHeight() / iconHeight);
+	    
+	    tmpImg = addInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addInterventionMonthIcon.setImage(tmpImg);
+	    ajoutMoisDI.setIcon(addInterventionMonthIcon);
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
@@ -864,14 +887,29 @@ public class Formulaire extends JFrame{
 				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
 				interventionDemand.add(textFieldNbIntervention, interventionDemandConstraint); //ajout de la zone de texte textFieldNbBPOuverts
 				
-				JButton deleteInterventionDemand = new JButton("- Supprimer mois");
+				JButton deleteInterventionMonth = new JButton("Supprimer mois");
 				
-				deleteInterventionDemand.addActionListener(new ActionListener() {
+				final ImageIcon deleteInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+			  	
+			  	final int iconHeight = (int) (deleteInterventionMonth.getPreferredSize().getHeight() - deleteInterventionMonth.getPreferredSize().getHeight() / 3);
+			    final int iconWidth  = deleteInterventionMonthIcon.getIconWidth() / (deleteInterventionMonthIcon.getIconHeight() / iconHeight);
+			    
+			    final Image tmpImg = deleteInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+			    deleteInterventionMonthIcon.setImage(tmpImg);
+			    deleteInterventionMonth.setIcon(deleteInterventionMonthIcon);
+				
+				deleteInterventionMonth.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						interventionMonths.remove(comboBoxMoisDI);
 						interventionNumbers.remove(textFieldNbIntervention);
+						
+						if (positionMoisDI >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
+							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
+							ajoutMoisDI.setIcon(deleteInterventionMonthIcon);
+							ajoutMoisDI.setEnabled(true);
+						}
 						
 						--positionMoisDI;
 						
@@ -883,13 +921,19 @@ public class Formulaire extends JFrame{
 				interventionDemandConstraint.gridx = 0;
 				interventionDemandConstraint.gridy = ++currentPositionCounter;
 				interventionDemandConstraint.gridwidth = 1;
-				interventionDemand.add(deleteInterventionDemand, interventionDemandConstraint);
+				interventionDemand.add(deleteInterventionMonth, interventionDemandConstraint);
 				
 				constraint.gridx = 0;
 				constraint.gridy = ++positionMoisDI;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				constraint.insets = new Insets(7, 7, 0, 7); //marges autour de l'element
 				conteneurPrincipal.add(interventionDemand, constraint);
+				
+				if (positionMoisDI >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
+					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[1]);
+					ajoutMoisDI.setIcon(null);
+					ajoutMoisDI.setEnabled(false);
+				}
 				
 				conteneurPrincipal.revalidate();
 			}
@@ -1062,7 +1106,8 @@ public class Formulaire extends JFrame{
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
 	    titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
-		
+	    titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
+	    
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = titleInset; //marges autour de l'element
@@ -1076,7 +1121,16 @@ public class Formulaire extends JFrame{
 	    final Collection<FreeTree> freeTrees2 = new LinkedList<FreeTree>();
 	    
 	    //bouton d'ajout d'arborescence libre
-	  	final JButton ajoutArboLibre2 = new JButton("+ Ajouter une arborescence libre");
+	  	final JButton ajoutArboLibre2 = new JButton("Ajouter une arborescence libre");
+	  	
+	  	final ImageIcon addFreeTreeIcon2 = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	  	
+	  	iconHeight = (int) (ajoutArboLibre2.getPreferredSize().getHeight() - ajoutArboLibre2.getPreferredSize().getHeight() / 3);
+	    iconWidth  = addFreeTreeIcon2.getIconWidth() / (addFreeTreeIcon2.getIconHeight() / iconHeight);
+	    
+	    tmpImg = addFreeTreeIcon2.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addFreeTreeIcon2.setImage(tmpImg);
+	    ajoutArboLibre2.setIcon(addFreeTreeIcon2);
 	  	
 	  	ajoutArboLibre2.addActionListener(new ActionListener() {
 			
@@ -1167,8 +1221,17 @@ public class Formulaire extends JFrame{
     
 	  	positionCounter += NUMBER_METER_ALLOWED;
     
-	  	//bouton d'ajout d'arborescence libre
-	  	final JButton ajoutCompteur = new JButton("+ Ajouter un compteur");
+	  	//bouton d'ajout de compteur
+	  	final JButton ajoutCompteur = new JButton("Ajouter un compteur");
+	  	
+	  	final ImageIcon addMeterIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+	  	
+	  	iconHeight = (int) (ajoutCompteur.getPreferredSize().getHeight() - ajoutCompteur.getPreferredSize().getHeight() / 3);
+	    iconWidth  = addMeterIcon.getIconWidth() / (addMeterIcon.getIconHeight() / iconHeight);
+	    
+	    tmpImg = addMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    addMeterIcon.setImage(tmpImg);
+	    ajoutCompteur.setIcon(addMeterIcon);
   	
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
@@ -1178,7 +1241,16 @@ public class Formulaire extends JFrame{
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
 	  			
 	  		    // Bouton supprimer
-	  		    JButton delete = new JButton("- Supprimer");
+	  		    JButton delete = new JButton("Supprimer");
+	  		    
+	  		    final ImageIcon deleteMeterIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+	  	  	
+		  	  	final int iconHeight = (int) (delete.getPreferredSize().getHeight() - delete.getPreferredSize().getHeight() / 3);
+		  	    final int iconWidth  = deleteMeterIcon.getIconWidth() / (deleteMeterIcon.getIconHeight() / iconHeight);
+		  	    
+		  	    final Image tmpImg = deleteMeterIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		  	    deleteMeterIcon.setImage(tmpImg);
+		  	    delete.setIcon(deleteMeterIcon);
 	  		    
 	  		    delete.addActionListener(new ActionListener() {
 
@@ -1215,13 +1287,24 @@ public class Formulaire extends JFrame{
     
 	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
-	  	constraint.gridwidth = 1;
+	  	constraint.gridwidth = GridBagConstraints.REMAINDER;
 	  	conteneurPrincipal.add(ajoutCompteur, constraint); //ajout du bouton ajoutCompteur
+	  	
+	  	ajoutCompteur.doClick();
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
 		final JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
+		
+		final ImageIcon generateReportIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[3]);
+	  	
+	  	iconHeight = (int) (valideForm.getPreferredSize().getHeight() - valideForm.getPreferredSize().getHeight() / 3);
+	    iconWidth  = generateReportIcon.getIconWidth() / (generateReportIcon.getIconHeight() / iconHeight);
+	    
+	    tmpImg = generateReportIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+	    generateReportIcon.setImage(tmpImg);
+	    valideForm.setIcon(generateReportIcon);
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
@@ -2435,11 +2518,17 @@ public class Formulaire extends JFrame{
 					
 					@Override
 			        public void done() {
-			            mainFrame.setEnabled(true);
-			            mainFrame.setCursor(null); //turn off the wait cursor
+						stopPdfCreation(pBarFrame);
 			        }
 
 				};
+				
+				pBarFrame.addWindowListener(new WindowAdapter() {
+		            public void windowClosing(java.awt.event.WindowEvent e) {
+		                stopPdfCreation(pBarFrame);
+		                pdfCreation.cancel(true);
+		            }
+		        });
 				
 				/*pdfCreation.addPropertyChangeListener(new PropertyChangeListener() {
 					
