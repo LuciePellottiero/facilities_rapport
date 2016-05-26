@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
 
 import utilities.OperationUtilities;
 
@@ -124,6 +125,10 @@ public class Meter extends JPanel{
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				thisMeter.add(elementPanel, constraint);
 				
+				ajoutMois.setEnabled(false);
+				ajoutMois.setText(ADD_BUTTON_TEXT[2]);
+				ajoutMois.setIcon(null);
+				
 				if (lastMonthPosition >= startMonthPosition + NUMBER_MONTH_ALLOWED) {
 					
 					ajoutMois.setEnabled(false);
@@ -213,6 +218,23 @@ public class Meter extends JPanel{
 		JTextField textFieldConsommation = new JTextField(15); //creation de la zone de texte textFieldConsommation de taille 15
 		consommation.setLabelFor(textFieldConsommation); //attribution de la zone de texte textFieldConsommation au label consommation
 		monthConsumptions.add(textFieldConsommation);
+		
+		textFieldConsommation.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+			
+			@Override
+			public void update(DocumentEvent arg0) {
+				if (!textFieldConsommation.getText().equals("")) {
+					ajoutMois.setEnabled(true);
+					ajoutMois.setText(ADD_BUTTON_TEXT[0]);
+					ajoutMois.setIcon(addElementIcon);
+				}
+				else {
+					ajoutMois.setEnabled(false);
+					ajoutMois.setText(ADD_BUTTON_TEXT[2]);
+					ajoutMois.setIcon(null);
+				}
+			}
+		});
 		
 		constraint.gridx = 1;
 		monthPanel.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
