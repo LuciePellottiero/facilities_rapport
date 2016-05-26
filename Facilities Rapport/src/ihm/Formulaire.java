@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,6 +121,8 @@ public class Formulaire extends JFrame{
 	private int freeTrees1Position;
 	private int freeTrees2Position;
 	private int meterPosition;
+	
+	private final List<Boolean> listPreventiveMonthAvailabilitys;
 	
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
@@ -598,7 +601,7 @@ public class Formulaire extends JFrame{
 	    Collection<JTextField>        nbPreventivesVouchersClosed      = new ArrayList<JTextField>();
 	    Collection<JTextArea>         commentsPreventivesVouchers      = new ArrayList<JTextArea>();
 
-	    preventiveVoucherLastMonthPosition = positionCounter;
+	    preventiveVoucherLastMonthPosition = ++positionCounter;
 	    final int preventiveVoucherFirstMonthPosition = positionCounter;
 	    positionCounter += NUMBER_PREVENTIVE_MONTH_ALLOWED;
 	    
@@ -613,12 +616,17 @@ public class Formulaire extends JFrame{
 		    addIcon.setImage(tmpImg);
 		    ajoutMoisBP.setIcon(addIcon);
 	    }
+	    
+	    listPreventiveMonthAvailabilitys = Arrays.asList(new Boolean[NUMBER_PREVENTIVE_MONTH_ALLOWED]);
+	    for (int i = 0; i < listPreventiveMonthAvailabilitys.size(); ++i) {
+	    	listPreventiveMonthAvailabilitys.set(i, true);
+	    }
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
-			    	
+
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if (preventiveVoucherLastMonthPosition >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
+				if (preventiveVoucherLastMonthPosition++ >= preventiveVoucherFirstMonthPosition + NUMBER_PREVENTIVE_MONTH_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
 		    				"Impossible d'ajouter un mois supplémentaire dans la partie " + PREVENTIVE_VOUCHER_MONTH_LABELS[0], "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
@@ -628,12 +636,28 @@ public class Formulaire extends JFrame{
 					return;
 				}
 				
+				int thisPreventivMonthCounter = 0;
+				
+				for (int i = 0; i < listPreventiveMonthAvailabilitys.size(); ++i) {
+					
+					if (listPreventiveMonthAvailabilitys.get(i) != false) {
+						listPreventiveMonthAvailabilitys.set(i, false);
+						thisPreventivMonthCounter = i;
+						break;
+					}
+				}
+				
+				System.out.println(listPreventiveMonthAvailabilitys);
+				System.out.println("this counter = " + thisPreventivMonthCounter);
+				
+				
 				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
-						nbPreventivesVouchersClosed, commentsPreventivesVouchers);
+						nbPreventivesVouchersClosed, commentsPreventivesVouchers, 
+						thisPreventivMonthCounter);
 				
 				preventiveVoucherMonth.setBorder(BorderFactory.createTitledBorder("Bon préventif"));
-				constraint.gridy = ++preventiveVoucherLastMonthPosition;
+				constraint.gridy = preventiveVoucherFirstMonthPosition + thisPreventivMonthCounter;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 				conteneurPrincipal.add(preventiveVoucherMonth, constraint);
@@ -737,7 +761,7 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees1Position = positionCounter;
+	    freeTrees1Position = ++positionCounter;
 	    final int startFreeTree1Position = freeTrees1Position;
 	    
 	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
@@ -758,10 +782,27 @@ public class Formulaire extends JFrame{
 		    ajoutArboLibre.setIcon(addFreeTreeIcon1);
 	  	}
 	    
+	  	final List<Boolean> listFreeTreeAvailabilitys1 = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+		for (int i = 0; i < listFreeTreeAvailabilitys1.size(); ++i) {
+			listFreeTreeAvailabilitys1.set(i, true);
+		}
+	  	
 	  	ajoutArboLibre.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				int tmpFreeTreePosition = 0;
+				
+				for (int i = 0; i < listFreeTreeAvailabilitys1.size(); ++i) {
+					if (listFreeTreeAvailabilitys1.get(i) != false) {
+						listFreeTreeAvailabilitys1.set(i, false);
+						tmpFreeTreePosition = i;
+						break;
+					}
+				}
+				
+				final int freeTreeMonthPosition = tmpFreeTreePosition;
 			    
 			    FreeTree arboLibre = new FreeTree();
 			    
@@ -786,6 +827,7 @@ public class Formulaire extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
+						listFreeTreeAvailabilitys1.set(freeTreeMonthPosition, true);
 						--freeTrees1Position;
 						
 						freeTrees1.remove(arboLibre);
@@ -823,14 +865,14 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = ++freeTrees1Position;
+				constraint.gridy = startFreeTree1Position + freeTreeMonthPosition;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(arboLibre, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
-			    if (freeTrees1Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
+			    if (freeTrees1Position++ >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
 			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre.setEnabled(false);
 			    	ajoutArboLibre.setIcon(null);
@@ -874,10 +916,27 @@ public class Formulaire extends JFrame{
 		    addInterventionMonthIcon.setImage(tmpImg);
 		    ajoutMoisDI.setIcon(addInterventionMonthIcon);
 		}
+		
+		final List<Boolean> listInterventionAvailabilitys = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+		for (int i = 0; i < listInterventionAvailabilitys.size(); ++i) {
+			listInterventionAvailabilitys.set(i, true);
+		}
 				
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
-			public void actionPerformed(ActionEvent arg0) {	
+			public void actionPerformed(ActionEvent arg0) {
+				
+			    int tmpInterventionMonthPosition = 0;
+				
+				for (int i = 0; i < listInterventionAvailabilitys.size(); ++i) {
+					if (listInterventionAvailabilitys.get(i) != false) {
+						listInterventionAvailabilitys.set(i, false);
+						tmpInterventionMonthPosition = i;
+						break;
+					}
+				}
+				
+				final int interventionMonthPosition = tmpInterventionMonthPosition;
 				
 				JPanel interventionDemand = new JPanel(new GridBagLayout());
 				interventionDemand.setBorder(BorderFactory.createTitledBorder("Demande d'intervention"));
@@ -949,6 +1008,7 @@ public class Formulaire extends JFrame{
 							ajoutMoisDI.setEnabled(true);
 						}
 						
+						listInterventionAvailabilitys.set(interventionMonthPosition, true);
 						--positionMoisDI;
 						
 						conteneurPrincipal.remove(interventionDemand);
@@ -962,12 +1022,12 @@ public class Formulaire extends JFrame{
 				interventionDemand.add(deleteInterventionMonth, interventionDemandConstraint);
 				
 				constraint.gridx = 0;
-				constraint.gridy = ++positionMoisDI;
+				constraint.gridy = startInterventionDemandP + interventionMonthPosition;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				constraint.insets = new Insets(7, 7, 0, 7); //marges autour de l'element
 				conteneurPrincipal.add(interventionDemand, constraint);
 				
-				if (positionMoisDI >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
+				if (positionMoisDI++ >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
 					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[1]);
 					ajoutMoisDI.setIcon(null);
 					ajoutMoisDI.setEnabled(false);
@@ -1172,10 +1232,27 @@ public class Formulaire extends JFrame{
 		    ajoutArboLibre2.setIcon(addFreeTreeIcon2);
 	  	}
 	  	
+	  	final List<Boolean> listFreeTreeAvailabilitys2 = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+		for (int i = 0; i < listFreeTreeAvailabilitys2.size(); ++i) {
+			listFreeTreeAvailabilitys2.set(i, true);
+		}
+	  	
 	  	ajoutArboLibre2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				int tmpFreeTreePosition = 0;
+				
+				for (int i = 0; i < listFreeTreeAvailabilitys2.size(); ++i) {
+					if (listFreeTreeAvailabilitys2.get(i) != false) {
+						listFreeTreeAvailabilitys2.set(i, false);
+						tmpFreeTreePosition = i;
+						break;
+					}
+				}
+				
+				final int freeTreeMonthPosition = tmpFreeTreePosition;
 				
 				FreeTree freeTree = new FreeTree();
 			    
@@ -1200,6 +1277,7 @@ public class Formulaire extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
+						listFreeTreeAvailabilitys2.set(freeTreeMonthPosition, true);
 						--freeTrees2Position;
 						
 						freeTrees2.remove(freeTree);
@@ -1237,14 +1315,14 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = ++freeTrees2Position;
+				constraint.gridy = startFreeTree2Position + freeTreeMonthPosition;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(freeTree, constraint);
 				
 				conteneurPrincipal.revalidate();
 				
-			    if (freeTrees2Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+			    if (freeTrees2Position++ >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
 			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre2.setEnabled(false);
 			    	ajoutArboLibre2.setIcon(null);
@@ -2626,7 +2704,8 @@ public class Formulaire extends JFrame{
 
 	private JPanel createPreventiveVoucherMonth (JComponent mainContainer, Collection<JComboBox<String>> preventivesVouchersMonths, 
 			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed,
-			Collection<JTextArea> commentsPreventivesVouchers) {
+			Collection<JTextArea> commentsPreventivesVouchers,
+			final int thisPosition) {
 		
 		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
 		
@@ -2757,7 +2836,8 @@ public class Formulaire extends JFrame{
 		final ImageIcon deleteIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
 		
 		if (deleteIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
-			iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - deleteMonthButton.getPreferredSize().getHeight() / 3);
+			iconHeight = (int) ((int) deleteMonthButton.getPreferredSize().getHeight() - 
+					deleteMonthButton.getPreferredSize().getHeight() / 3);
 		    iconWidth  = deleteIcon.getIconWidth() / (deleteIcon.getIconHeight() / iconHeight);
 		    
 		    tmpImg = deleteIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
@@ -2779,9 +2859,10 @@ public class Formulaire extends JFrame{
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				ajoutMoisBP.setIcon(addIcon);
 				
-				--preventiveVoucherLastMonthPosition;
+				listPreventiveMonthAvailabilitys.set(thisPosition, true);
 				
 				mainContainer.remove(thisPreventiveVoucherMonthPanel);
+				--preventiveVoucherLastMonthPosition;
 				
 				mainContainer.revalidate();
 			}

@@ -23,6 +23,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
+import utilities.OperationUtilities;
+
 public class FreeTree extends JPanel{
 	
 	/**
@@ -30,7 +32,7 @@ public class FreeTree extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 3;
+	private static final int NUMBER_ELEMENT_ALLOWED = 4;
 	
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
@@ -62,18 +64,15 @@ public class FreeTree extends JPanel{
 		constraint.gridx = 0;
 		constraint.gridy = positionCounter;
 		constraint.weightx = 1;
-		constraint.insets = new Insets(20, 0, 5, 0); //marges autour de l'element
+		constraint.insets = new Insets(5, 0, 3, 0); //marges autour de l'element
 		constraint.fill = GridBagConstraints.BOTH;
 		
 		elements = new LinkedList<JTextField>();
-		elementNumbers = new LinkedList<JTextField>();
+		elementNumbers = new LinkedList<JTextField>();	    
 	    
-	    constraint.insets = new Insets(20, 0, 3, 0); //marges autour de l'element
 		//titre
 	    final JLabel title = new JLabel("Titre : "); //creation du label titre
 	    
-	    constraint.gridx = 0;
-	    constraint.gridy = ++positionCounter;
 		this.add(title, constraint); //ajout du label titre
 		
 		titleTextField = new JTextField(15); //creation de la zone de texte textFieldTitre2de taille 15
@@ -137,17 +136,13 @@ public class FreeTree extends JPanel{
 		    	thisFreeTree.add(elementPanel, constraint);
 		    	
 		    	thisFreeTree.revalidate();
-		    	thisFreeTree.repaint();
 		    	
-		    	for (Component element : thisFreeTree.getComponents()) {
-		    		System.out.println(element);		    		
-		    	}
-		    	
-		    	System.out.println("[ajout : " + (lastElementPosition - 1));
-		    	for (JTextField element : thisFreeTree.elements) {
-		    		System.out.println("element" + ",");		    		
-		    	}
-		    	System.out.println("]");
+		    	if (lastElementPosition >= startElementPosition + NUMBER_ELEMENT_ALLOWED) {
+					
+					addElement.setEnabled(false);
+					addElement.setText(ADD_ELEMENT_TEXT[3]);
+					addElement.setIcon(null);
+				}
 		    }
 		});
 		
@@ -277,8 +272,7 @@ public class FreeTree extends JPanel{
 		deleteElementButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				thisFreeTree.remove(elementPanel);
+			public void actionPerformed(ActionEvent e) {		
 				
 				elements.remove(textFieldElement);
 				elementNumbers.remove(textFieldNombre);
@@ -292,19 +286,19 @@ public class FreeTree extends JPanel{
 					
 				}
 				
-				thisFreeTree.revalidate();
+				final GridBagLayout freeTreeLayout = (GridBagLayout)thisFreeTree.getLayout();
+				for (int i = OperationUtilities.getComponentIndex(elementPanel); i < thisFreeTree.getComponentCount(); ++i) {
+					
+					Component currentComponent = thisFreeTree.getComponent(i);
+					GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
+					--thisComponentConstraint.gridy;
+					freeTreeLayout.setConstraints(currentComponent, thisComponentConstraint);
+				}
 				
+				thisFreeTree.remove(elementPanel);
 				--lastElementPosition;
 				
-				for (Component element : thisFreeTree.getComponents()) {
-		    		System.out.println(element);		    		
-		    	}
-				
-				System.out.println("[suppression : " + lastElementPosition);
-		    	for (JTextField element : thisFreeTree.elements) {
-		    		System.out.println("element" + ",");		    		
-		    	}
-		    	System.out.println("]");
+				thisFreeTree.revalidate();
 			}
 		});
 		
