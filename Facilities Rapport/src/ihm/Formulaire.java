@@ -647,9 +647,6 @@ public class Formulaire extends JFrame{
 					}
 				}
 				
-				System.out.println(listPreventiveMonthAvailabilitys);
-				System.out.println("this counter = " + thisPreventivMonthCounter);
-				
 				
 				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
@@ -802,7 +799,7 @@ public class Formulaire extends JFrame{
 					}
 				}
 				
-				final int freeTreeMonthPosition = tmpFreeTreePosition;
+				final int freeTreePosition = tmpFreeTreePosition;
 			    
 			    FreeTree arboLibre = new FreeTree();
 			    
@@ -827,7 +824,7 @@ public class Formulaire extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
-						listFreeTreeAvailabilitys1.set(freeTreeMonthPosition, true);
+						listFreeTreeAvailabilitys1.set(freeTreePosition, true);
 						--freeTrees1Position;
 						
 						freeTrees1.remove(arboLibre);
@@ -865,7 +862,7 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = startFreeTree1Position + freeTreeMonthPosition;
+				constraint.gridy = startFreeTree1Position + freeTreePosition;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(arboLibre, constraint);
@@ -1252,7 +1249,7 @@ public class Formulaire extends JFrame{
 					}
 				}
 				
-				final int freeTreeMonthPosition = tmpFreeTreePosition;
+				final int freeTreePosition = tmpFreeTreePosition;
 				
 				FreeTree freeTree = new FreeTree();
 			    
@@ -1277,7 +1274,7 @@ public class Formulaire extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
-						listFreeTreeAvailabilitys2.set(freeTreeMonthPosition, true);
+						listFreeTreeAvailabilitys2.set(freeTreePosition, true);
 						--freeTrees2Position;
 						
 						freeTrees2.remove(freeTree);
@@ -1315,7 +1312,7 @@ public class Formulaire extends JFrame{
 				});
 				
 			    constraint.gridx = 0;
-				constraint.gridy = startFreeTree2Position + freeTreeMonthPosition;
+				constraint.gridy = startFreeTree2Position + freeTreePosition;
 				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
 			    constraint.gridwidth = 4;
 			    conteneurPrincipal.add(freeTree, constraint);
@@ -1349,6 +1346,7 @@ public class Formulaire extends JFrame{
 	    final Collection<Meter> meters = new LinkedList<Meter>();
 	    
 	  	meterPosition = ++positionCounter;
+	  	final int meterStartPosition = meterPosition;
     
 	  	positionCounter += NUMBER_METER_ALLOWED;
     
@@ -1365,10 +1363,27 @@ public class Formulaire extends JFrame{
 		    addMeterIcon.setImage(tmpImg);
 		    ajoutCompteur.setIcon(addMeterIcon);
 	  	}
+	  	
+	  	final List<Boolean> listMeterAvailabilitys = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+		for (int i = 0; i < listMeterAvailabilitys.size(); ++i) {
+			listMeterAvailabilitys.set(i, true);
+		}
   	
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
+	  			
+	  			int tmpMeterPosition = 0;
+				
+				for (int i = 0; i < listMeterAvailabilitys.size(); ++i) {
+					if (listMeterAvailabilitys.get(i) != false) {
+						listMeterAvailabilitys.set(i, false);
+						tmpMeterPosition = i;
+						break;
+					}
+				}
+				
+				final int currentMeterPosition = tmpMeterPosition;
 	  			
 	  			final Meter meter = new Meter();
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
@@ -1390,6 +1405,7 @@ public class Formulaire extends JFrame{
 
 	  				@Override
 	  				public void actionPerformed(ActionEvent e) {
+	  					listMeterAvailabilitys.set(currentMeterPosition, true);
 	  					--meterPosition;
 	  					
 	  					meters.remove(meter);
@@ -1399,7 +1415,7 @@ public class Formulaire extends JFrame{
 	  				}
 	  			});
 	  		    
-	  		    GridBagConstraints meterConstraint = meter.constraint;
+	  		    GridBagConstraints meterConstraint = meter.constraint();
 	  		    meterConstraint.gridx = 0;
 	  			++meterConstraint.gridy;
 	  			meterConstraint.gridwidth = 1;
@@ -1408,8 +1424,10 @@ public class Formulaire extends JFrame{
 	  			
 	  			meters.add(meter);
 	  			
+	  			meterPosition++;
+	  			
 	  			constraint.gridx = 0;
-				constraint.gridy = ++meterPosition;
+				constraint.gridy = meterStartPosition + currentMeterPosition;
 				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(meter, constraint);
@@ -1418,7 +1436,6 @@ public class Formulaire extends JFrame{
 	  		}
 	  	});
 	  	
-    
 	  	constraint.gridx = 1;
 	  	constraint.gridy = ++positionCounter;
 	  	constraint.gridwidth = GridBagConstraints.REMAINDER;

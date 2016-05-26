@@ -44,7 +44,7 @@ public class FreeTree extends JPanel{
 	private final JTextField titleTextField;
 	private final JTextArea textAreaComment;
 	
-	final JButton addElement;
+	private final JButton addElement;
 
 	private int lastElementPosition;
 	
@@ -260,7 +260,7 @@ public class FreeTree extends JPanel{
 		
 		final JButton deleteElementButton = new JButton();
 		
-		ImageIcon deleteElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[4]);
+		final ImageIcon deleteElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[4]);
 	    if (deleteElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
 		    final int iconHeight = (int) (deleteElementButton.getPreferredSize().getHeight() - deleteElementButton.getPreferredSize().getHeight() / 3);
 		    final int iconWidth  = deleteElementIcon.getIconWidth() / (deleteElementIcon.getIconHeight() / iconHeight);
