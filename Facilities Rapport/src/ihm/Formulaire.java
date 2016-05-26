@@ -247,7 +247,6 @@ public class Formulaire extends JFrame{
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 	    conteneurPrincipal.add(textFieldNomCA, constraint); //ajout de la zone de texte nomCA
-	
         
 		/*-------------------------------------------formulaire client-------------------------------------------------*/
 		
@@ -529,17 +528,24 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 		conteneurPrincipal.add(rapportActivite, constraint); //ajout du label rapportActivite
 		
-		String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
-		JComboBox<String> comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
+		final String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
+		final JComboBox<String> comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		rapportActivite.setLabelFor(comboBoxRapport); //attribution de la comboBox comboBoxRapport au label rapportActivite
 		conteneurPrincipal.add(comboBoxRapport, constraint); //ajout de la comboBox comboBoxRapport
-	    
+		
+		final JCheckBox updateVoucherMonth = new JCheckBox("Mettre à jour les mois");
+		
+		constraint.gridx = 1;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		conteneurPrincipal.add(updateVoucherMonth, constraint);
+		
 	    //date debut
-	    JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
+	    final JLabel dateDebut = new JLabel("Date de début : "); //creation du label dateDebut
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
@@ -596,10 +602,12 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 		conteneurPrincipal.add(titreBP, constraint); //ajout du titreBP dans conteneurPrincipal
 	    
-	    Collection<JComboBox<String>> preventivesVouchersMonths        = new ArrayList<JComboBox<String>>();
-	    Collection<JTextField>        nbPreventivesVouchersOpened      = new ArrayList<JTextField>();
-	    Collection<JTextField>        nbPreventivesVouchersClosed      = new ArrayList<JTextField>();
-	    Collection<JTextArea>         commentsPreventivesVouchers      = new ArrayList<JTextArea>();
+	    Collection<JComboBox<String>> preventivesVouchersMonths        = new LinkedList<JComboBox<String>>();
+	    Collection<JTextField>        nbPreventivesVouchersOpened      = new LinkedList<JTextField>();
+	    Collection<JTextField>        nbPreventivesVouchersClosed      = new LinkedList<JTextField>();
+	    Collection<JTextArea>         commentsPreventivesVouchers      = new LinkedList<JTextArea>();
+	    
+	    ArrayList<JButton> deleteButtonsPreventivesVouchers = new ArrayList<JButton>();
 
 	    preventiveVoucherLastMonthPosition = ++positionCounter;
 	    final int preventiveVoucherFirstMonthPosition = positionCounter;
@@ -651,9 +659,10 @@ public class Formulaire extends JFrame{
 				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
 						nbPreventivesVouchersClosed, commentsPreventivesVouchers, 
-						thisPreventivMonthCounter);
+						deleteButtonsPreventivesVouchers, thisPreventivMonthCounter);
 				
 				preventiveVoucherMonth.setBorder(BorderFactory.createTitledBorder("Bon préventif"));
+				
 				constraint.gridy = preventiveVoucherFirstMonthPosition + thisPreventivMonthCounter;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
@@ -672,6 +681,72 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
+		
+		comboBoxRapport.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (updateVoucherMonth.isSelected()) {
+					
+					final int monthNumber;
+					
+					switch (comboBoxRapport.getSelectedItem().toString()) {
+					case "Hebdomadaire":
+					case "Mensuel" :	
+						monthNumber = 1;
+						break;
+					
+					case "Bimensuel":
+						monthNumber = 2;
+						break;
+					
+					case "Trimestriel":
+						monthNumber = 4;
+						break;
+					
+					case "Semestriel" :
+						monthNumber = 6;
+						break;
+					
+					case "Annuel" :
+						monthNumber = 12;
+						break;
+					
+					default:
+						monthNumber = 0;
+						break;
+					}
+					
+					final int previousMonthNumber = deleteButtonsPreventivesVouchers.size();
+					
+					while (deleteButtonsPreventivesVouchers.size() != monthNumber) {
+						
+						if (deleteButtonsPreventivesVouchers.size() < monthNumber) {
+							ajoutMoisBP.doClick();
+							ajoutMoisBP.setEnabled(true);
+						}
+						else {
+							deleteButtonsPreventivesVouchers.get(deleteButtonsPreventivesVouchers.size() - 1).doClick();
+						}
+					}
+					
+					Iterator<JComboBox<String>> preventiveMonthsIter = preventivesVouchersMonths.iterator();
+					
+					for (int i = 0; i < deleteButtonsPreventivesVouchers.size(); ++i) {
+						JComboBox<String> currentMonth = preventiveMonthsIter.next();
+						
+						if (i >= previousMonthNumber) {
+							currentMonth.setSelectedIndex(i);
+						}
+					}	
+					
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisBP.setEnabled(false);
+					ajoutMoisBP.setIcon(null);
+				}
+			}
+		});
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
 	    
@@ -971,9 +1046,26 @@ public class Formulaire extends JFrame{
 				interventionDemandConstraint.gridwidth = 1;
 				interventionDemand.add(nbIntervention, interventionDemandConstraint); //ajout du label nbBPOuverts
 				
-				JTextField textFieldNbIntervention = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
+				final JTextField textFieldNbIntervention = new JTextField("0", 2); //creation de la zone de texte textFieldNbBPOuverts
 				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
 				interventionNumbers.add(textFieldNbIntervention);
+				
+				textFieldNbIntervention.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+					
+					@Override
+					public void update(DocumentEvent arg0) {
+						if (!textFieldNbIntervention.getText().equals("")) {
+							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
+							ajoutMoisDI.setIcon(addInterventionMonthIcon);
+							ajoutMoisDI.setEnabled(true);
+						}
+						else {
+							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[2]);
+							ajoutMoisDI.setIcon(null);
+							ajoutMoisDI.setEnabled(false);
+						}
+					}
+				});
 				
 				interventionDemandConstraint.gridx = 1;
 				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -999,11 +1091,9 @@ public class Formulaire extends JFrame{
 						interventionMonths.remove(comboBoxMoisDI);
 						interventionNumbers.remove(textFieldNbIntervention);
 						
-						if (positionMoisDI >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
-							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
-							ajoutMoisDI.setIcon(deleteInterventionMonthIcon);
-							ajoutMoisDI.setEnabled(true);
-						}
+						ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
+						ajoutMoisDI.setIcon(addInterventionMonthIcon);
+						ajoutMoisDI.setEnabled(true);
 						
 						listInterventionAvailabilitys.set(interventionMonthPosition, true);
 						--positionMoisDI;
@@ -1023,6 +1113,10 @@ public class Formulaire extends JFrame{
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				constraint.insets = new Insets(7, 7, 0, 7); //marges autour de l'element
 				conteneurPrincipal.add(interventionDemand, constraint);
+				
+				ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[2]);
+				ajoutMoisDI.setIcon(null);
+				ajoutMoisDI.setEnabled(false);
 				
 				if (positionMoisDI++ >= startInterventionDemandP + NUMBER_INTERVENTION_DEMAND_ALLOWED) {
 					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[1]);
@@ -2719,9 +2813,10 @@ public class Formulaire extends JFrame{
 	    
 	}	
 
-	private JPanel createPreventiveVoucherMonth (JComponent mainContainer, Collection<JComboBox<String>> preventivesVouchersMonths, 
-			Collection<JTextField> nbPreventivesVouchersOpened, Collection<JTextField> nbPreventivesVouchersClosed,
-			Collection<JTextArea> commentsPreventivesVouchers,
+	private final JPanel createPreventiveVoucherMonth (final JComponent mainContainer, 
+			final Collection<JComboBox<String>> preventivesVouchersMonths, 
+			final Collection<JTextField> nbPreventivesVouchersOpened, final Collection<JTextField> nbPreventivesVouchersClosed,
+			final Collection<JTextArea> commentsPreventivesVouchers, final Collection<JButton> deleteButtonsPreventivesVouchers,
 			final int thisPosition) {
 		
 		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
@@ -2758,7 +2853,7 @@ public class Formulaire extends JFrame{
 	    constraint.gridwidth = 1;
 	    thisPreventiveVoucherMonthPanel.add(nbBPOuverts, constraint); //ajout du label nbBPOuverts
 	    
-	    JTextField textFieldNbBPOuverts = new JTextField(2); //creation de la zone de texte textFieldNbBPOuverts
+	    JTextField textFieldNbBPOuverts = new JTextField("0", 2); //creation de la zone de texte textFieldNbBPOuverts
 	    nbBPOuverts.setLabelFor(textFieldNbBPOuverts); //attribution de la zone de texte au label nbBPOuverts
 	    nbPreventivesVouchersOpened.add(textFieldNbBPOuverts);
 		
@@ -2774,7 +2869,7 @@ public class Formulaire extends JFrame{
 	    constraint.gridwidth = 1;
 	    thisPreventiveVoucherMonthPanel.add(nbBPFermes, constraint); //ajout du label nbBPFermes
 		
-	    JTextField textFieldNbBPFermes = new JTextField(2); //creation de la zone de texte textFieldNbBPFermes
+	    JTextField textFieldNbBPFermes = new JTextField("0", 2); //creation de la zone de texte textFieldNbBPFermes
 	    nbBPFermes.setLabelFor(textFieldNbBPFermes); //attribution de la zone de texte textFieldNbBPFermes au label nbBPFermes
 	    nbPreventivesVouchersClosed.add(textFieldNbBPFermes);
 		
@@ -2831,7 +2926,7 @@ public class Formulaire extends JFrame{
 		});
 		
 		//commentaire BP
-	    JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
+	    final JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherMonthPosition;
@@ -2879,11 +2974,15 @@ public class Formulaire extends JFrame{
 				listPreventiveMonthAvailabilitys.set(thisPosition, true);
 				
 				mainContainer.remove(thisPreventiveVoucherMonthPanel);
+				deleteButtonsPreventivesVouchers.remove(deleteMonthButton);
+				
 				--preventiveVoucherLastMonthPosition;
 				
 				mainContainer.revalidate();
 			}
 		});
+		
+		deleteButtonsPreventivesVouchers.add(deleteMonthButton);
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++preventiveVoucherMonthPosition;
@@ -2893,7 +2992,7 @@ public class Formulaire extends JFrame{
 		return thisPreventiveVoucherMonthPanel;
 	}
 	
-	private void stopPdfCreation(ProgressBarFrame pBFrame) {
+	private final void stopPdfCreation(final ProgressBarFrame pBFrame) {
 		
 		this.setCursor(null);
 		this.setEnabled(true);
