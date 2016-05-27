@@ -71,7 +71,8 @@ public class Formulaire extends JFrame{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JButton ajoutMoisBP;
+	private final JButton ajoutMoisBP;
+	private final JButton ajoutMoisDI;
 	
 	public final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
 			"Files" + File.separator + "Icons";
@@ -122,8 +123,10 @@ public class Formulaire extends JFrame{
 	private int freeTrees1Position;
 	private int freeTrees2Position;
 	private int meterPosition;
+	private int monthNumber;
 	
-	private final List<Boolean> listPreventiveMonthAvailabilitys;
+	private final List<Boolean> listMeterMonthsPorvided;
+	private final List<Boolean> listInterventionAvailabilitys;
 	
 	public Formulaire() throws IOException{
 	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
@@ -608,7 +611,7 @@ public class Formulaire extends JFrame{
 	    Collection<JTextField>        nbPreventivesVouchersClosed      = new LinkedList<JTextField>();
 	    Collection<JTextArea>         commentsPreventivesVouchers      = new LinkedList<JTextArea>();
 	    
-	    ArrayList<JButton> deleteButtonsPreventivesVouchers = new ArrayList<JButton>();
+	    final ArrayList<JButton> deleteButtonsPreventivesVouchers = new ArrayList<JButton>();
 
 	    preventiveVoucherLastMonthPosition = ++positionCounter;
 	    final int preventiveVoucherFirstMonthPosition = positionCounter;
@@ -626,9 +629,9 @@ public class Formulaire extends JFrame{
 		    ajoutMoisBP.setIcon(addIcon);
 	    }
 	    
-	    listPreventiveMonthAvailabilitys = Arrays.asList(new Boolean[NUMBER_PREVENTIVE_MONTH_ALLOWED]);
-	    for (int i = 0; i < listPreventiveMonthAvailabilitys.size(); ++i) {
-	    	listPreventiveMonthAvailabilitys.set(i, true);
+	    listMeterMonthsPorvided = Arrays.asList(new Boolean[NUMBER_PREVENTIVE_MONTH_ALLOWED]);
+	    for (int i = 0; i < listMeterMonthsPorvided.size(); ++i) {
+	    	listMeterMonthsPorvided.set(i, true);
 	    }
 		
 		ajoutMoisBP.addActionListener(new ActionListener() {
@@ -647,10 +650,10 @@ public class Formulaire extends JFrame{
 				
 				int thisPreventivMonthCounter = 0;
 				
-				for (int i = 0; i < listPreventiveMonthAvailabilitys.size(); ++i) {
+				for (int i = 0; i < listMeterMonthsPorvided.size(); ++i) {
 					
-					if (listPreventiveMonthAvailabilitys.get(i) != false) {
-						listPreventiveMonthAvailabilitys.set(i, false);
+					if (listMeterMonthsPorvided.get(i) != false) {
+						listMeterMonthsPorvided.set(i, false);
 						thisPreventivMonthCounter = i;
 						break;
 					}
@@ -682,72 +685,6 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
-		
-		comboBoxRapport.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if (updateVoucherMonth.isSelected()) {
-					
-					final int monthNumber;
-					
-					switch (comboBoxRapport.getSelectedItem().toString()) {
-					case "Hebdomadaire":
-					case "Mensuel" :	
-						monthNumber = 1;
-						break;
-					
-					case "Bimensuel":
-						monthNumber = 2;
-						break;
-					
-					case "Trimestriel":
-						monthNumber = 4;
-						break;
-					
-					case "Semestriel" :
-						monthNumber = 6;
-						break;
-					
-					case "Annuel" :
-						monthNumber = 12;
-						break;
-					
-					default:
-						monthNumber = 0;
-						break;
-					}
-					
-					final int previousMonthNumber = deleteButtonsPreventivesVouchers.size();
-					
-					while (deleteButtonsPreventivesVouchers.size() != monthNumber) {
-						
-						if (deleteButtonsPreventivesVouchers.size() < monthNumber) {
-							ajoutMoisBP.doClick();
-							ajoutMoisBP.setEnabled(true);
-						}
-						else {
-							deleteButtonsPreventivesVouchers.get(deleteButtonsPreventivesVouchers.size() - 1).doClick();
-						}
-					}
-					
-					Iterator<JComboBox<String>> preventiveMonthsIter = preventivesVouchersMonths.iterator();
-					
-					for (int i = 0; i < deleteButtonsPreventivesVouchers.size(); ++i) {
-						JComboBox<String> currentMonth = preventiveMonthsIter.next();
-						
-						if (i >= previousMonthNumber) {
-							currentMonth.setSelectedIndex(i);
-						}
-					}	
-					
-					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
-					ajoutMoisBP.setEnabled(false);
-					ajoutMoisBP.setIcon(null);
-				}
-			}
-		});
 	    
 	    /*----------------------------------------formulaire bons preventifs par domaine------------------------------------------------*/
 	    
@@ -968,6 +905,8 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreDI, constraint); //ajout du titreRapportr dans conteneurPrincipal
 		
+	    final ArrayList<JButton> deleteButtonsInterventionMonths = new ArrayList<JButton>();
+	    
 		//bouton d'ajout de mois pour les BP
 		positionMoisDI = ++positionCounter;
 		final int startInterventionDemandP = positionMoisDI;
@@ -976,13 +915,13 @@ public class Formulaire extends JFrame{
 		Collection<JComboBox<String>> interventionMonths = new LinkedList<JComboBox<String>>();
 		Collection<JTextField> interventionNumbers = new LinkedList<JTextField>();
 				
-		JButton ajoutMoisDI = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
+		ajoutMoisDI = new JButton(ADD_MONTH_BUTTON_TEXT[0]);
 		
 		final ImageIcon addInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 		
 		if (addInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
 	  	
-		  	iconHeight = (int) (ajoutArboLibre.getPreferredSize().getHeight() - ajoutArboLibre.getPreferredSize().getHeight() / 3);
+		  	iconHeight = (int) (ajoutMoisDI.getPreferredSize().getHeight() - ajoutMoisDI.getPreferredSize().getHeight() / 3);
 		    iconWidth  = addInterventionMonthIcon.getIconWidth() / (addInterventionMonthIcon.getIconHeight() / iconHeight);
 		    
 		    tmpImg = addInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
@@ -990,7 +929,7 @@ public class Formulaire extends JFrame{
 		    ajoutMoisDI.setIcon(addInterventionMonthIcon);
 		}
 		
-		final List<Boolean> listInterventionAvailabilitys = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+		listInterventionAvailabilitys = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
 		for (int i = 0; i < listInterventionAvailabilitys.size(); ++i) {
 			listInterventionAvailabilitys.set(i, true);
 		}
@@ -998,8 +937,7 @@ public class Formulaire extends JFrame{
 		ajoutMoisDI.addActionListener(new ActionListener() {
 					    	
 			public void actionPerformed(ActionEvent arg0) {
-				
-			    int tmpInterventionMonthPosition = 0;
+				int tmpInterventionMonthPosition = 0;
 				
 				for (int i = 0; i < listInterventionAvailabilitys.size(); ++i) {
 					if (listInterventionAvailabilitys.get(i) != false) {
@@ -1011,104 +949,9 @@ public class Formulaire extends JFrame{
 				
 				final int interventionMonthPosition = tmpInterventionMonthPosition;
 				
-				JPanel interventionDemand = new JPanel(new GridBagLayout());
-				interventionDemand.setBorder(BorderFactory.createTitledBorder("Demande d'intervention"));
-				
-				int currentPositionCounter = 0;
-				
-				GridBagConstraints interventionDemandConstraint = new GridBagConstraints();
-				interventionDemandConstraint.gridx = 0;
-				interventionDemandConstraint.gridy = currentPositionCounter;
-				interventionDemandConstraint.weightx = 1;
-				interventionDemandConstraint.fill = GridBagConstraints.BOTH;
-				
-				//mois
-				JLabel moisDI = new JLabel("Mois : ");
-				
-				interventionDemandConstraint.insets = new Insets(3, 7, 0, 7); //marges autour de l'element
-				interventionDemandConstraint.gridy = ++currentPositionCounter;
-				interventionDemand.add(moisDI, interventionDemandConstraint); //ajout du label moisBP
-				
-				JComboBox<String> comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
-				comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
-				moisDI.setLabelFor(comboBoxMoisDI); //attribution du label moisBP à la comboBox comboBoxMoisBP
-				interventionMonths.add(comboBoxMoisDI);
-				
-				interventionDemandConstraint.gridx = 1;
-				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
-				interventionDemand.add(comboBoxMoisDI, interventionDemandConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
-						
-				//nombre d'interventions
-				JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
-				
-				interventionDemandConstraint.insets = new Insets(0, 7, 0, 7); //marges autour de l'element
-				interventionDemandConstraint.gridx = 0;
-				interventionDemandConstraint.gridy = ++currentPositionCounter;
-				interventionDemandConstraint.gridwidth = 1;
-				interventionDemand.add(nbIntervention, interventionDemandConstraint); //ajout du label nbBPOuverts
-				
-				final JTextField textFieldNbIntervention = new JTextField("0", 2); //creation de la zone de texte textFieldNbBPOuverts
-				nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
-				interventionNumbers.add(textFieldNbIntervention);
-				
-				textFieldNbIntervention.getDocument().addDocumentListener(new PersonnalDocumentListener() {
-					
-					@Override
-					public void update(DocumentEvent arg0) {
-						if (!textFieldNbIntervention.getText().equals("")) {
-							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
-							ajoutMoisDI.setIcon(addInterventionMonthIcon);
-							ajoutMoisDI.setEnabled(true);
-						}
-						else {
-							ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[2]);
-							ajoutMoisDI.setIcon(null);
-							ajoutMoisDI.setEnabled(false);
-						}
-					}
-				});
-				
-				interventionDemandConstraint.gridx = 1;
-				interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
-				interventionDemand.add(textFieldNbIntervention, interventionDemandConstraint); //ajout de la zone de texte textFieldNbBPOuverts
-				
-				JButton deleteInterventionMonth = new JButton("Supprimer mois");
-				
-				final ImageIcon deleteInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
-			  	
-				if (deleteInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
-				  	final int iconHeight = (int) (deleteInterventionMonth.getPreferredSize().getHeight() - deleteInterventionMonth.getPreferredSize().getHeight() / 3);
-				    final int iconWidth  = deleteInterventionMonthIcon.getIconWidth() / (deleteInterventionMonthIcon.getIconHeight() / iconHeight);
-				    
-				    final Image tmpImg = deleteInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
-				    deleteInterventionMonthIcon.setImage(tmpImg);
-				    deleteInterventionMonth.setIcon(deleteInterventionMonthIcon);
-				}
-				
-				deleteInterventionMonth.addActionListener(new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						interventionMonths.remove(comboBoxMoisDI);
-						interventionNumbers.remove(textFieldNbIntervention);
-						
-						ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
-						ajoutMoisDI.setIcon(addInterventionMonthIcon);
-						ajoutMoisDI.setEnabled(true);
-						
-						listInterventionAvailabilitys.set(interventionMonthPosition, true);
-						--positionMoisDI;
-						
-						conteneurPrincipal.remove(interventionDemand);
-						conteneurPrincipal.revalidate();
-					}
-				});
-				
-				interventionDemandConstraint.gridx = 0;
-				interventionDemandConstraint.gridy = ++currentPositionCounter;
-				interventionDemandConstraint.gridwidth = 1;
-				interventionDemand.add(deleteInterventionMonth, interventionDemandConstraint);
-				
+				JPanel interventionDemand = createInterventionDemand(interventionMonths, interventionNumbers, conteneurPrincipal,
+						interventionMonthPosition, deleteButtonsInterventionMonths);
+			    
 				constraint.gridx = 0;
 				constraint.gridy = startInterventionDemandP + interventionMonthPosition;
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -1151,6 +994,98 @@ public class Formulaire extends JFrame{
 		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
 	    conteneurPrincipal.add(scrollPaneComDI, constraint); //ajout de la zone de texte emailCl
 	    
+	    comboBoxRapport.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (updateVoucherMonth.isSelected()) {
+					
+					switch (comboBoxRapport.getSelectedItem().toString()) {
+					case "Hebdomadaire":
+					case "Mensuel" :	
+						monthNumber = 1;
+						break;
+					
+					case "Bimensuel":
+						monthNumber = 2;
+						break;
+					
+					case "Trimestriel":
+						monthNumber = 4;
+						break;
+					
+					case "Semestriel" :
+						monthNumber = 6;
+						break;
+					
+					case "Annuel" :
+						monthNumber = 12;
+						break;
+					
+					default:
+						monthNumber = 0;
+						break;
+					}
+					
+					// Partie bon preventif
+					final int previousMonthNumber = deleteButtonsPreventivesVouchers.size();
+					
+					while (deleteButtonsPreventivesVouchers.size() != monthNumber) {
+						
+						if (deleteButtonsPreventivesVouchers.size() < monthNumber) {
+							ajoutMoisBP.doClick();
+							ajoutMoisBP.setEnabled(true);
+						}
+						else {
+							deleteButtonsPreventivesVouchers.get(deleteButtonsPreventivesVouchers.size() - 1).doClick();
+						}
+					}
+					
+					Iterator<JComboBox<String>> preventiveMonthsIter = preventivesVouchersMonths.iterator();
+					
+					for (int i = 0; i < deleteButtonsPreventivesVouchers.size(); ++i) {
+						JComboBox<String> currentMonth = preventiveMonthsIter.next();
+						
+						if (i >= previousMonthNumber) {
+							currentMonth.setSelectedIndex(i);
+						}
+					}	
+					
+					ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisBP.setEnabled(false);
+					ajoutMoisBP.setIcon(null);
+					
+					// Partie demande d'intervention
+					final int previousInterventionMonthNumber = deleteButtonsInterventionMonths.size();
+					
+					while (deleteButtonsInterventionMonths.size() != monthNumber) {
+						
+						if (deleteButtonsInterventionMonths.size() < monthNumber) {
+							ajoutMoisDI.doClick();
+							ajoutMoisDI.setEnabled(true);
+						}
+						else {
+							deleteButtonsInterventionMonths.get(deleteButtonsInterventionMonths.size() - 1).doClick();
+						}
+					}
+					
+					Iterator<JComboBox<String>> interventionMonthsIter = interventionMonths.iterator();
+					
+					for (int i = 0; i < deleteButtonsInterventionMonths.size(); ++i) {
+						JComboBox<String> currentMonth = interventionMonthsIter.next();
+						
+						if (i >= previousInterventionMonthNumber) {
+							currentMonth.setSelectedIndex(i);
+						}
+					}	
+					
+					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisDI.setEnabled(false);
+					ajoutMoisDI.setIcon(null);
+				}
+			}
+		});
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
 	   
@@ -2037,6 +1972,22 @@ public class Formulaire extends JFrame{
 							}
 				    	}
 				    	
+				    	if (counter != monthNumber) {
+				    		final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+	    							"Le nombre de mois de bon préventif (" + counter +"), n'est pas conforme au type de rapport (" +
+				    		        comboBoxRapport.getSelectedItem().toString() + ")." + 
+	    						    System.lineSeparator() + "Voulez-vous continuer?", 
+	    							"Erreur", JOptionPane.YES_NO_OPTION);
+	    					
+				    		if(dialogResult == JOptionPane.NO_OPTION){
+	    						stopPdfCreation(pBarFrame);
+	    						return null;
+	    					}
+	    					else {
+	    						pBarFrame.toFront();
+	    					}
+				    	}
+				    	
 				    	if (!preventivesVouchers.isEmpty()) {
 					    	try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
@@ -2699,7 +2650,9 @@ public class Formulaire extends JFrame{
 						
 						/*-----------------Partie compteurs-----------------*/
 						
-						fontToFit = false;
+						fontToFit = true;
+						
+						counter = 0;
 						
 						Iterator<Meter> meterIter = meters.iterator();
 						
@@ -2746,9 +2699,33 @@ public class Formulaire extends JFrame{
 				    				//currentMeterData.addString(currentConsumption.getText() + " " + currentUnit,
 				    					//	currentMonth.getSelectedItem().toString() + " : ");
 				    				
+				    				try {
+					    				while (counter < MONTH_CHOICE.length) {
+					    					
+					    					if (MONTH_CHOICE[counter].equals(currentMonth.getSelectedItem().toString())) {
+					    						break;
+					    					}
+					    					System.out.println(MONTH_CHOICE[counter] + " " + currentUnit);
+					    					barChartDatas.addValue(0, currentUnit, MONTH_CHOICE[counter]);
+					    					
+					    					++counter;
+					    				}
+				    				}
+				    				catch (Exception e) {
+				    					e.printStackTrace();
+				    				}
+
+				    				System.out.println(currentMonth.getSelectedItem().toString() + " " + currentUnit);
 				    				barChartDatas.addValue(Double.parseDouble(currentConsumption.getText()), currentUnit, 
-				    						currentMonth.getSelectedItem().toString());
+					    					currentMonth.getSelectedItem().toString());			    				
 				    			}
+								
+								if (counter < MONTH_CHOICE.length) {
+									++counter;
+								}
+								else {
+									counter = 0;
+								}
 								
 							}
 							
@@ -2813,6 +2790,12 @@ public class Formulaire extends JFrame{
 					
 					@Override
 			        public void done() {
+						try {
+					        get();
+					    } 
+						catch (Exception e) {
+					        e.printStackTrace();
+					    }
 						stopPdfCreation(pBarFrame);
 			        }
 
@@ -2861,7 +2844,7 @@ public class Formulaire extends JFrame{
 	    
 	}	
 
-	private final JPanel createPreventiveVoucherMonth (final JComponent mainContainer, 
+	private JPanel createPreventiveVoucherMonth (final JComponent mainContainer, 
 			final Collection<JComboBox<String>> preventivesVouchersMonths, 
 			final Collection<JTextField> nbPreventivesVouchersOpened, final Collection<JTextField> nbPreventivesVouchersClosed,
 			final Collection<JTextArea> commentsPreventivesVouchers, final Collection<JButton> deleteButtonsPreventivesVouchers,
@@ -3006,7 +2989,7 @@ public class Formulaire extends JFrame{
 			deleteMonthButton.setIcon(deleteIcon);
 		}
 		deleteMonthButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				
@@ -3019,7 +3002,7 @@ public class Formulaire extends JFrame{
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
 				ajoutMoisBP.setIcon(addIcon);
 				
-				listPreventiveMonthAvailabilitys.set(thisPosition, true);
+				listMeterMonthsPorvided.set(thisPosition, true);
 				
 				mainContainer.remove(thisPreventiveVoucherMonthPanel);
 				deleteButtonsPreventivesVouchers.remove(deleteMonthButton);
@@ -3040,7 +3023,127 @@ public class Formulaire extends JFrame{
 		return thisPreventiveVoucherMonthPanel;
 	}
 	
-	private final void stopPdfCreation(final ProgressBarFrame pBFrame) {
+	private JPanel createInterventionDemand (final Collection<JComboBox<String>> interventionMonths, 
+			final Collection<JTextField> interventionNumbers, final JComponent conteneurPrincipal, final int interventionMonthPosition,
+			final ArrayList<JButton> deleteButtonsInterventionMonths) {
+		
+		JPanel interventionDemand = new JPanel(new GridBagLayout());
+		interventionDemand.setBorder(BorderFactory.createTitledBorder("Demande d'intervention"));
+		
+		int currentPositionCounter = 0;
+		
+		GridBagConstraints interventionDemandConstraint = new GridBagConstraints();
+		interventionDemandConstraint.gridx = 0;
+		interventionDemandConstraint.gridy = currentPositionCounter;
+		interventionDemandConstraint.weightx = 1;
+		interventionDemandConstraint.fill = GridBagConstraints.BOTH;
+		
+		//mois
+		JLabel moisDI = new JLabel("Mois : ");
+		
+		interventionDemandConstraint.insets = new Insets(3, 7, 0, 7); //marges autour de l'element
+		interventionDemandConstraint.gridy = ++currentPositionCounter;
+		interventionDemand.add(moisDI, interventionDemandConstraint); //ajout du label moisBP
+		
+		JComboBox<String> comboBoxMoisDI = new JComboBox<String>(MONTH_CHOICE); //initialisation de la comboBox comboBoxMoisBP avec la liste choixMois
+		comboBoxMoisDI.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxMoisBP
+		moisDI.setLabelFor(comboBoxMoisDI); //attribution du label moisBP à la comboBox comboBoxMoisBP
+		interventionMonths.add(comboBoxMoisDI);
+		
+		interventionDemandConstraint.gridx = 1;
+		interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+		interventionDemand.add(comboBoxMoisDI, interventionDemandConstraint); //ajout de la zone de texte comboBox comboBoxMoisBP
+				
+		//nombre d'interventions
+		JLabel nbIntervention = new JLabel("Nombre d'interventions : "); //creation du label nbBPOuverts
+		
+		interventionDemandConstraint.insets = new Insets(0, 7, 0, 7); //marges autour de l'element
+		interventionDemandConstraint.gridx = 0;
+		interventionDemandConstraint.gridy = ++currentPositionCounter;
+		interventionDemandConstraint.gridwidth = 1;
+		interventionDemand.add(nbIntervention, interventionDemandConstraint); //ajout du label nbBPOuverts
+		
+		final JTextField textFieldNbIntervention = new JTextField("0", 2); //creation de la zone de texte textFieldNbBPOuverts
+		nbIntervention.setLabelFor(textFieldNbIntervention); //attribution de la zone de texte au label nbBPOuverts
+		interventionNumbers.add(textFieldNbIntervention);
+		
+		final ImageIcon addInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
+		
+		if (addInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+	  	
+		  	final int iconHeight = (int) (ajoutMoisDI.getPreferredSize().getHeight() - ajoutMoisDI.getPreferredSize().getHeight() / 3);
+		    final int iconWidth  = addInterventionMonthIcon.getIconWidth() / (addInterventionMonthIcon.getIconHeight() / iconHeight);
+		    
+		    final Image tmpImg = addInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    addInterventionMonthIcon.setImage(tmpImg);
+		}
+		
+		textFieldNbIntervention.getDocument().addDocumentListener(new PersonnalDocumentListener() {
+			
+			@Override
+			public void update(DocumentEvent arg0) {
+				if (!textFieldNbIntervention.getText().equals("")) {
+					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
+					ajoutMoisDI.setIcon(addInterventionMonthIcon);
+					ajoutMoisDI.setEnabled(true);
+				}
+				else {
+					ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[2]);
+					ajoutMoisDI.setIcon(null);
+					ajoutMoisDI.setEnabled(false);
+				}
+			}
+		});
+		
+		interventionDemandConstraint.gridx = 1;
+		interventionDemandConstraint.gridwidth = GridBagConstraints.REMAINDER;
+		interventionDemand.add(textFieldNbIntervention, interventionDemandConstraint); //ajout de la zone de texte textFieldNbBPOuverts
+		
+		JButton deleteInterventionMonth = new JButton("Supprimer mois");
+		
+		final ImageIcon deleteInterventionMonthIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+	  	
+		if (deleteInterventionMonthIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+		  	final int iconHeight = (int) (deleteInterventionMonth.getPreferredSize().getHeight() - deleteInterventionMonth.getPreferredSize().getHeight() / 3);
+		    final int iconWidth  = deleteInterventionMonthIcon.getIconWidth() / (deleteInterventionMonthIcon.getIconHeight() / iconHeight);
+		    
+		    final Image tmpImg = deleteInterventionMonthIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+		    deleteInterventionMonthIcon.setImage(tmpImg);
+		    deleteInterventionMonth.setIcon(deleteInterventionMonthIcon);
+		}
+		
+		deleteInterventionMonth.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				interventionMonths.remove(comboBoxMoisDI);
+				interventionNumbers.remove(textFieldNbIntervention);
+				
+				ajoutMoisDI.setText(ADD_MONTH_BUTTON_TEXT[0]);
+				ajoutMoisDI.setIcon(addInterventionMonthIcon);
+				ajoutMoisDI.setEnabled(true);
+				
+				listInterventionAvailabilitys.set(interventionMonthPosition, true);
+				--positionMoisDI;
+				
+				deleteButtonsInterventionMonths.remove(deleteInterventionMonth);
+				
+				conteneurPrincipal.remove(interventionDemand);
+				conteneurPrincipal.revalidate();
+			}
+		});
+		
+		deleteButtonsInterventionMonths.add(deleteInterventionMonth);
+		
+		interventionDemandConstraint.gridx = 0;
+		interventionDemandConstraint.gridy = ++currentPositionCounter;
+		interventionDemandConstraint.gridwidth = 1;
+		interventionDemand.add(deleteInterventionMonth, interventionDemandConstraint);
+		
+		return interventionDemand;
+	}
+	
+	private void stopPdfCreation(final ProgressBarFrame pBFrame) {
 		
 		this.setCursor(null);
 		this.setEnabled(true);

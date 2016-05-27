@@ -36,4 +36,15 @@ public abstract class OperationUtilities {
 	
 	    return -1;
 	}
+	
+	public static <T> int findIndex(T[] array, T value) {
+		for (int i = 0; i < array.length; ++i) {
+			
+			if (array[i].equals(value)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 }

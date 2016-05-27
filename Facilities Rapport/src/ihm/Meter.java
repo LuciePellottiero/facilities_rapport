@@ -246,50 +246,18 @@ public class Meter extends JPanel{
 	    //unite d'energie
 	    final String[] energieChoice = {"kWh", "MWh"}; //differents choix de l'unite
 		
-	    JComponent unit;
-		
-		if (comboBoxTypeCompteur.getSelectedIndex() >= 1) {
-			
-			if (comboBoxTypeCompteur.getSelectedIndex() >= 2) {
-				unit = new JComboBox<String>(energieChoice);
-			}
-			else {
-				unit = new JComboBox<String>(gazChoice);
-			}
-			
-			JComboBox<String> lastUnit = ((JComboBox<String>) unit);
-			monthUnits.add(lastUnit.getSelectedItem().toString());
-			
-			((JComboBox<String>) unit).addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					monthUnits.remove(lastUnit);
-					String lastUnit = ((JComboBox<String>) unit).getSelectedItem().toString();
-					monthUnits.add(lastUnit);
-					
-				}
-			});
-		}
-		else {
-			unit = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
-			monthUnits.add(((JLabel) unit).getText());
-		}
-		
-	    constraint.gridx = 2;
-	    constraint.weightx = 0;
-		constraint.gridwidth = 1;
-		monthPanel.add(unit, constraint); //ajout de la comboBoxUnite
-		
-		comboBoxTypeCompteur.addActionListener(new ActionListener() {
+	    comboBoxTypeCompteur.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				monthPanel.remove(monthPanel.getComponentCount() - 1);
-				monthUnits.remove(index);
+				if (index < monthUnits.size()) {
+					monthPanel.remove(monthPanel.getComponentCount() - 1);
+					monthUnits.remove(index);
+				}
 				
 				JComponent unit;
+				
 				if (comboBoxTypeCompteur.getSelectedIndex() >= 1) {
 					
 					if (comboBoxTypeCompteur.getSelectedIndex() >= 2) {
@@ -306,10 +274,12 @@ public class Meter extends JPanel{
 						
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							monthUnits.remove(lastUnit);
-							String lastUnit = ((JComboBox<String>) unit).getSelectedItem().toString();
-							monthUnits.add(lastUnit);
+							System.out.println(monthUnits + " " + index);
 							
+							String lastUnit = ((JComboBox<String>) unit).getSelectedItem().toString();
+							monthUnits.set(index, lastUnit);
+							
+							System.out.println(monthUnits + " " + index);
 						}
 					});
 				}
@@ -326,7 +296,9 @@ public class Meter extends JPanel{
 				monthPanel.revalidate();
 			}
 		});
-		
+
+		comboBoxTypeCompteur.setSelectedIndex(0);
+	    
 		JPanel thisMeter = this;
 		
 		deleteElementButton.addActionListener(new ActionListener() {
