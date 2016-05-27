@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 
 public abstract class OperationUtilities {
 
-	public static final boolean isNumeric(final String str)
+	public static boolean isNumeric(final String str)
 	{
 	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
 	}
 	
-	public static final BigDecimal truncateDecimal(final double x,final int numberofDecimals)
+	public static BigDecimal truncateDecimal(final double x,final int numberofDecimals)
 	{
 	    if ( x > 0) {
 	        return new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR);
@@ -21,7 +21,7 @@ public abstract class OperationUtilities {
 	    }
 	}
 	
-	public static final int getComponentIndex(final Component component) {
+	public static int getComponentIndex(final Component component) {
 	    
 		if (component != null && component.getParent() != null) {
 			Container container = component.getParent();

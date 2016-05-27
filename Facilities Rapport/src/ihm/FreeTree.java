@@ -32,7 +32,7 @@ public class FreeTree extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 4;
+	private static final int NUMBER_ELEMENT_ALLOWED = 40;
 	
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};

@@ -59,6 +59,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import documentHandler.writeStrategies.DefaultWriteStrategie;
 import utilities.OperationUtilities;
 import utilities.chartGenerator.DefaultChartGenerator;
 import utilities.chartGenerator.IChartGenerator;
@@ -424,8 +425,8 @@ public class Formulaire extends JFrame{
 		
 		final ImageIcon removePictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
 	    if (removePictureIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
-		    iconHeight = (int) (deleteLogo.getPreferredSize().getHeight() - deleteLogo.getPreferredSize().getHeight() / 3);
-		    iconWidth  = removePictureIcon.getIconWidth() / (removePictureIcon.getIconHeight() / iconHeight);
+	    	iconWidth = (int) (deleteLogo.getPreferredSize().getWidth() - deleteLogo.getPreferredSize().getWidth() / 2);
+		    iconHeight  = removePictureIcon.getIconHeight() / (removePictureIcon.getIconWidth() / iconWidth);
 		    
 		    tmpImg = removePictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
 		    removePictureIcon.setImage(tmpImg);
@@ -1707,6 +1708,8 @@ public class Formulaire extends JFrame{
 				    	
 				    	final int incrementUnit = 5;
 				    	
+				    	Boolean fontToFit = false;
+				    	
 				    	// On prepare les donnees
 				    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
 				    	
@@ -1917,7 +1920,8 @@ public class Formulaire extends JFrame{
 		 
 							if (counter <= 1) {
 				    		
-					    		preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
+					    		//preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), 
+					    			//	PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 								
 						    	if (textFieldNbBPOuverts.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
@@ -1936,9 +1940,10 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
+									//preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
 									
-									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", comboBoxMoisBP.getSelectedItem().toString());
+									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
+											comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	if (textFieldNbBPFermes.getText().equals("")) {
@@ -1958,7 +1963,7 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
+						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
 						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
@@ -1973,7 +1978,7 @@ public class Formulaire extends JFrame{
 									!textAreaCommentaireBP.getText().equals("") ||
 									!textFieldNbBPFermes.getText().equals("")) {
 								
-								preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
+								//preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
 								
 						    	if (textFieldNbBPOuverts.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
@@ -1994,7 +1999,7 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-									preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
+									//preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
 									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
 											comboBoxMoisBP.getSelectedItem().toString());
 						    	}
@@ -2018,7 +2023,7 @@ public class Formulaire extends JFrame{
 						    		return null;
 						    	}
 						    	else {
-						    		preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
+						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
 						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", 
 						    				comboBoxMoisBP.getSelectedItem().toString());
 						    	}
@@ -2035,7 +2040,7 @@ public class Formulaire extends JFrame{
 				    	if (!preventivesVouchers.isEmpty()) {
 					    	try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
-										"Mois", "Nombre de bons préventifs", barChartDatas, true);
+										"Mois", "Nombre de bons préventifs", barChartDatas, true, fontToFit);
 								
 								preventivesVouchers.addJFreeChart(barChart);
 				    		} 
@@ -2053,6 +2058,8 @@ public class Formulaire extends JFrame{
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    
 				    	/*-----------------Partie Bons preventifs par domaines-----------------*/
+						
+						fontToFit = false;
 				    	
 				    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
 				    	
@@ -2063,7 +2070,7 @@ public class Formulaire extends JFrame{
 				    	Iterator<JFormattedTextField> pourcentsIter = textFieldPourcentsBP.iterator();
 				    	
 				    	barChartDatas = new DefaultCategoryDataset();
-				    	DefaultPieDataset      pieChartDatas = new DefaultPieDataset();
+				    	DefaultPieDataset pieChartDatas = new DefaultPieDataset();
 				    	
 				    	Map<String, Double> pourcentages = new HashMap<String, Double>();
 				    	Double total = new Double (0f);
@@ -2090,7 +2097,11 @@ public class Formulaire extends JFrame{
 					    			return null;
 				    			}
 				    			else {		    				
-				    				domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				//domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				
+				    				if (currentDomain.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    					fontToFit = true;
+				    				}
 				    				
 				    				double currentPourcentage = 0;
 				    				
@@ -2117,8 +2128,6 @@ public class Formulaire extends JFrame{
 				    					return null;
 				    				}
 				    				
-				    				barChartDatas.addValue(currentPourcentage, "Pourcentage d'avancement", currentDomain.getText());
-				    				
 				    				total += currentPourcentage;
 				    				
 				    				if (total > 100 && !continueAbove100) {
@@ -2141,7 +2150,7 @@ public class Formulaire extends JFrame{
 				    		}
 				    	}		
 				    	
-				    	if (!domainPreventivesVouchers.isEmpty()) {
+				    	if (!pourcentages.isEmpty()) {
 				    		
 				    		if (total < 100) {
 				    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
@@ -2158,9 +2167,24 @@ public class Formulaire extends JFrame{
 		    					}
 				    		}
 				    		
+				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
+				    		
+				    		while (mapIter.hasNext()) {
+				    			Map.Entry<String, Double> currentEntry = mapIter.next();
+				    			
+				    			double currentRelativePourcentage = currentEntry.getValue() / total;
+				    			
+				    			final String finalPourcentage = OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%";
+				    			
+				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + finalPourcentage,
+				    					currentRelativePourcentage);
+				    			
+				    			barChartDatas.addValue(currentRelativePourcentage * 100, "Pourcentage d'avancement", currentEntry.getKey());
+				    		}
+				    		
 				    		try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreBPDomaine.getText(), 
-										"Domaines techniques", "Pourcentages d'avancement", barChartDatas, false);
+										"Domaines techniques", "Pourcentages d'avancement", barChartDatas, false, fontToFit);
 								
 								domainPreventivesVouchers.addJFreeChart(barChart);
 				    		} 
@@ -2171,16 +2195,6 @@ public class Formulaire extends JFrame{
 										+ e.getMessage(), "Erreur", 
 										JOptionPane.WARNING_MESSAGE);
 							}
-				    		
-				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
-				    		
-				    		while (mapIter.hasNext()) {
-				    			Map.Entry<String, Double> currentEntry = mapIter.next();
-				    			
-				    			double currentRelativePourcentage = currentEntry.getValue() / total;
-				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
-				    					currentRelativePourcentage);
-				    		}
 				    		
 				    		try {
 								JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
@@ -2201,6 +2215,8 @@ public class Formulaire extends JFrame{
 				    	}
 				    	
 				    	/*-----------------Partie arborescence libre 1-----------------*/
+				    	
+				    	fontToFit = false;
 				    	
 				    	Iterator<FreeTree> freeTrees1Iter = freeTrees1.iterator();
 				    	
@@ -2248,10 +2264,14 @@ public class Formulaire extends JFrame{
 						    		return null;
 				    			}
 				    			else {
-				    				freeTree1.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+				    				//freeTree1.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
 				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", currentElement.getText());
 				    				
 				    				isElement = true;
+				    			}
+				    			
+				    			if (currentElement.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    				fontToFit = true;
 				    			}
 				    		}
 				    		
@@ -2262,7 +2282,7 @@ public class Formulaire extends JFrame{
 				    		if (isElement) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
-											"Element", "Nombre", barChartDatas, true);
+											"Element", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree1.addJFreeChart(barchart);
 								} 
@@ -2281,6 +2301,8 @@ public class Formulaire extends JFrame{
 						publish(pBarFrame.getProgress() + incrementUnit);
 				
 				    	/*-----------------Partie demande d'intervention-----------------*/
+						
+						fontToFit = false;
 				    	
 				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 				    	
@@ -2293,7 +2315,7 @@ public class Formulaire extends JFrame{
 				    		JComboBox<String> currentInterventionMonths = interventionMonthsIter.next();
 				    		JTextField currentInterventionNumber = interventionNumbersIter.next();
 				    		
-				    		interventionDemand.addString(currentInterventionMonths.getSelectedItem().toString(), "Mois : ");
+				    		//interventionDemand.addString(currentInterventionMonths.getSelectedItem().toString(), "Mois : ");
 					    	
 					    	if (currentInterventionNumber.getText().equals("") ||
 					    			!OperationUtilities.isNumeric(currentInterventionNumber.getText())) {
@@ -2306,36 +2328,39 @@ public class Formulaire extends JFrame{
 					    		return null;
 					    	}
 					    	else {
-					    		interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
-					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", "Mois");
+					    		//interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
+					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", 
+					    				currentInterventionMonths.getSelectedItem().toString());
 					    	}
 					    	
 					    	if (!textAreaCommentaireDI.getText().equals("")) {
 					    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
-					    	}
-					    	
-					    	if (!interventionDemand.isEmpty()) {
-						    	try {
-									JFreeChart barChart = chartGenerator.generateBarChart(titreDI.getText(), 
-											"Mois", "Nombre d'intervention", barChartDatas, true);
-									
-									interventionDemand.addJFreeChart(barChart);
-					    		} 
-					    		catch (Exception e) {
-					    			e.printStackTrace();
-									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
-											+ titreDI.getText() + " : \n"
-											+ e.getMessage(), "Erreur", 
-											JOptionPane.WARNING_MESSAGE);
-								}
-					    	}
+					    	}	
+				    	}
+				    	
+				    	if (!interventionDemand.isEmpty()) {
+					    	try {
+								JFreeChart barChart = chartGenerator.generateBarChart(titreDI.getText(), 
+										"Mois", "Nombre d'intervention", barChartDatas, true, fontToFit);
+								
+								interventionDemand.addJFreeChart(barChart);
+				    		} 
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+								JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en bare dans la partie"
+										+ titreDI.getText() + " : \n"
+										+ e.getMessage(), "Erreur", 
+										JOptionPane.WARNING_MESSAGE);
+							}
 					    	
 					    	datas.add(interventionDemand);
 				    	}
-				    	
+				    	 	
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    	
 				    	/*-----------------Partie demande d'intervention par etat-----------------*/
+						
+						fontToFit = false;
 				    	
 				    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
 				    	
@@ -2370,7 +2395,11 @@ public class Formulaire extends JFrame{
 				    				return null;
 				    			}
 				    			else {
-				    				stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
+				    				//stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
+				    				
+				    				if (currentState.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    					fontToFit = true;
+				    				}
 				    				
 				    				Integer currentNumber = 0;
 				    				
@@ -2403,7 +2432,11 @@ public class Formulaire extends JFrame{
 				    		}
 				    	}
 				    	
-				    	if (!stateInterventionDemand.isEmpty()) {
+				    	if (!textAreaCommentaireDI.getText().equals("")) {
+				    		stateInterventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+				    	}
+				    	
+				    	if (pieChartDatas.getItemCount() > 0) {
 				    		
 				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
 				    		
@@ -2436,6 +2469,8 @@ public class Formulaire extends JFrame{
 				    	}
 				    	
 				    	/*-----------------Partie demande d'intervention par domaine-----------------*/
+				    	
+				    	fontToFit = false;
 				    	
 				    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
 				    	
@@ -2473,7 +2508,11 @@ public class Formulaire extends JFrame{
 					    			return null;
 				    			}
 				    			else {		    				
-				    				domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				//domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
+				    				
+				    				if (currentDomain.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    					fontToFit = true;
+				    				}
 				    				
 				    				double currentPourcentage = 0;
 				    				
@@ -2522,7 +2561,11 @@ public class Formulaire extends JFrame{
 				    		}
 				    	}		
 				    	
-				    	if (!domainInterventionDemand.isEmpty()) {
+				    	if (!textAreaComDIDomaine.getText().equals("")) {
+				    		domainInterventionDemand.addString(textAreaComDIDomaine.getText(), commentaireDIDomaine.getText());
+				    	}
+				    	
+				    	if (!pourcentages.isEmpty()) {
 				    		
 				    		if (total < 100) {
 				    			int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
@@ -2545,7 +2588,8 @@ public class Formulaire extends JFrame{
 				    			Map.Entry<String, Double> currentEntry = mapIter.next();
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
-				    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " + OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " +
+				    			        OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
 				    					currentRelativePourcentage);
 				    		}
 				    		
@@ -2570,10 +2614,11 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie arborescence libre 2-----------------*/
 				    	
+				    	fontToFit = false;
+				    	
 				    	Iterator<FreeTree> freeTrees2Iter = freeTrees2.iterator();
 				    	
 				    	while (freeTrees2Iter.hasNext()) {
-				    		Boolean isThereElements = false;
 				    		
 				    		FreeTree currentTree = freeTrees2Iter.next();
 				    		
@@ -2616,11 +2661,14 @@ public class Formulaire extends JFrame{
 						    		return null;
 				    			}
 				    			else {
-				    				freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+				    				//freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
+				    				
+				    				if (currentElement.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    					fontToFit = true;
+				    				}
+				    				
 				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", 
 				    						currentElement.getText());
-				    				
-				    				isThereElements = true;
 				    			}
 				    		}
 				    		
@@ -2628,10 +2676,10 @@ public class Formulaire extends JFrame{
 				    			freeTree.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
 				    		}
 				    		
-				    		if (isThereElements) {
+				    		if (barChartDatas.getColumnCount() > 0) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
-											"Element", "Nombre", barChartDatas, true);
+											"Element", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree.addJFreeChart(barchart);
 								} 
@@ -2651,6 +2699,8 @@ public class Formulaire extends JFrame{
 						
 						/*-----------------Partie compteurs-----------------*/
 						
+						fontToFit = false;
+						
 						Iterator<Meter> meterIter = meters.iterator();
 						
 						while (meterIter.hasNext()) {
@@ -2658,8 +2708,6 @@ public class Formulaire extends JFrame{
 							IDataHandler currentMeterData = new DefaultDataHandler(meterTitle.getText());
 							
 							barChartDatas = new DefaultCategoryDataset();
-							
-							Boolean isThereMonths = false;
 							
 							Meter currentMeter = meterIter.next();
 							
@@ -2671,8 +2719,6 @@ public class Formulaire extends JFrame{
 							Iterator<String> currentUnitIter = currentMeter.monthUnits().iterator();
 							
 							while (currentMonthIter.hasNext()) {
-								
-								isThereMonths = true;
 								
 								JComboBox<String> currentMonth = currentMonthIter.next();
 								JTextField currentConsumption = currentConsumptionIter.next();
@@ -2697,8 +2743,8 @@ public class Formulaire extends JFrame{
 						    		return null;
 				    			}
 				    			else {
-				    				currentMeterData.addString(currentConsumption.getText() + " " + currentUnit,
-				    						currentMonth.getSelectedItem().toString() + " : ");
+				    				//currentMeterData.addString(currentConsumption.getText() + " " + currentUnit,
+				    					//	currentMonth.getSelectedItem().toString() + " : ");
 				    				
 				    				barChartDatas.addValue(Double.parseDouble(currentConsumption.getText()), currentUnit, 
 				    						currentMonth.getSelectedItem().toString());
@@ -2710,10 +2756,10 @@ public class Formulaire extends JFrame{
 								currentMeterData.addString(currentMeter.textAreaCommentaire().getText(), "Commentaire : ");
 							}
 								
-							if (isThereMonths) {
+							if (barChartDatas.getColumnCount() > 0) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart("Compteur",
-											"Mois", "Consommation", barChartDatas, true);
+											"Mois", "Consommation", barChartDatas, true, fontToFit);
 									
 									currentMeterData.addJFreeChart(barchart);
 								} 
@@ -2724,9 +2770,11 @@ public class Formulaire extends JFrame{
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}
-					    		
-					    		datas.add(currentMeterData);
 				    		}
+							
+							if (!currentMeterData.isEmpty()) {
+								datas.add(currentMeterData);
+							}
 						}
 				    	
 						try {
