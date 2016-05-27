@@ -129,17 +129,21 @@ public class Formulaire extends JFrame{
 	private final List<Boolean> listInterventionAvailabilitys;
 	
 	public Formulaire() throws IOException{
-	    // Lien vers ce formulaire pour l'affichage de fenetre d'information
-		
+		super();
+	    
+	    final ImageIcon vinciIcion = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[0]);
+	    if (vinciIcion.getImageLoadStatus() != MediaTracker.ERRORED) {
+	    	this.setIconImage(vinciIcion.getImage());
+	    }
+	    
 		final JPanel fenetre = new JPanel(); //creation de la fenetre principale
 		
+		// Lien vers ce formulaire pour l'affichage de fenetre d'information
 		final Formulaire mainFrame = this;
 		
 		positionCounter = 0;
 		
 		this.setTitle("Facilities Rapport"); //titre fenetre
-		
-		setIconImage(new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[0]).getImage());
 		
 		this.setSize(700, 600); //taille fenetre
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //pour fermer la fenetre
@@ -2826,10 +2830,7 @@ public class Formulaire extends JFrame{
 		});
 	    
         
-        /*--------------------------------------------------ajout des éléments---------------------------------------------*/
-	    
-       
-	    
+        /*--------------------------------------------------ajout des éléments---------------------------------------------*/    
 	    
 	    conteneur.add(conteneurPrincipal, BorderLayout.CENTER); //ajout du conteneur principal contenant tous les champs formulaires au centre du conteuneur
 	    
@@ -2839,9 +2840,9 @@ public class Formulaire extends JFrame{
 	    fenetre.add(titreFacilitiesRapport, BorderLayout.NORTH); //ajout du titre en haut de la fenetre 
 	    fenetre.add(scrollPanePrincipale, BorderLayout.CENTER); //ajout de la scrollPane principale (et du conteneur) au centre de la fenetre
 	    
-	    this.setContentPane(fenetre); 
-	    this.setVisible(true);  //visibilite
+	    this.setContentPane(fenetre);
 	    
+	    this.setVisible(true);  //visibilite  
 	}	
 
 	private JPanel createPreventiveVoucherMonth (final JComponent mainContainer, 
