@@ -1,5 +1,6 @@
 package dataHandler;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -35,6 +36,12 @@ public class DefaultDataHandler implements IDataHandler {
 
 		dataTypes.add(DATA_TYPE_JFREECHART);
 		datas.add(chartToAdd);
+	}
+	
+	@Override
+	public void addImage(Image imageToAdd) {
+		dataTypes.add(DATA_TYPE_IMAGE);
+		datas.add(imageToAdd);
 	}
 
 	@Override

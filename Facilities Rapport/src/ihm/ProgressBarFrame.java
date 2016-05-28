@@ -22,17 +22,19 @@ public class ProgressBarFrame extends JFrame{
 		super ("Création du pdf");
 		
 		JFrame thisFrame = this;
+		
+		// initialize Progress Bar
+		pbar = new JProgressBar();
+		pbar.setMinimum(MY_MINIMUM);
+		pbar.setMaximum(MY_MAXIMUM);
+		pbar.setStringPainted(true);
+		pbar.setValue(MY_MINIMUM);
+		
 		EventQueue.invokeLater(new Runnable() {
             
 			@Override
             public void run() {
             	JPanel progressBarPanel = new JPanel();
-        		
-        	    // initialize Progress Bar
-        		pbar = new JProgressBar();
-        		pbar.setMinimum(MY_MINIMUM);
-        		pbar.setMaximum(MY_MAXIMUM);
-        		pbar.setStringPainted(true);
         		
         		// add to JPanel
         		progressBarPanel.add(pbar);
@@ -48,8 +50,11 @@ public class ProgressBarFrame extends JFrame{
 
 	}
 	
-	public void updateBar(int newValue) {
+	public void updateBar(final int newValue) {
 		pbar.setValue(newValue);
+		
+		this.repaint();
+		this.revalidate();
 	}
 	
 	public int getProgress() {
