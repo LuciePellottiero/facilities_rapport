@@ -216,6 +216,7 @@ public class Formulaire extends JFrame{
 	    try{
 			final MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
+			textFieldTelRedac.setText("## ## ## ## ##");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -382,6 +383,7 @@ public class Formulaire extends JFrame{
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
+			textFieldTelCl.setText("## ## ## ## ##");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -546,6 +548,16 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(comboBoxRapport, constraint); //ajout de la comboBox comboBoxRapport
 		
 		final JCheckBox updateVoucherMonth = new JCheckBox("Mettre à jour les mois");
+		
+		updateVoucherMonth.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (updateVoucherMonth.isSelected()) {
+					comboBoxRapport.setSelectedItem(comboBoxRapport.getSelectedItem());
+				}
+			}
+		});
 		
 		constraint.gridx = 1;
 		constraint.gridy = ++positionCounter;
@@ -1090,6 +1102,8 @@ public class Formulaire extends JFrame{
 				}
 			}
 		});
+	    
+	    updateVoucherMonth.setSelected(true);
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
 	   
@@ -1679,7 +1693,7 @@ public class Formulaire extends JFrame{
 				    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
 				    	}
 				    	
-				    	if (finalTextFieldTelRedac.getText().equals("              ")) {
+				    	if (finalTextFieldTelRedac.getValue().equals("              ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1714,7 +1728,6 @@ public class Formulaire extends JFrame{
 				    	
 				    	datas.add(writerPart);
 
-				    	System.out.println(pBarFrame.getProgress());
 				    	publish(pBarFrame.getProgress() + incrementUnit);
 				    	
 				    	/*-----------------Partie client-----------------*/
@@ -1754,7 +1767,7 @@ public class Formulaire extends JFrame{
 				    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
 				    	}
 				    	
-				    	if (finalTtextFieldCodePostal.getText().equals("      ")) {
+				    	if (finalTtextFieldCodePostal.getValue().equals("      ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1776,7 +1789,7 @@ public class Formulaire extends JFrame{
 				    		clientPart.addString(textFieldVille.getText(), ville.getText());      // ville
 				    	}
 				    	
-				    	if (finalTextFieldTelCl.getText().equals("              ")) {
+				    	if (finalTextFieldTelCl.getValue().equals("              ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
