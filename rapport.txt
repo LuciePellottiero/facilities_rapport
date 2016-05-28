@@ -1,0 +1,23 @@
+Redacteur
+Nom : a
+Adresse : a
+Téléphone : 53 13 13 51 35
+Email : aa
+Nom du chargé d'affaire : a
+Client
+Nom du site : a
+Code : a
+Adresse : a
+Code postal :       
+Ville : a
+Téléphone :               
+Email : 
+Rapport
+Rapport d'activité : Hebdomadaire
+Date de début :   /  /    
+Date de fin :   /  /    
+Bons préventifs
+Bons préventifs par domaines
+Commentaire : 
+
+
