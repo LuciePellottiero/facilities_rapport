@@ -629,7 +629,6 @@ public class Formulaire extends JFrame{
 	    Collection<JComboBox<String>> preventivesVouchersMonths        = new LinkedList<JComboBox<String>>();
 	    Collection<JTextField>        nbPreventivesVouchersOpened      = new LinkedList<JTextField>();
 	    Collection<JTextField>        nbPreventivesVouchersClosed      = new LinkedList<JTextField>();
-	    Collection<JTextArea>         commentsPreventivesVouchers      = new LinkedList<JTextArea>();
 	    
 	    final ArrayList<JButton> deleteButtonsPreventivesVouchers = new ArrayList<JButton>();
 
@@ -682,8 +681,8 @@ public class Formulaire extends JFrame{
 				
 				JPanel preventiveVoucherMonth = createPreventiveVoucherMonth(conteneurPrincipal, 
 						preventivesVouchersMonths, nbPreventivesVouchersOpened, 
-						nbPreventivesVouchersClosed, commentsPreventivesVouchers, 
-						deleteButtonsPreventivesVouchers, thisPreventivMonthCounter);
+						nbPreventivesVouchersClosed, deleteButtonsPreventivesVouchers, 
+						thisPreventivMonthCounter);
 				
 				preventiveVoucherMonth.setBorder(BorderFactory.createTitledBorder("Bon préventif"));
 				
@@ -698,10 +697,27 @@ public class Formulaire extends JFrame{
 				ajoutMoisBP.setEnabled(false);
 				ajoutMoisBP.setIcon(null);
 			}
-		});	 
+		});
+		
+		//commentaire BP
+	    final JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
+		
+	    constraint.gridx = 0;
+		constraint.gridy = positionCounter;
+		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
+		conteneurPrincipal.add(commentaireBP, constraint);
+	    
+		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
+	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
+	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
+	    
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
+		conteneurPrincipal.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
 	    
 	    constraint.gridx = 1;
-		constraint.gridy = positionCounter;
+		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		constraint.insets = new Insets(10, 0, 3, 0); //marges autour de l'element
 		conteneurPrincipal.add(ajoutMoisBP, constraint); //ajout du bouton ajoutElement
@@ -1496,6 +1512,9 @@ public class Formulaire extends JFrame{
 	  	conteneurPrincipal.add(ajoutCompteur, constraint); //ajout du bouton ajoutCompteur
 	  	
 	  	ajoutCompteur.doClick();
+	  	
+	  	ajoutMoisBP.doClick();
+	  	ajoutMoisDI.doClick();
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
@@ -1864,7 +1883,6 @@ public class Formulaire extends JFrame{
 				    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter   = preventivesVouchersMonths.iterator();
 				    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter = nbPreventivesVouchersOpened.iterator();
 				    	Iterator<JTextField>        nbPreventivesVouchersClosedIter = nbPreventivesVouchersClosed.iterator();
-				    	Iterator<JTextArea>         commentsPreventivesVouchersIter = commentsPreventivesVouchers.iterator();
 				    	
 				    	int counter = 1;
 				    	
@@ -1876,7 +1894,6 @@ public class Formulaire extends JFrame{
 				    		JComboBox<String> comboBoxMoisBP        = preventivesVouchersMonthsIter.next();
 				    		JTextField        textFieldNbBPOuverts  = nbPreventivesVouchersOpenedIter.next();
 				    		JTextField        textFieldNbBPFermes   = nbPreventivesVouchersClosedIter.next();
-				    		JTextArea         textAreaCommentaireBP = commentsPreventivesVouchersIter.next();
 		 
 							if (counter <= 1) {
 				    		
@@ -1925,17 +1942,10 @@ public class Formulaire extends JFrame{
 						    	else {
 						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
 						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
-						    	}
-						    	
-						    	if (!textAreaCommentaireBP.getText().equals("")) {
-									preventivesVouchers.addString(textAreaCommentaireBP.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[3]);
-									stopPdfCreation(pBarFrame);
-								}
-						    	
+						    	}						    	
 						    	++counter;
 							}
 							else if (!textFieldNbBPOuverts.getText().equals("") ||
-									!textAreaCommentaireBP.getText().equals("") ||
 									!textFieldNbBPFermes.getText().equals("")) {
 								
 								//preventivesVouchers.addString(comboBoxMoisBP.getSelectedItem().toString(), PREVENTIVE_VOUCHER_MONTH_LABELS[0]);
@@ -1988,13 +1998,12 @@ public class Formulaire extends JFrame{
 						    				comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
-						    	if (!textAreaCommentaireBP.getText().equals("")) {
-									preventivesVouchers.addString(textAreaCommentaireBP.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[3]);
-									stopPdfCreation(pBarFrame);
-								}
-						    	
 						    	++counter;
 							}
+				    	}
+				    	
+				    	if (!textAreaCommentaireBP.equals("")) {
+				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
 				    	}
 				    	
 				    	if (counter != monthNumber) {
@@ -2849,7 +2858,6 @@ public class Formulaire extends JFrame{
 				pdfCreation.execute();
 		    }
 		});
-	    
         
         /*--------------------------------------------------ajout des éléments---------------------------------------------*/    
 	    
@@ -2868,8 +2876,9 @@ public class Formulaire extends JFrame{
 
 	private JPanel createPreventiveVoucherMonth (final JComponent mainContainer, 
 			final Collection<JComboBox<String>> preventivesVouchersMonths, 
-			final Collection<JTextField> nbPreventivesVouchersOpened, final Collection<JTextField> nbPreventivesVouchersClosed,
-			final Collection<JTextArea> commentsPreventivesVouchers, final Collection<JButton> deleteButtonsPreventivesVouchers,
+			final Collection<JTextField> nbPreventivesVouchersOpened, 
+			final Collection<JTextField> nbPreventivesVouchersClosed,
+			final Collection<JButton> deleteButtonsPreventivesVouchers,
 			final int thisPosition) {
 		
 		JPanel thisPreventiveVoucherMonthPanel = new JPanel (new GridBagLayout());
@@ -2937,7 +2946,8 @@ public class Formulaire extends JFrame{
 	    final ImageIcon addIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	    
 	    if (addIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
-		    iconHeight = ajoutMoisBP.getHeight() - ajoutMoisBP.getHeight() / 3;
+		    iconHeight = (int) (ajoutMoisBP.getPreferredSize().getHeight() - 
+		    		ajoutMoisBP.getPreferredSize().getHeight() / 3);
 		    iconWidth  = addIcon.getIconWidth() / (addIcon.getIconHeight() / iconHeight);
 		    
 		    tmpImg = addIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
@@ -2977,25 +2987,6 @@ public class Formulaire extends JFrame{
 				}
 			}
 		});
-		
-		//commentaire BP
-	    final JLabel commentaireBP = new JLabel(PREVENTIVE_VOUCHER_MONTH_LABELS[3]); //creation du label commentaireBP
-		
-	    constraint.gridx = 0;
-		constraint.gridy = ++preventiveVoucherMonthPosition;
-		constraint.insets = new Insets(10, 7, 0, 7); //marges autour de l'element
-		thisPreventiveVoucherMonthPanel.add(commentaireBP, constraint);
-	    
-		JTextArea textAreaCommentaireBP = new JTextArea(4, 15); //creation de la zone de texte textAreaCommentaireBP
-	    JScrollPane scrollPaneComBP = new JScrollPane(textAreaCommentaireBP); //creation de la scrollPane scrollPaneComBP contenant textAreaCommentaireBP
-	    commentaireBP.setLabelFor(textAreaCommentaireBP); //attribution de la zone de texte textAreaCommentaireBP au label commentaireBP
-	    commentsPreventivesVouchers.add(textAreaCommentaireBP);
-	    
-		constraint.gridy = ++preventiveVoucherMonthPosition;
-		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
-		thisPreventiveVoucherMonthPanel.add(scrollPaneComBP, constraint); //ajout de la scrollPane scrollPaneComBP
-		
 		JButton deleteMonthButton = new JButton("Supprimer mois");
 		
 		final ImageIcon deleteIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
@@ -3018,7 +3009,6 @@ public class Formulaire extends JFrame{
 				preventivesVouchersMonths.remove(comboBoxMoisBP);
 				nbPreventivesVouchersOpened.remove(textFieldNbBPOuverts);
 				nbPreventivesVouchersClosed.remove(textFieldNbBPFermes);
-				commentsPreventivesVouchers.remove(textAreaCommentaireBP);
 				
 				ajoutMoisBP.setEnabled(true);
 				ajoutMoisBP.setText(ADD_MONTH_BUTTON_TEXT[0]);
