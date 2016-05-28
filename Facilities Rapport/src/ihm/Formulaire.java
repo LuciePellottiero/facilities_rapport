@@ -1679,7 +1679,7 @@ public class Formulaire extends JFrame{
 				    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
 				    	}
 				    	
-				    	if (finalTextFieldTelRedac.getText().equals("")) {
+				    	if (finalTextFieldTelRedac.getText().equals("              ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1709,7 +1709,7 @@ public class Formulaire extends JFrame{
 				    		return null;
 				    	}
 				    	else {
-				    		writerPart.addString(textFieldNomCA.getText(),    nomCA.getText()); // nom du chage d'affaire
+				    		writerPart.addString(textFieldNomCA.getText(), nomCA.getText()); // nom du chage d'affaire
 				    	}
 				    	
 				    	datas.add(writerPart);
@@ -1754,7 +1754,7 @@ public class Formulaire extends JFrame{
 				    		clientPart.addString(textAreaAdrCl.getText(), adrCl.getText());      // adresse
 				    	}
 				    	
-				    	if (finalTtextFieldCodePostal.getText().equals("")) {
+				    	if (finalTtextFieldCodePostal.getText().equals("      ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + codePostal.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1773,10 +1773,10 @@ public class Formulaire extends JFrame{
 				    		return null;
 				    	}
 				    	else {
-				    		clientPart.addString(textFieldVille.getText(),      ville.getText());      // ville
+				    		clientPart.addString(textFieldVille.getText(), ville.getText());      // ville
 				    	}
 				    	
-				    	if (finalTextFieldTelCl.getText().equals("")) {
+				    	if (finalTextFieldTelCl.getText().equals("              ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
 				    				"le champs \"" + telCl.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1795,7 +1795,7 @@ public class Formulaire extends JFrame{
 				    		return null;
 				    	}
 				    	else {
-				    		clientPart.addString(textFieldEmailCl.getText(),    emailCl.getText());    // email client
+				    		clientPart.addString(textFieldEmailCl.getText(), emailCl.getText());    // email client
 				    	}
 				    	
 				    	if (logoIcon != null) {
