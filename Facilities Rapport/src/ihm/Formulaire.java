@@ -216,7 +216,7 @@ public class Formulaire extends JFrame{
 	    try{
 			final MaskFormatter maskTel  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelRedac = new JFormattedTextField(maskTel); //initialisation de la zone de texte tel formattee par le masque
-			textFieldTelRedac.setText("## ## ## ## ##");
+			textFieldTelRedac.setText("00 00 00 00 00");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -327,6 +327,7 @@ public class Formulaire extends JFrame{
 	    try{
 			MaskFormatter maskCodePostal  = new MaskFormatter("## ###"); //masque pour le format du code postal
 			textFieldCodePostal = new JFormattedTextField(maskCodePostal); //initialisation de la zone de texte codePostal formattee par le masque
+			textFieldCodePostal.setText("00 000");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -383,7 +384,7 @@ public class Formulaire extends JFrame{
 	    try{
 			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
 			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
-			textFieldTelCl.setText("## ## ## ## ##");
+			textFieldTelCl.setText("00 00 00 00 00");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -573,9 +574,11 @@ public class Formulaire extends JFrame{
 	    conteneurPrincipal.add(dateDebut, constraint); //ajout du label dateDebut
 	    
 	    JFormattedTextField textFieldDateDebut = null;
+	    
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateDebut = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateDebut formattee par le masque maskDate
+			textFieldDateDebut.setText("00/00/0000");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -600,6 +603,7 @@ public class Formulaire extends JFrame{
 	    try{
 			MaskFormatter maskDate  = new MaskFormatter("##/##/####"); //masque pour le format date
 			textFieldDateFin = new JFormattedTextField(maskDate); //initialisation de la zone de texte textFieldDateFin formattee par le masque maskDate
+			textFieldDateFin.setText("00/00/0000");
 	    }
 	    catch(ParseException e){
 			e.printStackTrace(); //exception
@@ -735,6 +739,7 @@ public class Formulaire extends JFrame{
 			}
 			
 			final JFormattedTextField currentTextFieldPourcent = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
+			currentTextFieldPourcent.setText("00.00%");
 			textFieldPourcentsBP.add(currentTextFieldPourcent);
 			
 			currentTextFieldPourcent.setEnabled(false);
@@ -1197,14 +1202,15 @@ public class Formulaire extends JFrame{
 			
 	    	try{
 				maskPourcent  = new MaskFormatter("##.##%"); //masque pour le format pourcentage
-		    }
+	    	}
 			catch(ParseException e){
 				e.printStackTrace(); //exception
 			}
 			
 			final JFormattedTextField textFieldPourcentDI = new JFormattedTextField(maskPourcent); //initialisation de la zone de texte Pourcent1 formattee par le masque
-			textFieldPourcentDI.setEnabled(false);
 			
+			textFieldPourcentDI.setEnabled(false);
+			textFieldPourcentDI.setText("00.00%");
 			diDomaine.addActionListener(new ActionListener() {
 				
 				@Override
