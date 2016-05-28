@@ -1635,12 +1635,13 @@ public class Formulaire extends JFrame{
 		    	
 		    	/*-----------------Ecriture du PDF-----------------*/
 		    	
-		    	ProgressBarFrame pBarFrame = new ProgressBarFrame();
+		    	final ProgressBarFrame pBarFrame = new ProgressBarFrame();
 		    	
 		    	SwingWorker<Void, Integer> pdfCreation = new SwingWorker<Void, Integer>() {
 										
 					@Override
 					protected Void doInBackground() throws Exception {
+						pBarFrame.updateBar(0);
 						
 						mainFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				    	mainFrame.setEnabled(false);
@@ -1712,7 +1713,8 @@ public class Formulaire extends JFrame{
 				    	}
 				    	
 				    	datas.add(writerPart);
-				    	
+
+				    	System.out.println(pBarFrame.getProgress());
 				    	publish(pBarFrame.getProgress() + incrementUnit);
 				    	
 				    	/*-----------------Partie client-----------------*/
