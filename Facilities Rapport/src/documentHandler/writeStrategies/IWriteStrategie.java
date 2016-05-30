@@ -9,31 +9,35 @@ import dataHandler.IDataHandler;
 import ihm.ProgressBarFrame;
 
 /**
- * Cette interface decrit les strategies d'edition de document
+ * Decrit les strategies d'edition de document
  * @author Lucie PELLOTTIERO
  *
  */
 public interface IWriteStrategie {
 	
 	/**
-	 * Un type de donnee possible
+	 * Identifiant de la strategie par defaut
 	 */
-	public static final Integer DATA_TYPE_STRING     = 0;
-	/**
-	 * Un type de donnee possible
-	 */
-	public static final Integer DATA_TYPE_JFREECHART = 1;
+	public static final int DEFAULT_STRATEGIE = 0;
 	
 	/**
-	 * Fonction qui permet de lancer l'edition d'un document a partir des donnees fournies
-	 * @param datas Les donnees fournies
-	 * @param reportPathName Le nom du document rapport
-	 * @param document l'objet document a editer
-	 * @param writer Le PdfWriter qui permettra de mettre des Objet (tel des JFreeChart)
+	 * Edite le Document fournis avec les donnees fournis en se servant du PdfWriter fournis
+	 * @param datas Les donnees que l'on doit ecrire
+	 * @param document Le Document que l'on edite
+	 * @param writer Le PdfWriter que l'on utilise
 	 * @return true si reussi, false sinon
-	 * @throws Exception Aucune Exception n'est geree
+	 * @throws Exception Aucune Exception n'est lancee
 	 */
 	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer) throws Exception;
 	
+	/**
+	 * Edite le Document avec les donnees en se servant du PdfWriter tout en mettant a jour la ProgressBar
+	 * @param datas Les donnees a mettre dans le Document
+	 * @param document Le Document a editer
+	 * @param writer Le PdfWriter que l'on doit utiliser
+	 * @param pBFrame La ProgressBar que l'on doit mettre a jour
+	 * @return true si reussi, false sinon
+	 * @throws Exception Aucune Exception n'est pas attrapee
+	 */
 	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer, ProgressBarFrame pBFrame) throws Exception;
 }

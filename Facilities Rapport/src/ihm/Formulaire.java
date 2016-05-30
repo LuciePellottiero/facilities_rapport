@@ -58,7 +58,6 @@ import org.jfree.data.general.DefaultPieDataset;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
-import documentHandler.writeStrategies.DefaultWriteStrategie;
 import utilities.OperationUtilities;
 import utilities.chartGenerator.DefaultChartGenerator;
 import utilities.chartGenerator.IChartGenerator;
@@ -2115,7 +2114,7 @@ public class Formulaire extends JFrame{
 				    			else {		    				
 				    				//domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
 				    				
-				    				if (currentDomain.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    				if (currentDomain.getText().length() > 6) {
 				    					fontToFit = true;
 				    				}
 				    				
@@ -2288,7 +2287,7 @@ public class Formulaire extends JFrame{
 				    				isElement = true;
 				    			}
 				    			
-				    			if (currentElement.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    			if (currentElement.getText().length() > 6) {
 				    				fontToFit = true;
 				    			}
 				    		}
@@ -2432,7 +2431,7 @@ public class Formulaire extends JFrame{
 				    			else {
 				    				//stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
 				    				
-				    				if (currentState.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    				if (currentState.getText().length() > 6) {
 				    					fontToFit = true;
 				    				}
 				    				
@@ -2545,7 +2544,7 @@ public class Formulaire extends JFrame{
 				    			else {		    				
 				    				//domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
 				    				
-				    				if (currentDomain.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    				if (currentDomain.getText().length() > 6) {
 				    					fontToFit = true;
 				    				}
 				    				
@@ -2698,7 +2697,7 @@ public class Formulaire extends JFrame{
 				    			else {
 				    				//freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
 				    				
-				    				if (currentElement.getText().length() > DefaultWriteStrategie.MAX_DOMAIN_SIZE) {
+				    				if (currentElement.getText().length() > 6) {
 				    					fontToFit = true;
 				    				}
 				    				

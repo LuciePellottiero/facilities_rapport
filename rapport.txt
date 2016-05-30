@@ -1,17 +1,17 @@
 Redacteur
-Nom : qsd
-Adresse : edq
+Nom : sdf
+Adresse : sf
 Téléphone : 00 00 00 00 00
-Email : qzd
-Nom du chargé d'affaire : qzdqzd
+Email : se
+Nom du chargé d'affaire : sef
 Client
-Nom du site : qzd
-Code : qzd
-Adresse : zdq
+Nom du site : sefse
+Code : sefsef
+Adresse : fse
 Code postal : 00 000
-Ville : qzd
+Ville : sef
 Téléphone : 00 00 00 00 00
-Email : qzd
+Email : sef
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000
