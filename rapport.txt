@@ -1,21 +1,21 @@
 Redacteur
-Nom : a
-Adresse : a
-Téléphone : 53 13 13 51 35
-Email : aa
-Nom du chargé d'affaire : a
+Nom : ESF
+Adresse : SEF
+Téléphone : 00 00 00 00 00
+Email : SEF
+Nom du chargé d'affaire : SEF
 Client
-Nom du site : a
-Code : a
-Adresse : a
-Code postal :       
-Ville : a
-Téléphone :               
-Email : 
+Nom du site : SEF
+Code : EF
+Adresse : SE
+Code postal : 00 000
+Ville : SEF
+Téléphone : 00 00 00 00 00
+Email : SEF
 Rapport
 Rapport d'activité : Hebdomadaire
-Date de début :   /  /    
-Date de fin :   /  /    
+Date de début : 00/00/0000
+Date de fin : 00/00/0000
 Bons préventifs
 Bons préventifs par domaines
 Commentaire : 
