@@ -65,7 +65,7 @@ import utilities.chartGenerator.IChartGenerator;
 public class Formulaire extends JFrame{
 	
 	/**
-	 * Truc utilise par JFrame
+	 * Utilise par JFrame
 	 */
 	private static final long serialVersionUID = 1L;
 
