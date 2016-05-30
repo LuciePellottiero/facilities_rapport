@@ -239,6 +239,11 @@ public class Meter extends JPanel{
 		constraint.gridx = 1;
 		monthPanel.add(textFieldConsommation, constraint); //ajout de la zone de texte textFieldConsommation
 		
+		constraint.gridx = 2;
+		constraint.weightx = 0;
+		constraint.gridwidth = 1;
+		monthPanel.add(new JLabel(), constraint); //ajout d'une unite temporaire
+		
 		//unite
 	    final String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
 	    //unite de gaz
@@ -297,7 +302,7 @@ public class Meter extends JPanel{
 			}
 		});
 
-		comboBoxTypeCompteur.setSelectedIndex(0);
+		comboBoxTypeCompteur.setSelectedIndex(comboBoxTypeCompteur.getSelectedIndex());
 	    
 		JPanel thisMeter = this;
 		
@@ -313,7 +318,7 @@ public class Meter extends JPanel{
 					GridBagConstraints thisComponentConstraint = meterLayout.getConstraints(currentComponent);
 					--thisComponentConstraint.gridy;
 					meterLayout.setConstraints(currentComponent, thisComponentConstraint);
-				}
+				}				
 				
 				--lastMonthPosition;
 				
@@ -323,8 +328,18 @@ public class Meter extends JPanel{
 				
 				thisMeter.remove(monthPanel);
 				thisMeter.revalidate();
+				
+				for (int i = 0; i < thisMeter.getComponentCount(); ++i) {
+					System.out.println(thisMeter.getComponent(i));
+				}
+				System.out.println(System.lineSeparator());
 			}
 		});
+		
+		for (Component c : monthPanel.getComponents()) {
+			System.out.println(c);
+		}
+		System.out.println(System.lineSeparator());
 				
 		return monthPanel;
 	}
