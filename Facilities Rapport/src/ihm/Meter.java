@@ -50,6 +50,8 @@ public class Meter extends JPanel{
 	private static final String[] ADD_BUTTON_TEXT = {"Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
 			"Remplissez les mois précedents"};
 	
+	public static final String[] UNIT_CHOICE = {"m³", "m³", "kWh", "MWh"}; //differents choix de l'unite
+	
 	private final Collection<JComboBox<String>> monthComboBoxes;
 	private final Collection<JTextField>        monthConsumptions;
 	private final ArrayList<String>             monthUnits;
@@ -244,8 +246,6 @@ public class Meter extends JPanel{
 		constraint.gridwidth = 1;
 		monthPanel.add(new JLabel(), constraint); //ajout d'une unite temporaire
 		
-		//unite
-	    final String[] choixUnite = {"m³", "kWh", "MWh"}; //differents choix de l'unite
 	    //unite de gaz
 	    final String[] gazChoice = {"m³", "kWh", "MWh"}; //differents choix de l'unite
 	    //unite d'energie
@@ -279,17 +279,14 @@ public class Meter extends JPanel{
 						
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							System.out.println(monthUnits + " " + index);
 							
 							String lastUnit = ((JComboBox<String>) unit).getSelectedItem().toString();
 							monthUnits.set(index, lastUnit);
-							
-							System.out.println(monthUnits + " " + index);
 						}
 					});
 				}
 				else {
-					unit = new JLabel(choixUnite[comboBoxTypeCompteur.getSelectedIndex()]);
+					unit = new JLabel(UNIT_CHOICE[comboBoxTypeCompteur.getSelectedIndex()]);
 					monthUnits.add(((JLabel) unit).getText());
 				}
 				
@@ -320,6 +317,9 @@ public class Meter extends JPanel{
 					meterLayout.setConstraints(currentComponent, thisComponentConstraint);
 				}				
 				
+				monthComboBoxes.remove(comboBoxMoisCompteur);
+				monthConsumptions.remove(textFieldConsommation);
+				
 				--lastMonthPosition;
 				
 				ajoutMois.setEnabled(true);
@@ -328,18 +328,8 @@ public class Meter extends JPanel{
 				
 				thisMeter.remove(monthPanel);
 				thisMeter.revalidate();
-				
-				for (int i = 0; i < thisMeter.getComponentCount(); ++i) {
-					System.out.println(thisMeter.getComponent(i));
-				}
-				System.out.println(System.lineSeparator());
 			}
 		});
-		
-		for (Component c : monthPanel.getComponents()) {
-			System.out.println(c);
-		}
-		System.out.println(System.lineSeparator());
 				
 		return monthPanel;
 	}

@@ -262,7 +262,7 @@ public class FreeTree extends JPanel{
 		
 		final ImageIcon deleteElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[4]);
 	    if (deleteElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
-		    final int iconHeight = (int) (deleteElementButton.getPreferredSize().getHeight() - deleteElementButton.getPreferredSize().getHeight() / 3);
+		    final int iconHeight = (int) (titleTextField.getPreferredSize().getHeight() - titleTextField.getPreferredSize().getHeight() / 3);
 		    final int iconWidth  = deleteElementIcon.getIconWidth() / (deleteElementIcon.getIconHeight() / iconHeight);
 		    
 		    Image tmpImg = deleteElementIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);

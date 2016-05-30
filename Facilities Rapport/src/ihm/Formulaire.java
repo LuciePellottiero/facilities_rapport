@@ -424,9 +424,15 @@ public class Formulaire extends JFrame{
 		conteneurPrincipal.add(customerLogo, constraint);
 	    
 		final JLabel customerLogoFile = new JLabel();
+		customerLogoFile.setPreferredSize(new Dimension(90, (int) customerLogoFile.getPreferredSize().getHeight()));
+		customerLogoFile.setHorizontalTextPosition(JLabel.CENTER);
+		customerLogo.setVerticalTextPosition(JLabel.BOTTOM);
 		
 		constraint.gridx = 1;
+		constraint.weightx = 1;
 		conteneurPrincipal.add(customerLogoFile, constraint);
+		
+		constraint.weightx = 0;
 		
 		int iconHeight;
 	    int iconWidth;
@@ -450,7 +456,7 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				logoIcon = null;
-				customerLogoFile.setText("");
+				//customerLogoFile.setText("");
 				customerLogoFile.setIcon(null);
 				deleteLogo.setVisible(false);
 				
@@ -459,7 +465,7 @@ public class Formulaire extends JFrame{
 		});
 		
 		constraint.gridx = 2;
-		constraint.weighty = 0;
+		constraint.weightx = 0;
 		conteneurPrincipal.add(deleteLogo, constraint);
 		
 	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -497,12 +503,13 @@ public class Formulaire extends JFrame{
 				            if (logoIcon.getIconWidth() > 90) {
 				            	logoIcon = new ImageIcon(logoIcon.getImage().
 				                                          getScaledInstance(90, -1,
-				                                                      Image.SCALE_SMOOTH));
+				                                          Image.SCALE_SMOOTH));
+				            	customerLogoFile.setPreferredSize(new Dimension(logoIcon.getIconWidth(), logoIcon.getIconHeight()));
 				            } 
 				        }
 				        
 				        customerLogoFile.setIcon(logoIcon);
-				        customerLogoFile.setText(fileChooser.getSelectedFile().getName());
+				        //customerLogoFile.setText(fileChooser.getSelectedFile().getName());
 						
 				        deleteLogo.setVisible(true);
 				        
@@ -549,7 +556,7 @@ public class Formulaire extends JFrame{
 		rapportActivite.setLabelFor(comboBoxRapport); //attribution de la comboBox comboBoxRapport au label rapportActivite
 		conteneurPrincipal.add(comboBoxRapport, constraint); //ajout de la comboBox comboBoxRapport
 		
-		final JCheckBox updateVoucherMonth = new JCheckBox("Mettre à jour les mois");
+		final JCheckBox updateVoucherMonth = new JCheckBox("Mettre à jour le nombre de mois");
 		
 		updateVoucherMonth.addActionListener(new ActionListener() {
 			
@@ -2012,7 +2019,8 @@ public class Formulaire extends JFrame{
 						    	}
 						    	else {
 						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
-						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", 
+						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), 
+						    				"Nombre de bons préventifs clôturés", 
 						    				comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
@@ -2024,9 +2032,10 @@ public class Formulaire extends JFrame{
 				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
 				    	}
 				    	
-				    	if (counter < monthNumber) {
+				    	if (preventivesVouchersMonths.size() < monthNumber || preventivesVouchersMonths.size() > monthNumber) {
 				    		final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
-	    							"Le nombre de mois de bon préventif (" + counter +"), n'est pas conforme au type de rapport (" +
+	    							"Le nombre de mois de " + titreBP.getText() + " (" + preventivesVouchersMonths.size() + 
+	    							"), n'est pas conforme au type de rapport (" +
 				    		        comboBoxRapport.getSelectedItem().toString() + ")." + 
 	    						    System.lineSeparator() + "Voulez-vous continuer?", 
 	    							"Erreur", JOptionPane.YES_NO_OPTION);
@@ -2312,7 +2321,7 @@ public class Formulaire extends JFrame{
 				    	/*-----------------Partie demande d'intervention-----------------*/
 						
 						fontToFit = false;
-				    	
+
 				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 				    	
 				    	barChartDatas = new DefaultCategoryDataset();
@@ -2340,11 +2349,28 @@ public class Formulaire extends JFrame{
 					    		//interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
 					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", 
 					    				currentInterventionMonths.getSelectedItem().toString());
-					    	}
-					    	
-					    	if (!textAreaCommentaireDI.getText().equals("")) {
-					    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
 					    	}	
+				    	}
+				    	
+				    	if (!textAreaCommentaireDI.getText().equals("")) {
+				    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+				    	}
+				    	
+				    	if (interventionMonths.size() < monthNumber || interventionMonths.size() > monthNumber) {
+				    		final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+	    							"Le nombre de mois de " + titreDI.getText() + " (" + interventionMonths.size() + 
+	    							"), n'est pas conforme au type de rapport (" +
+				    		        comboBoxRapport.getSelectedItem().toString() + ")." + 
+	    						    System.lineSeparator() + "Voulez-vous continuer?", 
+	    							"Erreur", JOptionPane.YES_NO_OPTION);
+	    					
+				    		if(dialogResult == JOptionPane.NO_OPTION){
+	    						stopPdfCreation(pBarFrame);
+	    						return null;
+	    					}
+	    					else {
+	    						pBarFrame.toFront();
+	    					}
 				    	}
 				    	
 				    	if (!interventionDemand.isEmpty()) {
@@ -2729,11 +2755,13 @@ public class Formulaire extends JFrame{
 							Iterator<JTextField> currentConsumptionIter = currentMeter.monthConsumptions().iterator();
 							Iterator<String> currentUnitIter = currentMeter.monthUnits().iterator();
 							
+							String currentUnit = "";
+							
 							while (currentMonthIter.hasNext()) {
 								
 								JComboBox<String> currentMonth = currentMonthIter.next();
 								JTextField currentConsumption = currentConsumptionIter.next();
-								String currentUnit = currentUnitIter.next();
+								currentUnit = currentUnitIter.next();
 								
 								if (currentConsumption.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
@@ -2743,8 +2771,7 @@ public class Formulaire extends JFrame{
 						    		stopPdfCreation(pBarFrame);
 						    		return null;
 						    	}
-				    			else if (currentConsumption.getText().equals("") || 
-				    					!OperationUtilities.isNumeric(currentConsumption.getText())) {
+				    			else if (!OperationUtilities.isNumeric(currentConsumption.getText())) {
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Consommation : \" (" + currentConsumption.getText() + 
 						    				") de la partie Compteur " + 
@@ -2757,23 +2784,17 @@ public class Formulaire extends JFrame{
 				    				//currentMeterData.addString(currentConsumption.getText() + " " + currentUnit,
 				    					//	currentMonth.getSelectedItem().toString() + " : ");
 				    				
-				    				try {
-					    				while (counter < MONTH_CHOICE.length) {
-					    					
-					    					if (MONTH_CHOICE[counter].equals(currentMonth.getSelectedItem().toString())) {
-					    						break;
-					    					}
-					    					System.out.println(MONTH_CHOICE[counter] + " " + currentUnit);
-					    					barChartDatas.addValue(0, currentUnit, MONTH_CHOICE[counter]);
-					    					
-					    					++counter;
-					    				}
-				    				}
-				    				catch (Exception e) {
-				    					e.printStackTrace();
+				    				while (counter < MONTH_CHOICE.length) {
+				    					
+				    					if (MONTH_CHOICE[counter].equals(currentMonth.getSelectedItem().toString())) {
+				    						break;
+				    					}
+
+				    					barChartDatas.addValue(0, currentUnit, MONTH_CHOICE[counter]);
+				    					
+				    					++counter;
 				    				}
 
-				    				System.out.println(currentMonth.getSelectedItem().toString() + " " + currentUnit);
 				    				barChartDatas.addValue(Double.parseDouble(currentConsumption.getText()), currentUnit, 
 					    					currentMonth.getSelectedItem().toString());			    				
 				    			}
@@ -2785,6 +2806,16 @@ public class Formulaire extends JFrame{
 									counter = 0;
 								}
 								
+							}
+							
+							if (currentMeter.monthComboBoxes().isEmpty()) {
+								while (counter < MONTH_CHOICE.length) {
+
+			    					barChartDatas.addValue(0, Meter.UNIT_CHOICE[currentMeter.comboBoxTypeCompteur().getSelectedIndex()],
+			    							MONTH_CHOICE[counter]);
+			    					
+			    					++counter;
+			    				}
 							}
 							
 							if (!currentMeter.textAreaCommentaire().getText().equals("")) {
