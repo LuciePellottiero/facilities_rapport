@@ -36,7 +36,7 @@ public class DefaultChartGenerator implements IChartGenerator {
 		CategoryAxis domainAxis = plot.getDomainAxis();
 		
 		if (fontToFit) {	 
-			Font font = new Font("Dialog", Font.PLAIN, 8);
+			Font font = new Font("Dialog", Font.PLAIN, 6);
 			domainAxis.setTickLabelFont(font);
 			domainAxis.setMaximumCategoryLabelWidthRatio(22);
 		}

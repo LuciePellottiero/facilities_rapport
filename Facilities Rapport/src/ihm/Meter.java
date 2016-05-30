@@ -297,7 +297,7 @@ public class Meter extends JPanel{
 			}
 		});
 
-		comboBoxTypeCompteur.setSelectedIndex(0);
+		comboBoxTypeCompteur.setSelectedIndex(comboBoxTypeCompteur.getSelectedIndex());
 	    
 		JPanel thisMeter = this;
 		
