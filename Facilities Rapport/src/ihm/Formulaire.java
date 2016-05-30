@@ -47,11 +47,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.MaskFormatter;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -67,7 +66,7 @@ import utilities.chartGenerator.IChartGenerator;
 public class Formulaire extends JFrame{
 	
 	/**
-	 * Truc utilise par JFrame
+	 * Utilise par JFrame
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -108,6 +107,8 @@ public class Formulaire extends JFrame{
 	
 	private final static String[] ADD_FREE_TREE_TEXT = {"Ajouter arborescence libre", 
 			"Impossible d'ajouter une arborescence libre supplémentaire"};
+	
+	private final static String[] ADD_METER_TEXT = {"Ajouter un compteur", "Impossible d'ajouter un compteur supplémentaire"};
 	
 	private static final int NUMBER_PREVENTIVE_MONTH_ALLOWED = 100;
 
@@ -800,13 +801,13 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
-	    JLabel titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
-		titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
+	    final JLabel titreArboLibre1 = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
+	    titreArboLibre1.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titre rapport
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = titleInset; //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
+	    conteneurPrincipal.add(titreArboLibre1, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
 	    freeTrees1Position = ++positionCounter;
 	    final int startFreeTree1Position = freeTrees1Position;
@@ -838,6 +839,18 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				if (freeTrees1Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
+					JOptionPane.showMessageDialog(conteneurPrincipal, 
+		    				"Impossible d'ajouter une arborescence libre dans la partie " + titreArboLibre1.getText(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+					
+			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
+			    	ajoutArboLibre.setEnabled(false);
+			    	ajoutArboLibre.setIcon(null);
+			    	
+			    	return;
+			    }
 				
 				int tmpFreeTreePosition = 0;
 				
@@ -877,6 +890,10 @@ public class Formulaire extends JFrame{
 						listFreeTreeAvailabilitys1.set(freeTreePosition, true);
 						--freeTrees1Position;
 						
+						ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[0]);
+				    	ajoutArboLibre.setEnabled(true);
+				    	ajoutArboLibre.setIcon(addFreeTreeIcon1);
+						
 						freeTrees1.remove(arboLibre);
 						
 						conteneurPrincipal.remove(arboLibre);
@@ -884,32 +901,14 @@ public class Formulaire extends JFrame{
 					}
 				});
 			    
+			    ++freeTrees1Position;
+			    
 			    GridBagConstraints freeTreeConstraint = arboLibre.constraint();
 			    freeTreeConstraint.gridx = 0;
 			    ++freeTreeConstraint.gridy;
 			    freeTreeConstraint.gridwidth = 1;
 				freeTreeConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 				arboLibre.add(delete, freeTreeConstraint); //ajout du bouton supprimer dans conteneurPrincipal
-			    
-			    arboLibre.addAncestorListener(new AncestorListener() {
-					
-					@Override
-					public void ancestorRemoved(AncestorEvent event) {
-						ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[0]);
-				    	ajoutArboLibre.setEnabled(true);
-				    	ajoutArboLibre.setIcon(addFreeTreeIcon1);
-					}
-					
-					@Override
-					public void ancestorMoved(AncestorEvent event) {	
-						
-					}
-					
-					@Override
-					public void ancestorAdded(AncestorEvent event) {
-						
-					}
-				});
 				
 			    constraint.gridx = 0;
 				constraint.gridy = startFreeTree1Position + freeTreePosition;
@@ -919,7 +918,7 @@ public class Formulaire extends JFrame{
 				
 				conteneurPrincipal.revalidate();
 				
-			    if (freeTrees1Position++ >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
+			    if (freeTrees1Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree1Position) {
 			    	ajoutArboLibre.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre.setEnabled(false);
 			    	ajoutArboLibre.setIcon(null);
@@ -1150,6 +1149,7 @@ public class Formulaire extends JFrame{
 	    for(int i = 0; i < nbEtats; i++){
 		    
 			JTextField textFieldNbEtat = new JTextField(15); //initialisation de la zone de texte textFieldNbEtat
+			textFieldNbEtat.setText("0");
 			textFieldNbEtat.setEnabled(false);
 			
 			JCheckBox etat = new JCheckBox(listeEtats[i]); //creation d'une checkbox pour chaque etat possible
@@ -1270,13 +1270,13 @@ public class Formulaire extends JFrame{
 	    
 	    /*----------------------------------------------formulaire arborescence libre----------------------------------------------------------*/
 	    
-	    titreArboLibre = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
-	    titreArboLibre.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
+	    final JLabel titreArboLibre2 = new JLabel("Arborescence libre"); //titre de la parte rapport du formulaire
+	    titreArboLibre2.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreBP
 	    
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = titleInset; //marges autour de l'element
-	    conteneurPrincipal.add(titreArboLibre, constraint); //ajout du titreRapportr dans conteneurPrincipal
+	    conteneurPrincipal.add(titreArboLibre2, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
 	    freeTrees2Position = ++positionCounter;
 	    Integer startFreeTree2Position = freeTrees2Position;
@@ -1308,6 +1308,18 @@ public class Formulaire extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				if (freeTrees2Position >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+					JOptionPane.showMessageDialog(conteneurPrincipal, 
+		    				"Impossible d'ajouter une arborescence libre dans la partie " + titreArboLibre2.getText(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+					
+			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
+			    	ajoutArboLibre2.setEnabled(false);
+			    	ajoutArboLibre2.setIcon(null);
+			    	
+			    	return;
+			    }
 				
 				int tmpFreeTreePosition = 0;
 				
@@ -1347,6 +1359,10 @@ public class Formulaire extends JFrame{
 						listFreeTreeAvailabilitys2.set(freeTreePosition, true);
 						--freeTrees2Position;
 						
+						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
+						ajoutArboLibre2.setEnabled(true);
+						ajoutArboLibre2.setIcon(addFreeTreeIcon2);
+						
 						freeTrees2.remove(freeTree);
 						
 						conteneurPrincipal.remove(freeTree);
@@ -1360,26 +1376,6 @@ public class Formulaire extends JFrame{
 			    freeTreeConstraint.gridwidth = 1;
 				freeTreeConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
 				freeTree.add(delete, freeTreeConstraint); //ajout du bouton supprimer dans conteneurPrincipal
-			    
-			    freeTree.addAncestorListener(new AncestorListener() {
-					
-					@Override
-					public void ancestorRemoved(AncestorEvent event) {
-						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
-						ajoutArboLibre2.setEnabled(true);
-						ajoutArboLibre2.setIcon(addFreeTreeIcon2);
-					}
-					
-					@Override
-					public void ancestorMoved(AncestorEvent event) {	
-						
-					}
-					
-					@Override
-					public void ancestorAdded(AncestorEvent event) {
-						
-					}
-				});
 				
 			    constraint.gridx = 0;
 				constraint.gridy = startFreeTree2Position + freeTreePosition;
@@ -1421,7 +1417,7 @@ public class Formulaire extends JFrame{
 	  	positionCounter += NUMBER_METER_ALLOWED;
     
 	  	//bouton d'ajout de compteur
-	  	final JButton ajoutCompteur = new JButton("Ajouter un compteur");
+	  	final JButton ajoutCompteur = new JButton(ADD_METER_TEXT[0]);
 	  	
 	  	final ImageIcon addMeterIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[1]);
 	  	
@@ -1434,7 +1430,7 @@ public class Formulaire extends JFrame{
 		    ajoutCompteur.setIcon(addMeterIcon);
 	  	}
 	  	
-	  	final List<Boolean> listMeterAvailabilitys = Arrays.asList(new Boolean[NUMBER_INTERVENTION_DEMAND_ALLOWED]);
+	  	final List<Boolean> listMeterAvailabilitys = Arrays.asList(new Boolean[NUMBER_METER_ALLOWED]);
 		for (int i = 0; i < listMeterAvailabilitys.size(); ++i) {
 			listMeterAvailabilitys.set(i, true);
 		}
@@ -1442,6 +1438,18 @@ public class Formulaire extends JFrame{
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
+	  			
+	  			if (meterPosition >= meterStartPosition + NUMBER_METER_ALLOWED) {
+	  				JOptionPane.showMessageDialog(conteneurPrincipal, 
+		    				"Impossible d'ajouter un compteur dans la partie " + meterTitle.getText(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
+	  				
+	  				ajoutCompteur.setEnabled(false);
+  					ajoutCompteur.setText(ADD_METER_TEXT[1]);
+  					ajoutCompteur.setIcon(null);
+  					
+  					return;
+				}
 	  			
 	  			int tmpMeterPosition = 0;
 				
@@ -1478,6 +1486,10 @@ public class Formulaire extends JFrame{
 	  					listMeterAvailabilitys.set(currentMeterPosition, true);
 	  					--meterPosition;
 	  					
+	  					ajoutCompteur.setEnabled(true);
+	  					ajoutCompteur.setText(ADD_METER_TEXT[0]);
+	  					ajoutCompteur.setIcon(addMeterIcon);
+	  					
 	  					meters.remove(meter);
 	  					
 	  					conteneurPrincipal.remove(meter);
@@ -1501,6 +1513,12 @@ public class Formulaire extends JFrame{
 				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
 				constraint.gridwidth = GridBagConstraints.REMAINDER;
 				conteneurPrincipal.add(meter, constraint);
+				
+				if (meterPosition >= meterStartPosition + NUMBER_METER_ALLOWED) {
+					ajoutCompteur.setEnabled(false);
+  					ajoutCompteur.setText(ADD_METER_TEXT[1]);
+  					ajoutCompteur.setIcon(null);
+				}
 			
 				conteneurPrincipal.revalidate();
 	  		}
@@ -2002,11 +2020,11 @@ public class Formulaire extends JFrame{
 							}
 				    	}
 				    	
-				    	if (!textAreaCommentaireBP.equals("")) {
+				    	if (!textAreaCommentaireBP.getText().equals("")) {
 				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
 				    	}
 				    	
-				    	if (counter != monthNumber) {
+				    	if (counter < monthNumber) {
 				    		final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
 	    							"Le nombre de mois de bon préventif (" + counter +"), n'est pas conforme au type de rapport (" +
 				    		        comboBoxRapport.getSelectedItem().toString() + ")." + 
@@ -2037,8 +2055,12 @@ public class Formulaire extends JFrame{
 										JOptionPane.WARNING_MESSAGE);
 							}
 					    	
-					    	datas.add(preventivesVouchers);
-				    	}			    	
+					    	
+				    	}
+				    	
+				    	if (!preventivesVouchers.isEmpty()) {
+				    		datas.add(preventivesVouchers);
+				    	}
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    
@@ -2159,7 +2181,9 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			
-				    			final String finalPourcentage = OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%";
+				    			
+				    			final String finalPourcentage = String.format("%.2f", (currentRelativePourcentage * 100)) +
+				    					"%";
 				    			
 				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + finalPourcentage,
 				    					currentRelativePourcentage);
@@ -2430,7 +2454,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + 
-				    					OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					String.format("%.2f", (currentRelativePourcentage * 100)) + "%",
 				    					currentRelativePourcentage);
 				    		}
 				    		
@@ -2574,7 +2598,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " +
-				    			        OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					String.format("%.2f", (currentRelativePourcentage * 100)) + "%",
 				    					currentRelativePourcentage);
 				    		}
 				    		
