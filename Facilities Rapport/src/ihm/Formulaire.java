@@ -50,6 +50,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.MaskFormatter;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -2019,11 +2020,11 @@ public class Formulaire extends JFrame{
 							}
 				    	}
 				    	
-				    	if (!textAreaCommentaireBP.equals("")) {
+				    	if (!textAreaCommentaireBP.getText().equals("")) {
 				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
 				    	}
 				    	
-				    	if (counter != monthNumber) {
+				    	if (counter < monthNumber) {
 				    		final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
 	    							"Le nombre de mois de bon préventif (" + counter +"), n'est pas conforme au type de rapport (" +
 				    		        comboBoxRapport.getSelectedItem().toString() + ")." + 
@@ -2039,7 +2040,7 @@ public class Formulaire extends JFrame{
 	    					}
 				    	}
 				    	
-				    	if (!preventivesVouchers.isEmpty()) {
+				    	if (counter > 1) {
 					    	try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreBP.getText(), 
 										"Mois", "Nombre de bons préventifs", barChartDatas, true, fontToFit);
@@ -2054,8 +2055,12 @@ public class Formulaire extends JFrame{
 										JOptionPane.WARNING_MESSAGE);
 							}
 					    	
-					    	datas.add(preventivesVouchers);
-				    	}			    	
+					    	
+				    	}
+				    	
+				    	if (!preventivesVouchers.isEmpty()) {
+				    		datas.add(preventivesVouchers);
+				    	}
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
 				    
@@ -2108,8 +2113,6 @@ public class Formulaire extends JFrame{
 				    				double currentPourcentage = 0;
 				    				
 				    				String pourcentageNumber = currentPourcent.getText().substring(0, 5);
-				    				System.out.println(pourcentageNumber);
-				    				System.out.println(currentPourcent.getText());
 				    				
 				    				if (!OperationUtilities.isNumeric(pourcentageNumber)) {
 				    					JOptionPane.showMessageDialog(fenetre, 
@@ -2178,7 +2181,8 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			
-				    			final String finalPourcentage = OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) +
+				    			
+				    			final String finalPourcentage = String.format("%.2f", (currentRelativePourcentage * 100)) +
 				    					"%";
 				    			
 				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + finalPourcentage,
@@ -2450,7 +2454,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			pieChartDatas.setValue(currentEntry.getKey() + " : " + 
-				    					OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					String.format("%.2f", (currentRelativePourcentage * 100)) + "%",
 				    					currentRelativePourcentage);
 				    		}
 				    		
@@ -2594,7 +2598,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			double currentRelativePourcentage = currentEntry.getValue() / total;
 				    			interventionPieChartDatas.setValue(currentEntry.getKey() + " : " +
-				    			        OperationUtilities.truncateDecimal(currentRelativePourcentage * 100, 2) + "%",
+				    					String.format("%.2f", (currentRelativePourcentage * 100)) + "%",
 				    					currentRelativePourcentage);
 				    		}
 				    		
