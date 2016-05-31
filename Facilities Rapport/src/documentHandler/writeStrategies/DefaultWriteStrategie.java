@@ -147,9 +147,9 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 					// Si c'est un graphe
 					case IDataHandler.DATA_TYPE_JFREECHART :
 						
-						// On obtient le PdfContentByte du PdfWriter
+						// Obtienir le PdfContentByte du PdfWriter
 						PdfContentByte contentByte = writer.getDirectContent();
-						// A partir de ca, on cree un PdfTemplate avec les tailles de l'instance
+						// Creation d'un PdfTemplate avec les tailles de l'instance
 			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
 			            
 			            // On crer l'objet Graphics2D dans le template qui en prend toute la place
@@ -218,6 +218,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 			
 		}
 
+		// Renvoie de réussite
 		return true;
 	}
 
@@ -404,6 +405,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 		document.close();
 		writer.close();
 	
+		// Renvoie de réussite
 		return true;
 	}
 }

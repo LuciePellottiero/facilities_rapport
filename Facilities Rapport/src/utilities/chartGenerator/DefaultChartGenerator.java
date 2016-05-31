@@ -27,7 +27,7 @@ public class DefaultChartGenerator implements IChartGenerator {
 
 	@Override
 	public JFreeChart generateBarChart(String title, String categoryAxisLabel, String valueAxisLabel, 
-			CategoryDataset barDataSet, Boolean legends, Boolean fontToFit) throws Exception {
+			CategoryDataset barDataSet, Boolean legends, int fontToFit) throws Exception {
 		
 		JFreeChart chart = ChartFactory.createBarChart(title, categoryAxisLabel, valueAxisLabel, barDataSet,
 				PlotOrientation.VERTICAL, legends, true, false);
@@ -35,11 +35,11 @@ public class DefaultChartGenerator implements IChartGenerator {
 		CategoryPlot plot = chart.getCategoryPlot(); 
 		CategoryAxis domainAxis = plot.getDomainAxis();
 		
-		if (fontToFit) {	 
+		if (fontToFit > 0) {	 
 			
-			final Font font = new Font("Dialog", Font.PLAIN, 6);
+			final Font font = new Font("Dialog", Font.PLAIN, fontToFit);
 			domainAxis.setTickLabelFont(font);
-			domainAxis.setMaximumCategoryLabelWidthRatio(22);
+			domainAxis.setMaximumCategoryLabelWidthRatio(20);
 		}
 		
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();

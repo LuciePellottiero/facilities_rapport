@@ -9,5 +9,5 @@ public interface IChartGenerator {
 	public JFreeChart generatePieChart(String title, PieDataset pieDataSet, Boolean legends) throws Exception;
 	
 	public JFreeChart generateBarChart(String title, String categoryAxisLabel, String valueAxisLabel, CategoryDataset barDataSet,
-			Boolean legends, Boolean fontToFit) throws Exception;
+			Boolean legends, int fontToFit) throws Exception;
 }

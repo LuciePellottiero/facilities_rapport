@@ -2,25 +2,29 @@ package utilities;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.math.BigDecimal;
 
+/**
+ * Fonctions utiles pour effectuer des operations
+ * @author Lucie PELLOTTIERO
+ *
+ */
 public abstract class OperationUtilities {
 
+	/**
+	 * Renvoie si l'argument est numerique ou non (avec '.' et un '-' pris en compte)
+	 * @param str la String a tester
+	 * @return true si c'est un nombre, false sinon
+	 */
 	public static boolean isNumeric(final String str)
 	{
 	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
 	}
 	
-	public static BigDecimal truncateDecimal(final double x,final int numberofDecimals)
-	{
-	    if ( x > 0) {
-	        return new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR);
-	    } 
-	    else {
-	        return new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_CEILING);
-	    }
-	}
-	
+	/**
+	 * Obtient l'index d'un Component dans la hierarchie de son parent
+	 * @param component Le Component dont on veut l'index
+	 * @return L'index du Component, -1 si le Component ou son parent est null
+	 */
 	public static int getComponentIndex(final Component component) {
 	    
 		if (component != null && component.getParent() != null) {
@@ -35,16 +39,5 @@ public abstract class OperationUtilities {
 	    }
 	
 	    return -1;
-	}
-	
-	public static <T> int findIndex(T[] array, T value) {
-		for (int i = 0; i < array.length; ++i) {
-			
-			if (array[i].equals(value)) {
-				return i;
-			}
-		}
-		
-		return -1;
 	}
 }

@@ -1711,7 +1711,7 @@ public class Formulaire extends JFrame{
 				    	
 				    	final int incrementUnit = 5;
 				    	
-				    	Boolean fontToFit = false;
+				    	int fontToFit = 0;
 				    	
 				    	// On prepare les donnees
 				    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
@@ -2074,7 +2074,7 @@ public class Formulaire extends JFrame{
 				    
 				    	/*-----------------Partie Bons preventifs par domaines-----------------*/
 						
-						fontToFit = false;
+						fontToFit = 0;
 				    	
 				    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
 				    	
@@ -2115,7 +2115,7 @@ public class Formulaire extends JFrame{
 				    				//domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
 				    				
 				    				if (currentDomain.getText().length() > 6) {
-				    					fontToFit = true;
+				    					fontToFit = 6;
 				    				}
 				    				
 				    				double currentPourcentage = 0;
@@ -2233,7 +2233,7 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie arborescence libre 1-----------------*/
 				    	
-				    	fontToFit = false;
+				    	fontToFit = 0;
 				    	
 				    	Iterator<FreeTree> freeTrees1Iter = freeTrees1.iterator();
 				    	
@@ -2288,7 +2288,7 @@ public class Formulaire extends JFrame{
 				    			}
 				    			
 				    			if (currentElement.getText().length() > 6) {
-				    				fontToFit = true;
+				    				fontToFit = 8;
 				    			}
 				    		}
 				    		
@@ -2319,7 +2319,7 @@ public class Formulaire extends JFrame{
 				
 				    	/*-----------------Partie demande d'intervention-----------------*/
 						
-						fontToFit = false;
+						fontToFit = 0;
 
 				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
 				    	
@@ -2394,7 +2394,7 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie demande d'intervention par etat-----------------*/
 						
-						fontToFit = false;
+						fontToFit = 0;
 				    	
 				    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
 				    	
@@ -2432,7 +2432,7 @@ public class Formulaire extends JFrame{
 				    				//stateInterventionDemand.addString(currentNbState.getText(), currentState.getText() + " : ");
 				    				
 				    				if (currentState.getText().length() > 6) {
-				    					fontToFit = true;
+				    					fontToFit = 8;
 				    				}
 				    				
 				    				Integer currentNumber = 0;
@@ -2504,7 +2504,7 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie demande d'intervention par domaine-----------------*/
 				    	
-				    	fontToFit = false;
+				    	fontToFit = 0;
 				    	
 				    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
 				    	
@@ -2545,7 +2545,7 @@ public class Formulaire extends JFrame{
 				    				//domainInterventionDemand.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
 				    				
 				    				if (currentDomain.getText().length() > 6) {
-				    					fontToFit = true;
+				    					fontToFit = 8;
 				    				}
 				    				
 				    				double currentPourcentage = 0;
@@ -2648,7 +2648,7 @@ public class Formulaire extends JFrame{
 				    	
 				    	/*-----------------Partie arborescence libre 2-----------------*/
 				    	
-				    	fontToFit = false;
+				    	fontToFit = 0;
 				    	
 				    	Iterator<FreeTree> freeTrees2Iter = freeTrees2.iterator();
 				    	
@@ -2698,7 +2698,7 @@ public class Formulaire extends JFrame{
 				    				//freeTree.addString(currentElementNumber.getText(), currentElement.getText() + " : ");
 				    				
 				    				if (currentElement.getText().length() > 6) {
-				    					fontToFit = true;
+				    					fontToFit = 8;
 				    				}
 				    				
 				    				barChartDatas.addValue(Double.parseDouble(currentElementNumber.getText()), "Nombre", 
@@ -2733,7 +2733,7 @@ public class Formulaire extends JFrame{
 						
 						/*-----------------Partie compteurs-----------------*/
 						
-						fontToFit = true;
+						fontToFit = 7;
 						
 						counter = 0;
 						
@@ -2754,7 +2754,7 @@ public class Formulaire extends JFrame{
 							Iterator<JTextField> currentConsumptionIter = currentMeter.monthConsumptions().iterator();
 							Iterator<String> currentUnitIter = currentMeter.monthUnits().iterator();
 							
-							String currentUnit = "";
+							String currentUnit = null;
 							
 							while (currentMonthIter.hasNext()) {
 								
@@ -2807,15 +2807,20 @@ public class Formulaire extends JFrame{
 								
 							}
 							
-							if (currentMeter.monthComboBoxes().isEmpty()) {
-								while (counter < MONTH_CHOICE.length) {
+							while (counter < MONTH_CHOICE.length) {
 
-			    					barChartDatas.addValue(0, Meter.UNIT_CHOICE[currentMeter.comboBoxTypeCompteur().getSelectedIndex()],
-			    							MONTH_CHOICE[counter]);
-			    					
-			    					++counter;
-			    				}
-							}
+								final String unit;
+								
+								if (currentUnit != null && !currentUnit.equals("")) {
+									unit = currentUnit;
+								}
+								else {
+									unit = Meter.UNIT_CHOICE[currentMeter.comboBoxTypeCompteur().getSelectedIndex()];
+								}
+		    					barChartDatas.addValue(0, unit, MONTH_CHOICE[counter]);
+		    					
+		    					++counter;
+		    				}
 							
 							if (!currentMeter.textAreaCommentaire().getText().equals("")) {
 								currentMeterData.addString(currentMeter.textAreaCommentaire().getText(), "Commentaire : ");
