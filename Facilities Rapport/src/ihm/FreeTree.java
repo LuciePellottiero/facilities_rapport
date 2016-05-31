@@ -1,6 +1,7 @@
 package ihm;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -32,7 +33,7 @@ public class FreeTree extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final int NUMBER_ELEMENT_ALLOWED = 40;
+	private static final int NUMBER_ELEMENT_ALLOWED = Integer.MAX_VALUE;
 	
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
@@ -45,10 +46,11 @@ public class FreeTree extends JPanel{
 	private final JTextArea textAreaComment;
 	
 	private final JButton addElement;
-
-	private int lastElementPosition;
-	
 	private final ImageIcon addElementIcon;
+	
+	private final JPanel elementsPanel;
+	
+	private int lastElementPosition;
 
 	public FreeTree(){
 
@@ -81,10 +83,21 @@ public class FreeTree extends JPanel{
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		this.add(titleTextField, constraint); //ajout de la zone de texte textFieldTitre
-	    
-		lastElementPosition = ++positionCounter;
 		
-		final int startElementPosition = lastElementPosition;
+		lastElementPosition = 0;
+		
+		elementsPanel = new JPanel(new GridBagLayout());
+		final GridBagConstraints elementConstraint = new GridBagConstraints();
+		elementConstraint.gridx = 0;
+		elementConstraint.gridy = lastElementPosition;
+		elementConstraint.weightx = 1;
+		elementConstraint.insets = new Insets(3, 0, 1, 0); //marges autour de l'element
+		elementConstraint.fill = GridBagConstraints.BOTH;
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.gridwidth = GridBagConstraints.REMAINDER;
+		this.add(elementsPanel, constraint); //ajout du bouton ajoutElement
 
 		//bouton d'ajout d'element
 		
@@ -102,7 +115,6 @@ public class FreeTree extends JPanel{
 		addElement.setEnabled(false);
 		
 		constraint.gridx = 1;
-		positionCounter += NUMBER_ELEMENT_ALLOWED;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
 		this.add(addElement, constraint); //ajout du bouton ajoutElement
@@ -111,7 +123,7 @@ public class FreeTree extends JPanel{
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
 		    	
-		    	if (lastElementPosition >= startElementPosition + NUMBER_ELEMENT_ALLOWED) {
+		    	if (lastElementPosition >= NUMBER_ELEMENT_ALLOWED) {
 					JOptionPane.showMessageDialog(thisFreeTree, 
 		    				"Impossible d'ajouter un element supplémentaire dans la partie " + titleTextField.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
@@ -129,20 +141,18 @@ public class FreeTree extends JPanel{
 		    	
 		    	final JPanel elementPanel = addElement();
 		    	
-		    	constraint.insets = new Insets(3, 0, 1, 0); //marges autour de l'element
-		    	constraint.gridx = 0;
-				constraint.gridy = lastElementPosition++;
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-		    	thisFreeTree.add(elementPanel, constraint);
+		    	elementConstraint.gridy = ++lastElementPosition;
+				elementConstraint.gridwidth = GridBagConstraints.REMAINDER;
+				elementsPanel.add(elementPanel, elementConstraint);
 		    	
-		    	thisFreeTree.revalidate();
+				elementsPanel.revalidate();
 		    	
-		    	if (lastElementPosition >= startElementPosition + NUMBER_ELEMENT_ALLOWED) {
+		    	/*if (lastElementPosition >= NUMBER_ELEMENT_ALLOWED) {
 					
 					addElement.setEnabled(false);
 					addElement.setText(ADD_ELEMENT_TEXT[3]);
 					addElement.setIcon(null);
-				}
+				}*/
 		    }
 		});
 		
@@ -255,8 +265,6 @@ public class FreeTree extends JPanel{
 	    constraint.gridx = 3;
 		constraint.gridwidth = 2;
 		elementPanel.add(textFieldNombre, constraint); //ajout de la zone de texte dateFin
-			
-		final FreeTree thisFreeTree = this;
 		
 		final JButton deleteElementButton = new JButton();
 		
@@ -286,19 +294,24 @@ public class FreeTree extends JPanel{
 					
 				}
 				
-				final GridBagLayout freeTreeLayout = (GridBagLayout)thisFreeTree.getLayout();
-				for (int i = OperationUtilities.getComponentIndex(elementPanel); i < thisFreeTree.getComponentCount(); ++i) {
+				final Container parent = elementPanel.getParent();
+				
+				if (parent != null) {
 					
-					Component currentComponent = thisFreeTree.getComponent(i);
-					GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
-					--thisComponentConstraint.gridy;
-					freeTreeLayout.setConstraints(currentComponent, thisComponentConstraint);
+					final GridBagLayout freeTreeLayout = (GridBagLayout)parent.getLayout();
+					for (int i = OperationUtilities.getComponentIndex(elementPanel); i < parent.getComponentCount(); ++i) {
+						
+						Component currentComponent = parent.getComponent(i);
+						GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
+						--thisComponentConstraint.gridy;
+						freeTreeLayout.setConstraints(currentComponent, thisComponentConstraint);
+					}
+					
+					parent.remove(elementPanel);
+					--lastElementPosition;
 				}
 				
-				thisFreeTree.remove(elementPanel);
-				--lastElementPosition;
-				
-				thisFreeTree.revalidate();
+				parent.revalidate();
 			}
 		});
 		
