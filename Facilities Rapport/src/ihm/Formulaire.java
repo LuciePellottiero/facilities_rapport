@@ -1127,9 +1127,11 @@ public class Formulaire extends JFrame{
 					ajoutMoisDI.setIcon(null);
 				}
 			}
-		});
+		});	   
 	    
 	    updateVoucherMonth.setSelected(true);
+	    
+	    comboBoxRapport.setSelectedIndex(comboBoxRapport.getSelectedIndex());
 	    
 	    /*----------------------------------------formulaire demandes d'intervention par états------------------------------------------------*/
 	   
@@ -2114,8 +2116,12 @@ public class Formulaire extends JFrame{
 				    			else {		    				
 				    				//domainPreventivesVouchers.addString(currentPourcent.getText(), currentDomain.getText() + " : ");
 				    				
-				    				if (currentDomain.getText().length() > 6) {
+				    				final int maxSize = 10;
+				    				
+				    				if (currentDomain.getText().length() > maxSize) {
 				    					fontToFit = 6;
+				    					currentDomain.setText(currentDomain.getText().substring(0, maxSize) + System.lineSeparator() + 
+				    							currentDomain.getText().substring(maxSize, currentDomain.getText().length()));
 				    				}
 				    				
 				    				double currentPourcentage = 0;

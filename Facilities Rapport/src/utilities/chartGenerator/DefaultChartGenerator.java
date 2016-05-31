@@ -39,7 +39,7 @@ public class DefaultChartGenerator implements IChartGenerator {
 			
 			final Font font = new Font("Dialog", Font.PLAIN, fontToFit);
 			domainAxis.setTickLabelFont(font);
-			domainAxis.setMaximumCategoryLabelWidthRatio(20);
+			domainAxis.setMaximumCategoryLabelWidthRatio(22);
 		}
 		
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
