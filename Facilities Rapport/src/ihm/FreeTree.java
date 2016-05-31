@@ -48,8 +48,6 @@ public class FreeTree extends JPanel{
 	private final JButton addElement;
 	private final ImageIcon addElementIcon;
 	
-	private final JPanel elementsPanel;
-	
 	private int lastElementPosition;
 
 	public FreeTree(){
@@ -86,11 +84,12 @@ public class FreeTree extends JPanel{
 		
 		lastElementPosition = 0;
 		
-		elementsPanel = new JPanel(new GridBagLayout());
+		final JPanel elementsPanel = new JPanel(new GridBagLayout());
 		final GridBagConstraints elementConstraint = new GridBagConstraints();
 		elementConstraint.gridx = 0;
 		elementConstraint.gridy = lastElementPosition;
 		elementConstraint.weightx = 1;
+		elementConstraint.gridwidth = GridBagConstraints.REMAINDER;
 		elementConstraint.insets = new Insets(3, 0, 1, 0); //marges autour de l'element
 		elementConstraint.fill = GridBagConstraints.BOTH;
 		
