@@ -26,18 +26,32 @@ import javax.swing.event.DocumentEvent;
 
 import utilities.OperationUtilities;
 
+/**
+ * JPanel d'arborescence libre.
+ * @author Lucie PELLOTTIERO
+ *
+ */
 public class FreeTree extends JPanel{
 	
 	/**
-	 * 
+	 * Numero de serialization par defaut
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Nombre maximum d'element que l'on peut ajouter
+	 */
 	private static final int NUMBER_ELEMENT_ALLOWED = Integer.MAX_VALUE;
 	
+	/**
+	 * Les String qui peuvent etres affichees sur le bouton d'ajout d'element selon le contexte
+	 */
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
 	
+	/**
+	 * Le GridBagConstraints de ce FreeTree.
+	 */
 	private final GridBagConstraints constraint;
 	
 	private final Collection<JTextField> elements;

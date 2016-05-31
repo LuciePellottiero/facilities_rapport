@@ -17,7 +17,8 @@ public abstract class OperationUtilities {
 	 */
 	public static boolean isNumeric(final String str)
 	{
-	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+	  // Correspond a n'importe quel nombre avec signe negatif et decimal
+	  return str.matches("-?\\d+(\\.\\d+)?");
 	}
 	
 	/**
@@ -27,17 +28,22 @@ public abstract class OperationUtilities {
 	 */
 	public static int getComponentIndex(final Component component) {
 	    
+		// Si le Component et son parent ne sont pas null
 		if (component != null && component.getParent() != null) {
+			// On obtient le parent
 			Container container = component.getParent();
 		    
+			// On itere sur tous les Component du parent
 			for (int i = 0; i < container.getComponentCount(); i++) {
 		    	
+				// Une fois que l'on a retrouvé celui que l'on cherche, on renvoie son index
 				if (container.getComponent(i) == component) {
 		    		return i;
 		    	}
 		    }
 	    }
 	
+		// Si le Component ou son parent est null, on renvoie -1
 	    return -1;
 	}
 }
