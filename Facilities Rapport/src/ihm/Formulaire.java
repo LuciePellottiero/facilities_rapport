@@ -465,6 +465,7 @@ public class Formulaire extends JFrame{
 		
 		constraint.gridx = 2;
 		constraint.weightx = 0;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
 		conteneurPrincipal.add(deleteLogo, constraint);
 		
 	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -532,9 +533,11 @@ public class Formulaire extends JFrame{
 	    
 		JLabel titreRapport = new JLabel("Rapport"); //titre de la partie rapport du formulaire
 		titreRapport.setFont(new Font("Arial",Font.BOLD,14)); //police + taille titreRapport
+		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.insets = titleInset; //marges autour de l'element
+		constraint.fill = GridBagConstraints.BOTH;
 	    conteneurPrincipal.add(titreRapport, constraint); //ajout du titreRapport dans conteneurPrincipal
 		
 	    constraint.insets = new Insets(0, 7, 3, 7); //marges autour de l'element
