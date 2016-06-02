@@ -912,7 +912,7 @@ public class Formulaire extends JFrame{
 			    
 			    ++freeTrees1Position;
 			    
-			    GridBagConstraints freeTreeConstraint = arboLibre.constraint();
+			    GridBagConstraints freeTreeConstraint = arboLibre.getConstraint();
 			    freeTreeConstraint.gridx = 0;
 			    ++freeTreeConstraint.gridy;
 			    freeTreeConstraint.gridwidth = 1;
@@ -1381,7 +1381,7 @@ public class Formulaire extends JFrame{
 					}
 				});
 			    
-			    GridBagConstraints freeTreeConstraint = freeTree.constraint();
+			    GridBagConstraints freeTreeConstraint = freeTree.getConstraint();
 			    freeTreeConstraint.gridx = 0;
 			    ++freeTreeConstraint.gridy;
 			    freeTreeConstraint.gridwidth = 1;
@@ -1508,7 +1508,7 @@ public class Formulaire extends JFrame{
 	  				}
 	  			});
 	  		    
-	  		    GridBagConstraints meterConstraint = meter.constraint();
+	  		    GridBagConstraints meterConstraint = meter.getConstraint();
 	  		    meterConstraint.gridx = 0;
 	  			++meterConstraint.gridy;
 	  			meterConstraint.gridwidth = 1;
@@ -2251,7 +2251,7 @@ public class Formulaire extends JFrame{
 				    		
 				    		FreeTree currentTree = freeTrees1Iter.next();
 				    		
-				    		if (currentTree.titleTextField().getText().equals("")) {
+				    		if (currentTree.getTitleTextField().getText().equals("")) {
 				    			JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"Titre : \" de la partie Arborescence Libre 1" +
 					    				" doit être remplis", "Erreur", 
@@ -2260,12 +2260,12 @@ public class Formulaire extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.titleTextField().getText());
+				    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.getTitleTextField().getText());
 				    		
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		
-				    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
-				    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+				    		Iterator<JTextField> currentTreeElementIter = currentTree.getElements().iterator();
+				    		Iterator<JTextField> currentTreeElementNumber = currentTree.getElementNumbers().iterator();
 				    		
 				    		while (currentTreeElementIter.hasNext()) {
 				    			JTextField currentElement = currentTreeElementIter.next();
@@ -2273,7 +2273,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			if (currentElement.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+						    				"le champs \"Elément : \" de la partie " + currentTree.getTitleTextField().getText() + 
 						    				" (Arboresence libre 1) doit être remplis", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -2283,7 +2283,7 @@ public class Formulaire extends JFrame{
 				    					!OperationUtilities.isNumeric(currentElementNumber.getText())) {
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
-						    				" de la partie " + currentTree.titleTextField().getText() + 
+						    				" de la partie " + currentTree.getTitleTextField().getText() + 
 						    				" (Arboresence libre 1) doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -2301,13 +2301,13 @@ public class Formulaire extends JFrame{
 				    			}
 				    		}
 				    		
-				    		if (!currentTree.textAreaComment().getText().equals("")) {
-				    			freeTree1.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
+				    			freeTree1.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
 				    		}
 				    		
 				    		if (isElement) {
 					    		try {
-									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
 											"Element", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree1.addJFreeChart(barchart);
@@ -2315,7 +2315,7 @@ public class Formulaire extends JFrame{
 					    		catch (Exception e) {
 					    			e.printStackTrace();
 									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
-											currentTree.titleTextField().getText() + " (Arboresence libre 1) : \n"
+											currentTree.getTitleTextField().getText() + " (Arboresence libre 1) : \n"
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}
@@ -2665,7 +2665,7 @@ public class Formulaire extends JFrame{
 				    		
 				    		FreeTree currentTree = freeTrees2Iter.next();
 				    		
-				    		if (currentTree.titleTextField().getText().equals("")) {
+				    		if (currentTree.getTitleTextField().getText().equals("")) {
 				    			JOptionPane.showMessageDialog(fenetre, 
 					    				"le champs \"Titre : \" de la partie Arborescence Libre 2" +
 					    				" doit être remplis", "Erreur", 
@@ -2674,12 +2674,12 @@ public class Formulaire extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree = new DefaultDataHandler(currentTree.titleTextField().getText());
+				    		IDataHandler freeTree = new DefaultDataHandler(currentTree.getTitleTextField().getText());
 				    		
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		
-				    		Iterator<JTextField> currentTreeElementIter = currentTree.elements().iterator();
-				    		Iterator<JTextField> currentTreeElementNumber = currentTree.elementNumbers().iterator();
+				    		Iterator<JTextField> currentTreeElementIter = currentTree.getElements().iterator();
+				    		Iterator<JTextField> currentTreeElementNumber = currentTree.getElementNumbers().iterator();
 				    		
 				    		while (currentTreeElementIter.hasNext()) {
 				    			JTextField currentElement = currentTreeElementIter.next();
@@ -2687,7 +2687,7 @@ public class Formulaire extends JFrame{
 				    			
 				    			if (currentElement.getText().equals("")) {
 						    		JOptionPane.showMessageDialog(fenetre, 
-						    				"le champs \"Elément : \" de la partie " + currentTree.titleTextField().getText() + 
+						    				"le champs \"Elément : \" de la partie " + currentTree.getTitleTextField().getText() + 
 						    				" (Arboresence libre 2) doit être remplis", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -2697,7 +2697,7 @@ public class Formulaire extends JFrame{
 				    					!OperationUtilities.isNumeric(currentElementNumber.getText())) {
 				    				JOptionPane.showMessageDialog(fenetre, 
 						    				"le champs \"Nombre : \" de l'élément " + currentElement.getText() + 
-						    				" de la partie " + currentTree.titleTextField().getText() + 
+						    				" de la partie " + currentTree.getTitleTextField().getText() + 
 						    				" (Arboresence libre 2) doit être remplis avec un nombre", "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 						    		stopPdfCreation(pBarFrame);
@@ -2715,13 +2715,13 @@ public class Formulaire extends JFrame{
 				    			}
 				    		}
 				    		
-				    		if (!currentTree.textAreaComment().getText().equals("")) {
-				    			freeTree.addString(currentTree.textAreaComment().getText(), "Commentaire : ");
+				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
+				    			freeTree.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
 				    		}
 				    		
 				    		if (barChartDatas.getColumnCount() > 0) {
 					    		try {
-									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.titleTextField().getText(),
+									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
 											"Element", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree.addJFreeChart(barchart);
@@ -2729,7 +2729,7 @@ public class Formulaire extends JFrame{
 					    		catch (Exception e) {
 					    			e.printStackTrace();
 									JOptionPane.showMessageDialog(fenetre, "Erreur lors de la création du graphe en barre dans la partie " +
-											currentTree.titleTextField().getText() + " (Arboresence libre 2) : \n"
+											currentTree.getTitleTextField().getText() + " (Arboresence libre 2) : \n"
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}
@@ -2756,12 +2756,12 @@ public class Formulaire extends JFrame{
 							
 							Meter currentMeter = meterIter.next();
 							
-							currentMeterData.addString(currentMeter.comboBoxTypeCompteur().getSelectedItem().toString(),
+							currentMeterData.addString(currentMeter.getComboBoxTypeCompteur().getSelectedItem().toString(),
 									"Type du compteur : ");
 							
-							Iterator<JComboBox<String>> currentMonthIter = currentMeter.monthComboBoxes().iterator();
-							Iterator<JTextField> currentConsumptionIter = currentMeter.monthConsumptions().iterator();
-							Iterator<String> currentUnitIter = currentMeter.monthUnits().iterator();
+							Iterator<JComboBox<String>> currentMonthIter = currentMeter.getMonthComboBoxes().iterator();
+							Iterator<JTextField> currentConsumptionIter = currentMeter.getMonthConsumptions().iterator();
+							Iterator<String> currentUnitIter = currentMeter.getMonthUnits().iterator();
 							
 							String currentUnit = null;
 							
@@ -2824,15 +2824,15 @@ public class Formulaire extends JFrame{
 									unit = currentUnit;
 								}
 								else {
-									unit = Meter.UNIT_CHOICE[currentMeter.comboBoxTypeCompteur().getSelectedIndex()];
+									unit = Meter.UNIT_CHOICE[currentMeter.getComboBoxTypeCompteur().getSelectedIndex()];
 								}
 		    					barChartDatas.addValue(0, unit, MONTH_CHOICE[counter]);
 		    					
 		    					++counter;
 		    				}
 							
-							if (!currentMeter.textAreaCommentaire().getText().equals("")) {
-								currentMeterData.addString(currentMeter.textAreaCommentaire().getText(), "Commentaire : ");
+							if (!currentMeter.getTextAreaCommentaire().getText().equals("")) {
+								currentMeterData.addString(currentMeter.getTextAreaCommentaire().getText(), "Commentaire : ");
 							}
 								
 							if (barChartDatas.getColumnCount() > 0) {

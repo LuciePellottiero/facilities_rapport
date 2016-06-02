@@ -213,8 +213,8 @@ public class FreeTree extends JPanel{
 		    	
 				elementsPanel.revalidate();
 		    	
-				// Si le dernier element est le dernier que l'on peut ajouter
-		    	// Alors on desactive le JButton
+				// Si le dernier element est le dernier que l'on peut ajouter,
+		    	// alors on desactive le JButton
 				// Etant donne la taille maximale, cette verification est superflue par rapport a sa frequence de realisation
 		    	/*if (lastElementPosition >= NUMBER_ELEMENT_ALLOWED) {
 					
@@ -455,7 +455,7 @@ public class FreeTree extends JPanel{
 	 * Obtient la Collection des noms des elements
 	 * @return La Collection des noms des elements
 	 */
-	public Collection<JTextField> elements() {
+	public Collection<JTextField> getElements() {
 		return elements;
 	}
 	
@@ -463,7 +463,7 @@ public class FreeTree extends JPanel{
 	 * Obtient la Collection des nombres lies aux elements
 	 * @return La Collection des nombres lies aux elements
 	 */
-	public Collection<JTextField> elementNumbers() {
+	public Collection<JTextField> getElementNumbers() {
 		return elementNumbers;
 	}
 	
@@ -471,7 +471,7 @@ public class FreeTree extends JPanel{
 	 * Obtient le JTextField du titre de ce FreeTree
 	 * @return Le JTextField du titre de ce FreeTree
 	 */
-	public JTextField titleTextField() {
+	public JTextField getTitleTextField() {
 		return titleTextField;
 	}
 	
@@ -479,7 +479,7 @@ public class FreeTree extends JPanel{
 	 * Obtient la JTextArea du commentaire de ce FreeTree
 	 * @return La JTextArea du commentaire de ce FreeTree
 	 */
-	public JTextArea textAreaComment() {
+	public JTextArea getTextAreaComment() {
 		return textAreaComment;
 	}
 	
@@ -488,7 +488,7 @@ public class FreeTree extends JPanel{
 	 * Utilise pour ajouter de nouveaux Component a la fin de ce FreeTree.
 	 * @return Le GridBagConstraints de ce FreeTree
 	 */
-	public GridBagConstraints constraint() {
+	public GridBagConstraints getConstraint() {
 		return constraint;
 	}
 }

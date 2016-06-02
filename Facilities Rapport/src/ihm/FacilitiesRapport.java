@@ -2,6 +2,7 @@ package ihm;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -15,8 +16,8 @@ public class FacilitiesRapport {
 	 * Fonction principale appelee lors de l'execution de l'application
 	 * @param args les arguments passes a l'application (innutilises)
 	 */
-	public static void main(String[] args){ 
-		// Delegation a l'EDT (Event Dispatch Thread) pour la gestion de la barre de progression
+	public static void main(final String[] args){ 
+		// Delegation a l'EDT (Event Dispatch Thread) pour la gestion des threads (le formulaire + la barre de progression)
 		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -25,6 +26,9 @@ public class FacilitiesRapport {
 				} 
                 catch (IOException e) {
 					e.printStackTrace();
+					// Affichage de l'erreur
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", 
+							JOptionPane.WARNING_MESSAGE);
 				}
             }
         });	
