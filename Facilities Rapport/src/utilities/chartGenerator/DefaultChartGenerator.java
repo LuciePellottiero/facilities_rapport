@@ -52,7 +52,7 @@ public class DefaultChartGenerator implements IChartGenerator {
 			// Modifie la Font de l'axe des domaines
 			domainAxis.setTickLabelFont(font);
 			// Fixe arbitrairement (evedntuellement a revoir), le ratio place disponnible/charactere affiche
-			domainAxis.setMaximumCategoryLabelWidthRatio(22);
+			domainAxis.setMaximumCategoryLabelWidthRatio(32);
 		}
 		
 		// Modifie le rendu des barres

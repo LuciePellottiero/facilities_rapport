@@ -1,19 +1,19 @@
 Redacteur
-Nom : er
-Adresse : ef
+Nom : ESFSEF
+Adresse : SEF
 Téléphone : 00 00 00 00 00
-Email : sef
-Nom du chargé d'affaire : sefsefsef
+Email : ESF
+Nom du chargé d'affaire : SEF
 Client
-Nom du site : sef
-Code : sef
-Adresse : sef
+Nom du site : SEF
+Code : SEF
+Adresse : SEF
 Code postal : 00 000
-Ville : sef
+Ville : SEF
 Téléphone : 00 00 00 00 00
-Email : sef
+Email : SEF
 Rapport
-Rapport d'activité : Hebdomadaire
+Rapport d'activité : Trimestriel
 Date de début : 00/00/0000
 Date de fin : 00/00/0000
 Bons préventifs

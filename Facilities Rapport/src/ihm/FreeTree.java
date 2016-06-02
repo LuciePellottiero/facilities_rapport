@@ -208,7 +208,6 @@ public class FreeTree extends JPanel{
 		    	
 		    	// Ajout du nouvel element
 		    	elementConstraint.gridy = ++lastElementPosition;
-				elementConstraint.gridwidth = GridBagConstraints.REMAINDER;
 				elementsPanel.add(elementPanel, elementConstraint);
 		    	
 				elementsPanel.revalidate();
@@ -421,9 +420,9 @@ public class FreeTree extends JPanel{
 					for (int i = OperationUtilities.getComponentIndex(elementPanel); i < parent.getComponentCount(); ++i) {
 						
 						// Obtention de l'element suivant
-						Component currentComponent = parent.getComponent(i);
+						final Component currentComponent = parent.getComponent(i);
 						// Obtiention de son GridBagConstraints (celui avec lequel il a ete ajoute)
-						GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
+						final GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
 						// Decremente sa coordonnee verticale
 						--thisComponentConstraint.gridy;
 						// Applique les modifications
@@ -432,12 +431,11 @@ public class FreeTree extends JPanel{
 					
 					// Suppression de cet element de son parent
 					parent.remove(elementPanel);
-					// Decrement l'indicateur de derniere position
-					--lastElementPosition;
+					// On revalide le parent
+					parent.revalidate();
 				}
-				
-				// On revalide le parent
-				parent.revalidate();
+				// Decrement l'indicateur de derniere position
+				--lastElementPosition;
 			}
 		});
 		

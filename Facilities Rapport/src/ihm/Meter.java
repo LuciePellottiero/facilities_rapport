@@ -458,9 +458,9 @@ public class Meter extends JPanel{
 					// Iteration sur les Component du parent après celui que l'on veut effacer
 					for (int i = OperationUtilities.getComponentIndex(monthPanel); i < parent.getComponentCount(); ++i) {
 						
-						Component currentComponent = parent.getComponent(i);
+						final Component currentComponent = parent.getComponent(i);
 						// Obtention du GridBagConstraints du Component courrant
-						GridBagConstraints thisComponentConstraint = meterLayout.getConstraints(currentComponent);
+						final GridBagConstraints thisComponentConstraint = meterLayout.getConstraints(currentComponent);
 						// Decremente sa position verticale
 						--thisComponentConstraint.gridy;
 						// Application des modifications
