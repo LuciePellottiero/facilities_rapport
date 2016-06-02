@@ -1370,10 +1370,22 @@ public class Formulaire extends JFrame{
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre2, constraint); //ajout du titreRapportr dans conteneurPrincipal
 	    
-	    freeTrees2LastPosition = ++positionCounter;
-	    Integer startFreeTree2Position = freeTrees2LastPosition;
+	    freeTrees2LastPosition = 0;
 	    
-	    positionCounter += NUMBER_FREE_TREE_ALLOWED;
+	    // Initialisation du JPanel qui contiendra tous les elements
+  		final JPanel freeTrees2Panel = new JPanel(new GridBagLayout());
+  		final GridBagConstraints freeTree2Constraints = new GridBagConstraints();
+  		freeTree2Constraints.gridx = 0;
+  		freeTree2Constraints.gridy = freeTrees2LastPosition;
+  		freeTree2Constraints.weightx = 1;
+  		freeTreeConstraints.gridwidth = GridBagConstraints.REMAINDER;
+  		freeTree2Constraints.insets = new Insets(3, 0, 1, 0);
+  		freeTree2Constraints.fill = GridBagConstraints.BOTH;
+  		
+  		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		constraint.insets = new Insets(0, 0, 0, 0);
+		conteneurPrincipal.add(freeTrees2Panel, constraint);
 	    
 	    final Collection<FreeTree> freeTrees2 = new LinkedList<FreeTree>();
 	    
@@ -1391,17 +1403,12 @@ public class Formulaire extends JFrame{
 		    ajoutArboLibre2.setIcon(addFreeTreeIcon2);
 	  	}
 	  	
-	  	final List<Boolean> listFreeTreeAvailabilitys2 = Arrays.asList(new Boolean[NUMBER_FREE_TREE_ALLOWED]);
-		for (int i = 0; i < listFreeTreeAvailabilitys2.size(); ++i) {
-			listFreeTreeAvailabilitys2.set(i, true);
-		}
-	  	
 	  	ajoutArboLibre2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if (freeTrees2LastPosition >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+				if (freeTrees2LastPosition >= NUMBER_FREE_TREE_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
 		    				"Impossible d'ajouter une arborescence libre dans la partie " + titreArboLibre2.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
@@ -1413,21 +1420,12 @@ public class Formulaire extends JFrame{
 			    	return;
 			    }
 				
-				int tmpFreeTreePosition = 0;
-				
-				for (int i = 0; i < listFreeTreeAvailabilitys2.size(); ++i) {
-					if (listFreeTreeAvailabilitys2.get(i) != false) {
-						listFreeTreeAvailabilitys2.set(i, false);
-						tmpFreeTreePosition = i;
-						break;
-					}
-				}
-				
-				final int freeTreePosition = tmpFreeTreePosition;
-				
 				FreeTree freeTree = new FreeTree();
 			    
-			    freeTrees2.add(freeTree);
+				freeTree2Constraints.gridy = ++freeTrees2LastPosition;
+				freeTrees2Panel.add(freeTree, freeTree2Constraints);
+				
+				freeTrees2.add(freeTree);
 			    
 			    // Bouton supprimer
 			    final JButton delete = new JButton("Supprimer");
@@ -1448,7 +1446,36 @@ public class Formulaire extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
-						listFreeTreeAvailabilitys2.set(freeTreePosition, true);
+						// Parent de ce JPanel
+						final Container parent = freeTree.getParent();
+						
+						// Si le JPanel a bien un parent
+						if (parent != null) {
+							
+							// Obtient le GridBagLayout de son parent
+							final GridBagLayout freeTreeLayout = (GridBagLayout)parent.getLayout();
+							
+							// Change le positionnement de tous les Component qui sont apres celui que l'on efface
+							// Cela fonctionne car dans la hierarchie du parent du JPanel, les Component sont tous ajoutes en derniers
+							// Parcour les Component qui sont apres celui que l'on efface
+							for (int i = OperationUtilities.getComponentIndex(freeTree); i < parent.getComponentCount(); ++i) {
+								
+								// Obtention du Component suivant
+								final Component currentComponent = parent.getComponent(i);
+								// Obtiention de son GridBagConstraints (celui avec lequel il a ete ajoute)
+								final GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
+								// Decremente sa coordonnee verticale
+								--thisComponentConstraint.gridy;
+								// Applique les modifications
+								freeTreeLayout.setConstraints(currentComponent, thisComponentConstraint);
+							}
+							
+							// Suppression de ce JPanel de son parent
+							parent.remove(freeTree);
+							// On revalide le parent
+							parent.revalidate();
+						}
+							
 						--freeTrees2LastPosition;
 						
 						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
@@ -1456,9 +1483,6 @@ public class Formulaire extends JFrame{
 						ajoutArboLibre2.setIcon(addFreeTreeIcon2);
 						
 						freeTrees2.remove(freeTree);
-						
-						conteneurPrincipal.remove(freeTree);
-						conteneurPrincipal.revalidate();
 					}
 				});
 			    
@@ -1466,22 +1490,20 @@ public class Formulaire extends JFrame{
 			    freeTreeConstraint.gridx = 0;
 			    ++freeTreeConstraint.gridy;
 			    freeTreeConstraint.gridwidth = 1;
-				freeTreeConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
-				freeTree.add(delete, freeTreeConstraint); //ajout du bouton supprimer dans conteneurPrincipal
+				freeTreeConstraint.insets = new Insets(0, 0, 3, 0);
+				//ajout du bouton supprimer dans ce FreeTree
+				freeTree.add(delete, freeTreeConstraint); 
 				
-			    constraint.gridx = 0;
-				constraint.gridy = startFreeTree2Position + freeTreePosition;
-				constraint.insets = new Insets(0, 0, 0, 0); //marges autour de l'element
-			    constraint.gridwidth = 4;
-			    conteneurPrincipal.add(freeTree, constraint);
-				
-				conteneurPrincipal.revalidate();
-				
-			    if (freeTrees2LastPosition++ >= NUMBER_FREE_TREE_ALLOWED + startFreeTree2Position) {
+				// Si le dernier FreeTree est le dernier que l'on peut ajouter,
+		    	// alors on desactive le JButton
+				// Etant donne la taille maximale, cette verification est superflue par rapport a sa frequence de realisation
+			    /*if (freeTrees2LastPosition++ >= NUMBER_FREE_TREE_ALLOWED) {
 			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre2.setEnabled(false);
 			    	ajoutArboLibre2.setIcon(null);
-			    }
+			    }*/
+				
+				freeTrees2Panel.revalidate();
 			}
 		});
 	  	
