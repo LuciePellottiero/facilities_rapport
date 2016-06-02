@@ -1420,7 +1420,7 @@ public class Formulaire extends JFrame{
 			    	return;
 			    }
 				
-				FreeTree freeTree = new FreeTree();
+				final FreeTree freeTree = new FreeTree();
 			    
 				freeTree2Constraints.gridy = ++freeTrees2LastPosition;
 				freeTrees2Panel.add(freeTree, freeTree2Constraints);
@@ -1486,7 +1486,7 @@ public class Formulaire extends JFrame{
 					}
 				});
 			    
-			    GridBagConstraints freeTreeConstraint = freeTree.getConstraint();
+			    final GridBagConstraints freeTreeConstraint = freeTree.getConstraint();
 			    freeTreeConstraint.gridx = 0;
 			    ++freeTreeConstraint.gridy;
 			    freeTreeConstraint.gridwidth = 1;
