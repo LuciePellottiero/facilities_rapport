@@ -2967,9 +2967,9 @@ public class Formulaire extends JFrame{
 						try {
 							if (!datas.isEmpty()) {
 								// Finallement on creer le document
-								CreateReportDocument.createPdf(datas, pBarFrame);
-								JOptionPane.showMessageDialog(fenetre, "Rapport généré", "Rapport généré", 
-										JOptionPane.INFORMATION_MESSAGE);
+								final String filePath = CreateReportDocument.createPdf(datas, pBarFrame);
+								JOptionPane.showMessageDialog(fenetre, "Rapport généré à l'emplacement :" + 
+										System.lineSeparator() + filePath, "Rapport généré", JOptionPane.INFORMATION_MESSAGE);
 								publish(ProgressBarFrame.MY_MAXIMUM);
 								stopPdfCreation(pBarFrame);
 

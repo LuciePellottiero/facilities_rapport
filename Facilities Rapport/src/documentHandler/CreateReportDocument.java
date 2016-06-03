@@ -37,7 +37,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune exception n'est attrapee
 	 */
-	public static boolean createPdf (final Collection<IDataHandler> datas, final ProgressBarFrame pBFrame) throws Exception{
+	public static String createPdf (final Collection<IDataHandler> datas, final ProgressBarFrame pBFrame) throws Exception{
 		
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		final File pdfReport = FileUtilities.getResource(DEFAULT_REPORT_PATH + File.separator + DEFAULT_FILE_NAME);
@@ -60,7 +60,7 @@ public class CreateReportDocument {
 		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
 		// On effectue l'edition du PDF par la strategie
-		final boolean result = writeStrategie.writeDocument(datas, document, pdfWriter, pBFrame);
+		writeStrategie.writeDocument(datas, document, pdfWriter, pBFrame);
 		
 		// On n'oublie pas de fermer tous les flux
 		pdfWriter.close();
@@ -77,7 +77,7 @@ public class CreateReportDocument {
 		}
 		
 		//On renvoie le resultat
-		return result;
+		return pdfReport.getAbsolutePath();
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est attrapee
 	 */
-	public static boolean createtPdf (final Collection<IDataHandler> datas, final String reportPathName, final int writeStrategieNumber) 
+	public static String createtPdf (final Collection<IDataHandler> datas, final String reportPathName, final int writeStrategieNumber) 
 			throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
 		final File pdfReport = FileUtilities.getResource(reportPathName);
@@ -117,7 +117,7 @@ public class CreateReportDocument {
 		 
 		
 		// On effectue l'edition du PDF par la strategie
-		final boolean result = writeStrategie.writeDocument(datas, document, pdfWriter);
+		writeStrategie.writeDocument(datas, document, pdfWriter);
 		
 		// On oublie pas de fermer tous les flux
 		pdfWriter.close();
@@ -134,6 +134,6 @@ public class CreateReportDocument {
 		}
 		
 		// On renvoie le resultat
-		return result;		
+		return pdfReport.getAbsolutePath();		
 	}
 }
