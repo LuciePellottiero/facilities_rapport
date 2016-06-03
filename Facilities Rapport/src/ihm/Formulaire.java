@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -147,7 +146,7 @@ public class Formulaire extends JFrame{
 	/**
 	 * Nombre d'arborescence libre que l'on peut ajouter
 	 */
-	private static final int NUMBER_FREE_TREE_ALLOWED = 30;
+	private static final int NUMBER_FREE_TREE_ALLOWED = Integer.MAX_VALUE;
 	
 	/**
 	 * Nombre de compteur que l'on peut ajouter
@@ -175,14 +174,6 @@ public class Formulaire extends JFrame{
 	 * La position verticale de la derniere arborescence libre 1
 	 */
 	private int freeTrees1LastPosition;
-	/**
-	 * La position verticale de la derniere arborescence libre 2
-	 */
-	private int freeTrees2LastPosition;
-	/**
-	 * La position verticale du dernier compteur
-	 */
-	private int meterLastPosition;
 	
 	/**
 	 * Le nombre de mois que l'on doit ajouter (pour les bons preventifs et les demandes d'intervention)<br>
@@ -1369,14 +1360,12 @@ public class Formulaire extends JFrame{
 		constraint.gridy = ++positionCounter;
 		constraint.insets = titleInset; //marges autour de l'element
 	    conteneurPrincipal.add(titreArboLibre2, constraint); //ajout du titreRapportr dans conteneurPrincipal
-	    
-	    freeTrees2LastPosition = 0;
-	    
+
 	    // Initialisation du JPanel qui contiendra tous les elements
   		final JPanel freeTrees2Panel = new JPanel(new GridBagLayout());
   		final GridBagConstraints freeTree2Constraints = new GridBagConstraints();
   		freeTree2Constraints.gridx = 0;
-  		freeTree2Constraints.gridy = freeTrees2LastPosition;
+  		freeTree2Constraints.gridy = 0;
   		freeTree2Constraints.weightx = 1;
   		freeTreeConstraints.gridwidth = GridBagConstraints.REMAINDER;
   		freeTree2Constraints.insets = new Insets(3, 0, 1, 0);
@@ -1408,7 +1397,7 @@ public class Formulaire extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if (freeTrees2LastPosition >= NUMBER_FREE_TREE_ALLOWED) {
+				if (freeTree2Constraints.gridy >= NUMBER_FREE_TREE_ALLOWED) {
 					JOptionPane.showMessageDialog(conteneurPrincipal, 
 		    				"Impossible d'ajouter une arborescence libre dans la partie " + titreArboLibre2.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
@@ -1422,7 +1411,7 @@ public class Formulaire extends JFrame{
 				
 				final FreeTree freeTree = new FreeTree();
 			    
-				freeTree2Constraints.gridy = ++freeTrees2LastPosition;
+				++freeTree2Constraints.gridy;
 				freeTrees2Panel.add(freeTree, freeTree2Constraints);
 				
 				freeTrees2.add(freeTree);
@@ -1476,7 +1465,7 @@ public class Formulaire extends JFrame{
 							parent.revalidate();
 						}
 							
-						--freeTrees2LastPosition;
+						--freeTree2Constraints.gridy;
 						
 						ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[0]);
 						ajoutArboLibre2.setEnabled(true);
@@ -1497,7 +1486,7 @@ public class Formulaire extends JFrame{
 				// Si le dernier FreeTree est le dernier que l'on peut ajouter,
 		    	// alors on desactive le JButton
 				// Etant donne la taille maximale, cette verification est superflue par rapport a sa frequence de realisation
-			    /*if (freeTrees2LastPosition++ >= NUMBER_FREE_TREE_ALLOWED) {
+			    /*if (freeTree2Constraints.gridy >= NUMBER_FREE_TREE_ALLOWED) {
 			    	ajoutArboLibre2.setText(ADD_FREE_TREE_TEXT[1]);
 			    	ajoutArboLibre2.setEnabled(false);
 			    	ajoutArboLibre2.setIcon(null);
@@ -1525,10 +1514,18 @@ public class Formulaire extends JFrame{
 	    
 	    final Collection<Meter> meters = new LinkedList<Meter>();
 	    
-	  	meterLastPosition = ++positionCounter;
-	  	final int meterStartPosition = meterLastPosition;
-    
-	  	positionCounter += NUMBER_METER_ALLOWED;
+	    final JPanel metersPanel = new JPanel(new GridBagLayout());
+	    final GridBagConstraints metersConstraints = new GridBagConstraints();
+		metersConstraints.gridx = 0;
+		metersConstraints.gridy = 0;
+		metersConstraints.weightx = 1;
+		metersConstraints.gridwidth = GridBagConstraints.REMAINDER;
+		metersConstraints.insets = new Insets(3, 0, 1, 0);
+		metersConstraints.fill = GridBagConstraints.BOTH;
+		
+		constraint.gridx = 0;
+		constraint.gridy = ++positionCounter;
+		conteneurPrincipal.add(metersPanel, constraint);
     
 	  	//bouton d'ajout de compteur
 	  	final JButton ajoutCompteur = new JButton(ADD_METER_TEXT[0]);
@@ -1543,17 +1540,12 @@ public class Formulaire extends JFrame{
 		    addMeterIcon.setImage(tmpImg);
 		    ajoutCompteur.setIcon(addMeterIcon);
 	  	}
-	  	
-	  	final List<Boolean> listMeterAvailabilitys = Arrays.asList(new Boolean[NUMBER_METER_ALLOWED]);
-		for (int i = 0; i < listMeterAvailabilitys.size(); ++i) {
-			listMeterAvailabilitys.set(i, true);
-		}
   	
 	  	ajoutCompteur.addActionListener(new ActionListener() {
 	  		@Override
 	  		public void actionPerformed(ActionEvent e) {
 	  			
-	  			if (meterLastPosition >= meterStartPosition + NUMBER_METER_ALLOWED) {
+	  			if (metersConstraints.gridy >= NUMBER_METER_ALLOWED) {
 	  				JOptionPane.showMessageDialog(conteneurPrincipal, 
 		    				"Impossible d'ajouter un compteur dans la partie " + meterTitle.getText(), "Erreur", 
 							JOptionPane.WARNING_MESSAGE);
@@ -1564,18 +1556,6 @@ public class Formulaire extends JFrame{
   					
   					return;
 				}
-	  			
-	  			int tmpMeterPosition = 0;
-				
-				for (int i = 0; i < listMeterAvailabilitys.size(); ++i) {
-					if (listMeterAvailabilitys.get(i) != false) {
-						listMeterAvailabilitys.set(i, false);
-						tmpMeterPosition = i;
-						break;
-					}
-				}
-				
-				final int currentMeterPosition = tmpMeterPosition;
 	  			
 	  			final Meter meter = new Meter();
 	  			meter.setBorder(BorderFactory.createTitledBorder("Compteur"));
@@ -1597,44 +1577,69 @@ public class Formulaire extends JFrame{
 
 	  				@Override
 	  				public void actionPerformed(ActionEvent e) {
-	  					listMeterAvailabilitys.set(currentMeterPosition, true);
-	  					--meterLastPosition;
+	  					
+	  				    // Parent de ce JPanel
+	  					final Container parent = meter.getParent();
+	  					
+	  					// Si le JPanel a bien un parent
+	  					if (parent != null) {
+	  						
+	  						// Obtient le GridBagLayout de son parent
+	  						final GridBagLayout freeTreeLayout = (GridBagLayout)parent.getLayout();
+	  						
+	  						// Change le positionnement de tous les Component qui sont apres celui que l'on efface
+	  						// Cela fonctionne car dans la hierarchie du parent du JPanel, les elements sont tous ajoutes en derniers
+	  						// Parcour les Component qui sont apres celui que l'on efface
+	  						for (int i = OperationUtilities.getComponentIndex(meter); i < parent.getComponentCount(); ++i) {
+	  							
+	  							// Obtention du Component suivant
+	  							final Component currentComponent = parent.getComponent(i);
+	  							// Obtiention de son GridBagConstraints (celui avec lequel il a ete ajoute)
+	  							final GridBagConstraints thisComponentConstraint = freeTreeLayout.getConstraints(currentComponent);
+	  							// Decremente sa coordonnee verticale
+	  							--thisComponentConstraint.gridy;
+	  							// Applique les modifications
+	  							freeTreeLayout.setConstraints(currentComponent, thisComponentConstraint);
+	  						}
+	  						
+	  						// Suppression de ce Meter de son parent
+	  						parent.remove(meter);
+	  						// On revalide le parent
+	  						parent.revalidate();
+	  					}
+	  					// Decrement l'indicateur de derniere position
+	  					--metersConstraints.gridy;
 	  					
 	  					ajoutCompteur.setEnabled(true);
 	  					ajoutCompteur.setText(ADD_METER_TEXT[0]);
 	  					ajoutCompteur.setIcon(addMeterIcon);
 	  					
 	  					meters.remove(meter);
-	  					
-	  					conteneurPrincipal.remove(meter);
-	  					conteneurPrincipal.revalidate();
 	  				}
 	  			});
 	  		    
-	  		    GridBagConstraints meterConstraint = meter.getConstraint();
-	  		    meterConstraint.gridx = 0;
-	  			++meterConstraint.gridy;
-	  			meterConstraint.gridwidth = 1;
-	  			meterConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
-	  			meter.add(delete, meterConstraint); //ajout du bouton supprimer dans conteneurPrincipal
+	  		    GridBagConstraints thisMeterConstraint = meter.getConstraint();
+	  		    thisMeterConstraint.gridx = 0;
+	  			++thisMeterConstraint.gridy;
+	  			thisMeterConstraint.gridwidth = 1;
+	  			thisMeterConstraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+	  			meter.add(delete, thisMeterConstraint); //ajout du bouton supprimer dans conteneurPrincipal
+	  			
+	  			++metersConstraints.gridy;
+	  			metersPanel.add(meter, metersConstraints);
 	  			
 	  			meters.add(meter);
-	  			
-	  			meterLastPosition++;
-	  			
-	  			constraint.gridx = 0;
-				constraint.gridy = meterStartPosition + currentMeterPosition;
-				constraint.insets = new Insets(15, 0, 5, 0); //marges autour de l'element
-				constraint.gridwidth = GridBagConstraints.REMAINDER;
-				conteneurPrincipal.add(meter, constraint);
 				
-				if (meterLastPosition >= meterStartPosition + NUMBER_METER_ALLOWED) {
+	  		    // Si le dernier Meter est le dernier que l'on peut ajouter,
+		    	// alors on desactive le JButton
+				// Etant donne le nombre de Meter maximale, cette verification est superflue par rapport a sa frequence de realisation
+				/*if (metersConstraints.gridy >= NUMBER_METER_ALLOWED) {
 					ajoutCompteur.setEnabled(false);
   					ajoutCompteur.setText(ADD_METER_TEXT[1]);
   					ajoutCompteur.setIcon(null);
-				}
+				}*/
 			
-				conteneurPrincipal.revalidate();
+				metersPanel.revalidate();
 	  		}
 	  	});
 	  	
