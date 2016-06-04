@@ -15,11 +15,17 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.ui.TextAnchor;
 
+/**
+ * Generateur par defaut de graphe
+ * @author Lucie PELLOTTIERO
+ *
+ */
 public class DefaultChartGenerator implements IChartGenerator {
 
 	@Override
 	public JFreeChart generatePieChart(String title, PieDataset pieDataSet, Boolean legends) throws Exception {
 		
+		// Genere un graphe camembert par defaut avec affichage de tooltips si disponnibles mais pas d'urls
 		JFreeChart chart = ChartFactory.createPieChart(title, pieDataSet, legends, true, false);
 		
 		return chart;
@@ -27,25 +33,39 @@ public class DefaultChartGenerator implements IChartGenerator {
 
 	@Override
 	public JFreeChart generateBarChart(String title, String categoryAxisLabel, String valueAxisLabel, 
-			CategoryDataset barDataSet, Boolean legends, Boolean fontToFit) throws Exception {
+			CategoryDataset barDataSet, Boolean legends, int fontToFit) throws Exception {
 		
+		// Genere un graphe en barre par defaut avec affichage des tooltips mais pas des urls
 		JFreeChart chart = ChartFactory.createBarChart(title, categoryAxisLabel, valueAxisLabel, barDataSet,
 				PlotOrientation.VERTICAL, legends, true, false);
 		
+		// Obtient les categories
 		CategoryPlot plot = chart.getCategoryPlot(); 
+		// Obtient l'axe des domaines
 		CategoryAxis domainAxis = plot.getDomainAxis();
 		
-		if (fontToFit) {	 
-			Font font = new Font("Dialog", Font.PLAIN, 6);
+		// Si on demande de mettre une Font particuliere
+		if (fontToFit > 0) {	 
+			
+			// Creer a la taille demandee
+			final Font font = new Font("Dialog", Font.PLAIN, fontToFit);
+			// Modifie la Font de l'axe des domaines
 			domainAxis.setTickLabelFont(font);
-			domainAxis.setMaximumCategoryLabelWidthRatio(22);
+			// Fixe arbitrairement (evedntuellement a revoir), le ratio place disponnible/charactere affiche
+			domainAxis.setMaximumCategoryLabelWidthRatio(32);
 		}
 		
+		// Modifie le rendu des barres
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
+		// Modifie le Label affiche dans les barres (standard)
 		CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(); 
+		// Ajoute le generateur de label dans les barres
 		renderer.setBaseItemLabelGenerator(generator); 
+		// Affiche les Label dans les barres
 		renderer.setBaseItemLabelsVisible(true);
+		// Place les Label en haut au centre des barres
 		renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.INSIDE12, TextAnchor.TOP_CENTER)); 
+		// S'il n'y a pas la place, on les places juste au dessu des barres
 		renderer.setPositiveItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_CENTER));
 		
 		return chart;

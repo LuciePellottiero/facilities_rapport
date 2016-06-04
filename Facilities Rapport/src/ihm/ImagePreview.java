@@ -13,72 +13,107 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
+/**
+ * JComponent a ajouter a un JFileChooser en tant qu'Accessory pour obtenir
+ *  un apercu d'une image lorsqu'elle est selectionnee dans le JFileChoose.
+ * @author Lucie PELLOTTERIO
+ *
+ */
 public class ImagePreview extends JComponent implements PropertyChangeListener{
 
 	/**
-	 * 
+	 * Numero de serialization genere
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	File file = null;
-	ImageIcon thumbnail = null;
+	/**
+	 * Le fichier selectionne dans le JFileChooser
+	 */
+	private File file;
+	/**
+	 * L'apercu de l'image si le fichier selectionner en est une
+	 */
+	private ImageIcon thumbnail;
 	
-	public ImagePreview(JFileChooser fc) {
+	/**
+	 * Constructeur de l'IpmagePreview. Il faut ensute l'ajouter aux Accessory du JFileChooser.
+	 * @param fileChooser Le JFileChooser auquel on ajoute cet ImagePreview
+	 */
+	public ImagePreview(final JFileChooser fileChooser) {
+		// Definition de la taille de cet ImagePreview
         setPreferredSize(new Dimension(100, 50));
-        fc.addPropertyChangeListener(this);
+        // Ajout du PropertyChangeListener de cet ImagePreview
+        fileChooser.addPropertyChangeListener(this);
     }
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(final PropertyChangeEvent evt) {
 		
+		// Determine si on doit mettre a jour l'affichage
 		boolean update = false;
-		String prop = evt.getPropertyName();
+		// Obtient le nom de l'evenement
+		final String eventName = evt.getPropertyName();
 		
-		//If the directory changed, don't show an image.
-		if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
+		// Si le repertoir a change, on enleve l'image et on indique qu'il faut mettre a jour l'affichage
+		if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(eventName)) {
 		    file = null;
 		    update = true;
-		
-		
 		} 
-		//If a file became selected, find out which one.
-		else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop)) {
+		
+		// Si un fichier a ete selectionne alors on l'obtient et on indique qu'il faut mettre a jour l'affichage
+		else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(eventName)) {
 		    file = (File) evt.getNewValue();
 		    update = true;
 		}
 		
-		//Update the preview accordingly.
+		// Si on doit faire la mise a jour de l'affichage
 		if (update) {
+			// Reinitialise l'apercu
 		    thumbnail = null;
+		    // Si cet ImagePreview est affiche
 		    if (isShowing()) {
+		    	// Charge l'image et son apercu
 		        loadImage();
+		        // Affiche l'apercu
 		        repaint();
 		    }
 		}
 	}
 	
+	/**
+	 * Charge l'image si cela est possible
+	 */
 	public void loadImage() {
+		
+		// Si le fichier est null, cela signifie que l'on a changer de repertoir donc on reinitialise l'apercu
         if (file == null) {
             thumbnail = null;
             return;
         }
 
-        //Don't use createImageIcon (which is a wrapper for getResource)
-        //because the image we're trying to load is probably not one
-        //of this program's own resources.
+        // Image temporaire qui sera l'image reelle
         Image tmpImage = null;
         try {
+        	// Tentative de lecture de l'image
         	tmpImage = ImageIO.read(file);
 		    
+        	// Si c'est une image
         	if (tmpImage != null) {
+        		// On creer une ImageIcon temporaire a partir de l'image
 		        ImageIcon tmpIcon = new ImageIcon(tmpImage);
+		        
+		        // Si la cration a reussi
 		        if (tmpIcon != null) {
+		        	// Si l'image a besoin d'etre redimensionnee
 		            if (tmpIcon.getIconWidth() > 90) {
+		            	// On creer une nouvelle ImageIcon qui sera une version redimensionnee de la veritable Image
+		            	// Ce sera donc l'apercu
 		                thumbnail = new ImageIcon(tmpIcon.getImage().
 		                                          getScaledInstance(90, -1,
 		                                                      Image.SCALE_DEFAULT));
 		            } 
-		            else { //no need to miniaturize
+		            else {
+		            	// Si il n'y a pas besoin de redimensionner alors on la prend directement comme apercu
 		                thumbnail = tmpIcon;
 		            }
 		        }
@@ -90,22 +125,31 @@ public class ImagePreview extends JComponent implements PropertyChangeListener{
 		}
     }
 	
-	protected void paintComponent(Graphics g) {
+	@Override
+	protected void paintComponent(Graphics graphic) {
+		// Si l'apercu n'a pas ete initialise, on tente de le charger
+		// Si cela ne fonctionne pas alors le fichier n'est pas une image
         if (thumbnail == null) {
             loadImage();
         }
+        // Si l'apercu n'est pas null
         if (thumbnail != null) {
-            int x = getWidth()/2 - thumbnail.getIconWidth()/2;
-            int y = getHeight()/2 - thumbnail.getIconHeight()/2;
+        	// On obtient les coordonnees ou doit etre placee le coin en haut a gauche de l'image
+            int x = getWidth() / 2 - thumbnail.getIconWidth() / 2;
+            int y = getHeight() / 2 - thumbnail.getIconHeight() / 2;
 
+            // On ne place pas l'image trop en dessou (lie a la dimension dans le constructeur de cet ImagePreview)
             if (y < 0) {
                 y = 0;
             }
 
+            // On ne place pas l'image trop a gauche (lie a la dimension dans le constructeur de cet ImagePreview)
             if (x < 5) {
                 x = 5;
             }
-            thumbnail.paintIcon(this, g, x, y);
+            
+            // On affiche l'image aux coordonnees calculees dans cet ImagePreview
+            thumbnail.paintIcon(this, graphic, x, y);
         }
     }
 }

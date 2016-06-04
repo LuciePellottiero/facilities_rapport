@@ -1,5 +1,5 @@
 /**
- * Ce package contient les classes liees a la generation et au traitement du fichier de rapport
+ * Contient les classes liees a la generation et au traitement du fichier de rapport
  * @author Lucie PELLOTTIERO
  *
  */
