@@ -58,6 +58,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import documentHandler.writeStrategies.IWriteStrategie;
 import utilities.OperationUtilities;
 import utilities.chartGenerator.DefaultChartGenerator;
 import utilities.chartGenerator.IChartGenerator;
@@ -2967,7 +2968,11 @@ public class Formulaire extends JFrame{
 						try {
 							if (!datas.isEmpty()) {
 								// Finallement on creer le document
-								final String filePath = CreateReportDocument.createPdf(datas, pBarFrame);
+								final String filePath = CreateReportDocument.createPdf(datas, 
+										CreateReportDocument.DEFAULT_REPORT_PATH + File.pathSeparator + 
+											CreateReportDocument.DEFAULT_FILE_NAME, 
+										IWriteStrategie.DEFAULT_STRATEGIE,
+										pBarFrame);
 								JOptionPane.showMessageDialog(fenetre, "Rapport généré à l'emplacement :" + 
 										System.lineSeparator() + filePath, "Rapport généré", JOptionPane.INFORMATION_MESSAGE);
 								publish(ProgressBarFrame.MY_MAXIMUM);
