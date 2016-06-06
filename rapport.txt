@@ -1,17 +1,17 @@
 Redacteur
-Nom : SEFFSEF
-Adresse : SEFSEF
+Nom : tfag
+Adresse : dbgdr
 Téléphone : 00 00 00 00 00
-Email : SEF
-Nom du chargé d'affaire : SEF
+Email : j,
+Nom du chargé d'affaire : gvj
 Client
-Nom du site : SEF
-Code : SEF
-Adresse : SE
+Nom du site : gv
+Code : g
+Adresse : g	
 Code postal : 00 000
-Ville : sesefse
+Ville : h
 Téléphone : 00 00 00 00 00
-Email : se
+Email : h
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000

@@ -110,7 +110,7 @@ public class FreeTree extends JPanel{
 		constraint.weightx = 0;
 		// Ajoute des marge pour chaques Component de ce FreeTree
 		constraint.insets = new Insets(5, 0, 0, 0);
-		// Indique que les elements peuvent prendre la place disponnible horizontalement et verticalement
+		// Indique que les elements peuvent prendre la place disponnible verticalement
 		constraint.fill = GridBagConstraints.VERTICAL;
 		
 		// Initialise les Collection
