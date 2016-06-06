@@ -1,7 +1,5 @@
 package ihm;
 
-import java.io.IOException;
-
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -22,9 +20,9 @@ public class FacilitiesRapport {
             public void run() {
                 try {
                 	// Creation du formulaire
-					new Formulaire();
+					new Form();
 				} 
-                catch (IOException e) {
+                catch (Exception e) {
 					e.printStackTrace();
 					// Affichage de l'erreur
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", 

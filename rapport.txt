@@ -1,17 +1,17 @@
 Redacteur
-Nom : tgsdr
-Adresse : drwg
+Nom : sef
+Adresse : se
 Téléphone : 00 00 00 00 00
-Email : dwrg
-Nom du chargé d'affaire : wdrh
+Email : sefse
+Nom du chargé d'affaire : gessefsef
 Client
-Nom du site : wdrg
-Code : wrdg
-Adresse : wdhrwrg
+Nom du site : gesf
+Code : seg
+Adresse : sefseg
 Code postal : 00 000
-Ville : wdrg
+Ville : sefse
 Téléphone : 00 00 00 00 00
-Email : rd
+Email : efseg
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000
