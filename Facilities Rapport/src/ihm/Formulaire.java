@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,6 +37,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -58,6 +60,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import documentHandler.writeStrategies.IWriteStrategie;
 import utilities.OperationUtilities;
 import utilities.chartGenerator.DefaultChartGenerator;
 import utilities.chartGenerator.IChartGenerator;
@@ -2966,11 +2969,42 @@ public class Formulaire extends JFrame{
 				    	
 						try {
 							if (!datas.isEmpty()) {
+								
+								// Fenetre pour choisir l'emplacement et le nom du rapport
+								final JDialog reportConfig = new JDialog(mainFrame, "Configuration du fichier de rapport", 
+										Dialog.ModalityType.DOCUMENT_MODAL);
+								
+								JPanel contentPane = new JPanel(new GridBagLayout());
+								reportConfig.setContentPane(contentPane);
+								
+								final GridBagConstraints constraints = new GridBagConstraints();
+								// Initialise toutes les valeurs qui nous sont utiles
+								constraints.gridx = 0;
+								constraints.gridy = 0;
+								constraints.weightx = 0;
+								// Ajoute des marge pour chaques Component de ce Dialog
+								constraints.insets = new Insets(5, 0, 0, 0);
+								// Indique que les elements peuvent prendre la place disponnible horizontalement et verticalement
+								constraints.fill = GridBagConstraints.BOTH;
+								
+								final JLabel directoryName = new JLabel("Répertoir du rapport");
+								
+								contentPane.add(directoryName, constraints);
+								
+								final JFileChooser destinationChooser = new JFileChooser();
+								destinationChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+								
 								// Finallement on creer le document
-								final String filePath = CreateReportDocument.createPdf(datas, pBarFrame);
+								final String filePath = CreateReportDocument.createPdf(datas, 
+										CreateReportDocument.DEFAULT_REPORT_PATH + File.pathSeparator + 
+											CreateReportDocument.DEFAULT_FILE_NAME, 
+										IWriteStrategie.DEFAULT_STRATEGIE,
+										pBarFrame);
+								
 								JOptionPane.showMessageDialog(fenetre, "Rapport généré à l'emplacement :" + 
 										System.lineSeparator() + filePath, "Rapport généré", JOptionPane.INFORMATION_MESSAGE);
 								publish(ProgressBarFrame.MY_MAXIMUM);
+								
 								stopPdfCreation(pBarFrame);
 
 							}
