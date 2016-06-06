@@ -28,7 +28,7 @@ public class CreateReportDocument {
 	public final static String DEFAULT_REPORT_PATH = "Facilities Rapport" + File.separator + 
 			"Files" + File.separator + "Reports";
 	
-	public final static String DEFAULT_FILE_NAME = "PdfRepport.pdf";
+	public final static String DEFAULT_FILE_NAME = "PdfReport";
 	
 	/**
 	 * Creer le document PDF du rapport a l'emplacement precise.

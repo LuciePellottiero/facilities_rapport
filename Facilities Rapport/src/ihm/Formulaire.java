@@ -96,7 +96,7 @@ public class Formulaire extends JFrame{
 	 * Le nom des fichiers des icons
 	 */
 	public final static String[] ICONS_NAME = {"vinciFacilitiesIcon.png", "addIcon.png", "addPictureIcon.png", 
-			"pdfIcon.png", "removeIcon.png"};
+			"pdfIcon.png", "removeIcon.png", "folderIcon.png", "validateIcon.png"};
 	
 	/**
 	 * Collection des pourcentage des bons preventifs par domaine
@@ -2982,30 +2982,141 @@ public class Formulaire extends JFrame{
 								constraints.gridx = 0;
 								constraints.gridy = 0;
 								constraints.weightx = 0;
+								constraints.gridwidth = 1;
 								// Ajoute des marge pour chaques Component de ce Dialog
 								constraints.insets = new Insets(5, 0, 0, 0);
 								// Indique que les elements peuvent prendre la place disponnible horizontalement et verticalement
 								constraints.fill = GridBagConstraints.BOTH;
 								
-								final JLabel directoryName = new JLabel("Répertoir du rapport");
+								final JLabel directoryName = new JLabel(CreateReportDocument.DEFAULT_REPORT_PATH + File.separator);
 								
 								contentPane.add(directoryName, constraints);
+								
+								final JTextField reportName = new JTextField(CreateReportDocument.DEFAULT_FILE_NAME);
+								
+								constraints.gridx = 1;
+								constraints.gridwidth = 1;
+								constraints.weightx = 1;
+								contentPane.add(reportName, constraints);
+								
+								final JLabel reportFileType = new JLabel(".pdf");
+								
+								constraints.gridx = 2;
+								constraints.gridwidth = GridBagConstraints.REMAINDER;
+								constraints.weightx = 0;
+								contentPane.add(reportFileType, constraints);
 								
 								final JFileChooser destinationChooser = new JFileChooser();
 								destinationChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 								
-								// Finallement on creer le document
-								final String filePath = CreateReportDocument.createPdf(datas, 
-										CreateReportDocument.DEFAULT_REPORT_PATH + File.pathSeparator + 
-											CreateReportDocument.DEFAULT_FILE_NAME, 
-										IWriteStrategie.DEFAULT_STRATEGIE,
-										pBarFrame);
+								final JButton chooseRepositery = new JButton("Choisir répertoire...");
+								directoryName.setLabelFor(chooseRepositery);
+								chooseRepositery.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										int returnVal = destinationChooser.showOpenDialog(mainFrame);
+									    
+										if(returnVal == JFileChooser.APPROVE_OPTION) {
+											try {
+												directoryName.setText(destinationChooser.getSelectedFile().getAbsolutePath());
+												
+												reportConfig.pack();
+												reportConfig.repaint();
+											}
+											catch (Exception ex) {
+												JOptionPane.showMessageDialog(mainFrame, 
+									    				"Le répertoire choisi est invalide", "Erreur", 
+														JOptionPane.WARNING_MESSAGE);
+											}		
+									    }
+									}
+								});
 								
-								JOptionPane.showMessageDialog(fenetre, "Rapport généré à l'emplacement :" + 
-										System.lineSeparator() + filePath, "Rapport généré", JOptionPane.INFORMATION_MESSAGE);
-								publish(ProgressBarFrame.MY_MAXIMUM);
+								final ImageIcon folerIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[5]);
+							    if (folerIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+								    final int iconHeight = (int) (chooseRepositery.getPreferredSize().getHeight() - chooseRepositery.getPreferredSize().getHeight() / 3);
+								    final int iconWidth  = folerIcon.getIconWidth() / (folerIcon.getIconHeight() / iconHeight);
+								    
+								    final Image tmpImg = folerIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+								    folerIcon.setImage(tmpImg);
+								    chooseRepositery.setIcon(folerIcon);
+							    }
 								
-								stopPdfCreation(pBarFrame);
+							    ++constraints.gridy;
+								constraints.gridx = 0;
+								constraints.gridwidth = GridBagConstraints.REMAINDER;
+								contentPane.add(chooseRepositery, constraints);
+								
+								final JButton approve = new JButton("Valider");
+								approve.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent arg0) {
+										// Finallement on creer le document
+										String filePath = "";
+										Boolean canWeCreate = true;
+										try {
+											File report = new File(directoryName.getText() + File.separator + 
+													reportName.getText() + reportFileType.getText());
+											
+											if (report.exists()) {
+												final int dialogResult = JOptionPane.showConfirmDialog (fenetre, 
+						    							"Le fichier " + reportName.getText() + " existe déjà, voulez-vous l'écraser?",
+						    							"Erreur", JOptionPane.YES_NO_OPTION);
+						    					if(dialogResult == JOptionPane.NO_OPTION){
+						    						canWeCreate = false;
+						    					}
+											}
+											
+											if (canWeCreate) {
+												filePath = CreateReportDocument.createPdf(datas, 
+														directoryName.getText() + File.separator + 
+														reportName.getText() + reportFileType.getText(), 
+														IWriteStrategie.DEFAULT_STRATEGIE,
+														pBarFrame);
+												
+												JOptionPane.showMessageDialog(fenetre, "Rapport généré à l'emplacement :" + 
+														System.lineSeparator() + filePath, "Rapport généré", JOptionPane.INFORMATION_MESSAGE);
+												
+												publish(ProgressBarFrame.MY_MAXIMUM);
+												reportConfig.dispose();
+											}
+										} 
+										catch (Exception e) {
+											e.printStackTrace();
+											JOptionPane.showMessageDialog(fenetre, e.getMessage(), "Erreur", 
+													JOptionPane.WARNING_MESSAGE);
+											
+											stopPdfCreation(pBarFrame);
+										}
+									}
+								});
+								
+								final ImageIcon validateIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[6]);
+							    if (validateIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+								    final int iconHeight = (int) (approve.getPreferredSize().getHeight() - approve.getPreferredSize().getHeight() / 3);
+								    final int iconWidth  = validateIcon.getIconWidth() / (validateIcon.getIconHeight() / iconHeight);
+								    
+								    final Image tmpImg = validateIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
+								    validateIcon.setImage(tmpImg);
+								    approve.setIcon(validateIcon);
+							    }
+								
+								++constraints.gridy;
+								constraints.gridx = 1;
+								contentPane.add(approve, constraints);
+								
+								reportConfig.addWindowListener(new WindowAdapter() {
+						            public void windowClosing(java.awt.event.WindowEvent e) {
+						                stopPdfCreation(pBarFrame);
+						                reportConfig.dispose();
+						            }
+						        });
+								
+								reportConfig.pack();
+								reportConfig.setLocationRelativeTo(mainFrame);
+								reportConfig.setVisible(true);
 
 							}
 							else {

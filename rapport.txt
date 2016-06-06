@@ -1,17 +1,17 @@
 Redacteur
-Nom : tfag
-Adresse : dbgdr
+Nom : tgsdr
+Adresse : drwg
 Téléphone : 00 00 00 00 00
-Email : j,
-Nom du chargé d'affaire : gvj
+Email : dwrg
+Nom du chargé d'affaire : wdrh
 Client
-Nom du site : gv
-Code : g
-Adresse : g	
+Nom du site : wdrg
+Code : wrdg
+Adresse : wdhrwrg
 Code postal : 00 000
-Ville : h
+Ville : wdrg
 Téléphone : 00 00 00 00 00
-Email : h
+Email : rd
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000
