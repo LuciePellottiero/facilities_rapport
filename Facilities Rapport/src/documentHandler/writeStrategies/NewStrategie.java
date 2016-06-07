@@ -1,12 +1,16 @@
 package documentHandler.writeStrategies;
 
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.jfree.chart.JFreeChart;
 
 import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -44,33 +48,12 @@ public class NewStrategie implements IWriteStrategie{
 		chartHeight = 350;
 	}
 	
-	class MyFooter extends PdfPageEventHelper {
-        Font ffont = new Font(Font.FontFamily.UNDEFINED, 5, Font.ITALIC);
- 
-        public void onEndPage(PdfWriter writer, Document document) {
-            PdfContentByte cb = writer.getDirectContent();
-            Phrase header = new Phrase("this is a header", ffont);
-            Phrase footer = new Phrase("this is a footer", ffont);
-            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-                    header,
-                    (document.right() - document.left()) / 2 + document.leftMargin(),
-                    document.top() + 10, 0);
-            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-                    footer,
-                    (document.right() - document.left()) / 2 + document.leftMargin(),
-                    document.bottom() - 10, 0);
-        }
-    }
-	
 	/**
 	 * Fonction d'edition de document
 	 */
 	@Override
 	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer)
 			throws Exception {
-		
-		MyFooter event = new MyFooter();
-	    writer.setPageEvent(event);
 	    
 		// On ouvre le document a la modification
 		document.open();
@@ -216,10 +199,80 @@ public class NewStrategie implements IWriteStrategie{
 
 		return true;
 	}
+	
+	//en-tête et pied de page
+	class MyFooter extends PdfPageEventHelper {
+        Font footerFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
+        Font colorFooterFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
+		
+        public void onStartPage(PdfWriter writer, Document document) {
+            PdfContentByte cb = writer.getDirectContent();
+            
+            //contenu en-tête
+            Phrase header1 = new Phrase("Centre d’Expertises VFPA", footerFont);
+            Phrase header2 = new Phrase("Aix en Provence", footerFont);
+            Phrase header3 = new Phrase("Support aux Opérations", footerFont);
+            
+            Image img;
+			try {
+				img = Image.getInstance("/Facilities Rapport/Files/Icons/vinciFacilitiesIcon.png");
+			} catch (BadElementException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+            //en-tête position
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
+                    header1,
+                    document.right() - document.rightMargin() - 30,
+                    document.top() + 20, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
+                    header2,
+                    document.right() - document.rightMargin() - 30,
+                    document.top() + 10, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
+                    header3,
+                    document.right() - document.rightMargin() -30,
+                    document.top() + 0, 0);
+        }
+        
+        public void onEndPage(PdfWriter writer, Document document) {
+            PdfContentByte cb = writer.getDirectContent();
+            
+            //contenu pied de page
+            Phrase footer1 = new Phrase("PROVENCE MAINTENANCE SERVICES - Immeuble Le Rubis - 165 av Galilée - 13 857 Aix En Provence Cedex 3", footerFont);
+            Phrase footer2 = new Phrase("Tél. : 04 42 90 55 80 - Fax. : 04 42 90 55 81  -  www.vinci-facilities.com - RCS 433 899 788 Aix en Provence – TVA FR 194 433 899 788", footerFont);
+            Phrase footer3 = new Phrase("Ce document est la propriété du Centre d’Expertises VFPA. Toute reproduction est interdite sans autorisations", colorFooterFont);
+            
+            //pied de page position
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    footer1,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 5, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    footer2,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 15, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    footer3,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 30, 0);
+        }
+    }
 
 	@Override
 	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer,
 			ProgressBarFrame pBFrame) throws Exception {
+		
+		MyFooter event = new MyFooter();
+	    writer.setPageEvent(event);
+	    
 		// On ouvre le document a la modification
 		document.open();
 		
@@ -241,6 +294,7 @@ public class NewStrategie implements IWriteStrategie{
         Paragraph paragraph2 = new Paragraph("Second paragraph");
         document.add(paragraph1);
         document.add(paragraph2);
+        document.add(Chunk.NEWLINE);
 		
 		// On itere sur les parties
 		while (datasIterator.hasNext()) {
