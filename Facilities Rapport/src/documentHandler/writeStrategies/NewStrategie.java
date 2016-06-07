@@ -315,9 +315,7 @@ public class NewStrategie implements IWriteStrategie{
 		para.add(new Phrase (" au ", baseConcreteFont));
 		datasIter.next();
 		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		datasIter.next();
-		datasIter.next();
-		datasIter.next();
+		
 		
 		para.add(Chunk.NEXTPAGE);
 		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
