@@ -1,17 +1,17 @@
 Redacteur
-Nom : wesges
-Adresse : efwsgews
-Téléphone : 24 24 23 52 35
-Email : RGSF
-Nom du chargé d'affaire : SEFSFSEG
+Nom : MEDARD
+Adresse : 57 Les Ombress Route de la Colline
+Téléphone : 06 16 29 34 74
+Email : dark1wador@ymail.com
+Nom du chargé d'affaire : Lucie PELOTTIERRO
 Client
-Nom du site : SEF
-Code : GSE
-Adresse : SEF
+Nom du site : sev
+Code : sef
+Adresse : seg
 Code postal : 00 000
-Ville : GSE
+Ville : sef
 Téléphone : 00 00 00 00 00
-Email : SGEFSE
+Email : qdz
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000

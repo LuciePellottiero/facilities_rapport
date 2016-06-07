@@ -57,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -194,6 +195,9 @@ public class Form extends JFrame{
 	 */
 	private int monthNumber;
 	
+	/**
+	 * Les donnees que l'on peut sauvegarder
+	 */
 	private final Collection<JTextComponent> datasToSerialize;
 	
 	/**
@@ -224,7 +228,7 @@ public class Form extends JFrame{
 		
 		// Taille fenetre
 		this.setSize(700, 600);
-		// Pour fermer l'application lorsque l'on ferme la fenetre
+		// Pour detruir la fenetre lorsqu'on la ferme
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// Position de la fenetre au centre de l'ecran
 	    this.setLocationRelativeTo(null);
@@ -248,10 +252,13 @@ public class Form extends JFrame{
 		// Marges autour des titres
 		final Insets titleInset = new Insets(20, 0, 5, 0);
 		
+		// La barre de menu a mettre sur le Form
 		final JMenuBar menuBar = new JMenuBar();
+		// Le menu qui concerne le rapoort (pas pdf)
 		final JMenu menu = new JMenu("Rapport");
 		menu.getAccessibleContext().setAccessibleDescription("Operations sur ce rapport");
 		
+		// Creation d'une nouvelle fenetre Form
 		final JMenuItem newReport = new JMenuItem("Nouveau rapport");
 		newReport.getAccessibleContext().setAccessibleDescription("Créer un nouveau rapport vierge prêt à être éditer");
 		newReport.addActionListener(new ActionListener() {
@@ -259,7 +266,7 @@ public class Form extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				// Delegation a l'EDT (Event Dispatch Thread) pour la gestion des threads (le formulaire + la barre de progression)
-				new Thread(new Runnable() {
+				SwingUtilities.invokeLater(new Runnable() {
 		            public void run() {
 		                try {
 		                	// Creation du formulaire
@@ -272,13 +279,14 @@ public class Form extends JFrame{
 									JOptionPane.WARNING_MESSAGE);
 						}
 		            }
-		        }).start();
+		        });
 			}
 		});
 		menu.add(newReport);
 		
 		menu.addSeparator();
 		
+		// Permet d'enregistrer les donnees dans la partie redacteur
 		final JMenuItem save = new JMenuItem("Enregistrer partie rédacteur");
 		save.getAccessibleContext().setAccessibleDescription("Sauvegarder la partie rédacteur de ce rapport pour pouvoir être réeditée plus tard");
 		save.addActionListener(new ActionListener() {
@@ -286,7 +294,9 @@ public class Form extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				// Creation d'un JFileChooser pour choisir la destination (sera un .xml)
 				final JFileChooser saveDestination = new JFileChooser();
+				saveDestination.setCurrentDirectory(new File ("./"));
 				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			            "xml file", "xml");
 				saveDestination.setFileFilter(filter);
@@ -304,14 +314,16 @@ public class Form extends JFrame{
 							final int dialogResult = JOptionPane.showConfirmDialog (contentPane, 
 	    							"Le fichier " + selectedDestination.getName() + " existe déjà, voulez-vous l'écraser?",
 	    							"Erreur", JOptionPane.YES_NO_OPTION);
-							// Si l'utilisateur refuse, alors on empeche la creation du rapport
+							// Si l'utilisateur refuse, alors on empeche la creation du fichier
 	    					if(dialogResult == JOptionPane.NO_OPTION){
 	    						return;
 	    					}
 						}
 						else {
+							// Si le fichier n'existe pas, alors on ajoute l'extension au nom fournis par l'utilisateur
 							selectedDestination = new File (saveDestination.getSelectedFile() + ".xml");
 						}
+						// Sauvegarde des donnees
 						xmlSerialization(selectedDestination);
 					}
 					catch (Exception ex) {
@@ -324,14 +336,16 @@ public class Form extends JFrame{
 		});
 		menu.add(save);
 		
+		// Chargement des donnees pour la parties redacteur
 		final JMenuItem load = new JMenuItem("Charger partie rédacteur");
 		load.getAccessibleContext().setAccessibleDescription("Charger la partie rédacteur d'un rapport enregistrée ulterieurement");
 		load.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// Creation d'un JFileChooser pour choisir le fichier des donnees
 				final JFileChooser loadPath = new JFileChooser();
-				
+				loadPath.setCurrentDirectory(new File ("./"));
 				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			            "xml file", "xml");
 				loadPath.setFileFilter(filter);
@@ -355,6 +369,7 @@ public class Form extends JFrame{
 		
 		menu.addSeparator();
 		
+		// Permet de fermer la fenetre
 		final JMenuItem exit = new JMenuItem("Quitter");
 		exit.getAccessibleContext().setAccessibleDescription("Quitter l'application");
 		exit.addActionListener(new ActionListener() {
@@ -369,6 +384,7 @@ public class Form extends JFrame{
 		menuBar.add(menu);
 		this.setJMenuBar(menuBar);
 		
+		// Initialisation de la Collection des donnees a sauvegarder
 		datasToSerialize = new LinkedList<JTextComponent>();
 		/*-----------------------------------------formulaire redacteur--------------------------------------------*/
 	    
@@ -620,113 +636,149 @@ public class Form extends JFrame{
 		// Creation du JFormattedTextField final pour la generation du rapport
 		final JFormattedTextField finalPostalCodeField = postalCodeField;
 		
-		//ville
-		final JLabel ville = new JLabel("Ville : "); //creation du label ville
+		// Ville
+		// Creation du JLabel ville
+		final JLabel city = new JLabel("Ville : ");
 		
 		constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-		mainContainer.add(ville, constraint); //ajout du label ville
+		// Ajout du JLabel ville
+		mainContainer.add(city, constraint);
 		
-		final JTextField textFieldVille = new JTextField(15); //creation de la zone de texte ville de taille 15
-		ville.setLabelFor(textFieldVille); //attribution de la zone de texte au label ville
+		// Creation de la zone de texte ville de taille 15
+		final JTextField cityField = new JTextField(15);
+		// Attribution du JLabel au JTextField
+		city.setLabelFor(cityField);
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldVille, constraint); //ajout de la zone de texte ville
+		// Ajout de la zone de texte ville
+		mainContainer.add(cityField, constraint);
 		
-		//nom du client
-	    final JLabel nomClient = new JLabel("Nom du client : "); //creation du label nomCl
+		// Nom du client
+		// Creation du JLabel du nom du client
+	    final JLabel customerName = new JLabel("Nom du client : ");
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-	    mainContainer.add(nomClient, constraint); //ajout du label nomCl
+		// Ajout du JLabel du nom du client
+	    mainContainer.add(customerName, constraint);
 	   
-	    final JTextField textFieldNomClient = new JTextField(15); //creation de la zone de texte nomCl de taille 15
-	    nomClient.setLabelFor(textFieldNomClient); //attribution de la zone de texte au label nomCl
+	    // Creation de la zone de texte du nom du client de taille 15
+	    final JTextField customerNameField = new JTextField(15);
+	    // Attribution du JLabel au JTextField
+	    customerName.setLabelFor(customerNameField);
 		
 	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-	    mainContainer.add(textFieldNomClient, constraint); //ajout de la zone de texte nomCl 
+		// Ajout de la zone de texte du nom du client
+		mainContainer.add(customerNameField, constraint);
 	    
-	    //telephone client
-	    final JLabel telCl = new JLabel("Téléphone : "); //creation du label telCl
+	    // Telephone client
+		// Creation du JLabel du telephone du client
+	    final JLabel customerPhone = new JLabel("Téléphone : ");
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-	    mainContainer.add(telCl, constraint); //ajout du label telCl
+		// Ajout du JLabel du telephone du client
+	    mainContainer.add(customerPhone, constraint);
 	   
 	    JFormattedTextField textFieldTelCl = null;
 	   
 	    try{
-			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##"); //masque pour le format du numero de telephone
-			textFieldTelCl = new JFormattedTextField(maskTelCl); //initialisation de la zone de texte telCl formattee par le masque
+	    	// Masque pour le format du numero de telephone
+			MaskFormatter maskTelCl  = new MaskFormatter("## ## ## ## ##");
+			// Initialisation de la zone de texte du telephone du client formattee par le masque
+			textFieldTelCl = new JFormattedTextField(maskTelCl);
+			// Attribution d'une valeur par defaut
 			textFieldTelCl.setValue("00 00 00 00 00");
 	    }
 	    catch(ParseException e){
-			e.printStackTrace(); //exception
+	    	// Exception
+			e.printStackTrace();
 		}
 	    
-	    telCl.setLabelFor(textFieldTelCl); //attribution de la zone de texte au label telCl
+	    // Attribution du JLabel au JFormattedTextField
+	    customerPhone.setLabelFor(textFieldTelCl);
 		
 	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-		mainContainer.add(textFieldTelCl, constraint); //ajout de la zone de texte telCl
+		// Ajout de la zone de texte du telephone du client
+		mainContainer.add(textFieldTelCl, constraint);
 		
+		// Version final pour la generation du rapport
 		final JFormattedTextField finalTextFieldTelCl = textFieldTelCl;
 	   
-	    //email client
-	    final JLabel emailCl = new JLabel("Email : "); //creation du label emailCl
+	    // Email client
+		// Creation du JLabel de l'email du client
+	    final JLabel customerMail = new JLabel("Email : ");
 		
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
-	    mainContainer.add(emailCl, constraint); //ajout du label emailCl
+		// Ajout du JLabel du mail du client
+	    mainContainer.add(customerMail, constraint);
 	   
-	    final JTextField textFieldEmailCl = new JTextField(15); //creation de la zone de texte emailCl de taille 15
-	    emailCl.setLabelFor(textFieldEmailCl); //attribution de la zone de texte au label emailCl
+	    // Creation de la zone de texte du mail du client de taille 15
+	    final JTextField customerMailField = new JTextField(15);
+	    // Attribution du JLabel au JTextField
+	    customerMail.setLabelFor(customerMailField);
 		
 	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
-	    mainContainer.add(textFieldEmailCl, constraint); //ajout de la zone de texte emailCl
+	    // Ajout de la zone de texte du mail du client
+		mainContainer.add(customerMailField, constraint);
 	    
+		// Logo du client
 	    final JLabel customerLogo = new JLabel ("Logo client : ");
-	    customerLogo.setHorizontalTextPosition(JLabel.CENTER);
-	    customerLogo.setVerticalTextPosition(JLabel.BOTTOM);
 	    
 	    constraint.gridx = 0;
 		constraint.gridy = ++positionCounter;
 		constraint.gridwidth = 1;
 		mainContainer.add(customerLogo, constraint);
 	    
+		// L'image du logo
 		final JLabel customerLogoFile = new JLabel();
+		// Ajustement de la taille
 		customerLogoFile.setPreferredSize(new Dimension(90, (int) customerLogoFile.getPreferredSize().getHeight()));
+		// Ajustement du text pour quand il y aura l'image
+		// Innutilise car le text est invisible (il est comme cache derriere un autre element)
 		customerLogoFile.setHorizontalTextPosition(JLabel.CENTER);
-		customerLogo.setVerticalTextPosition(JLabel.BOTTOM);
+		customerLogoFile.setVerticalTextPosition(JLabel.BOTTOM);
 		
 		constraint.gridx = 1;
 		constraint.weightx = 1;
 		mainContainer.add(customerLogoFile, constraint);
 		
+		// Initialisation des variables des image
 		int iconHeight;
 	    int iconWidth;
 	    Image tmpImg;
 		
+	    // Le JButton pour supprimer l'image selectionnee
 		final JButton deleteLogo = new JButton();
 		
+		// Tentative d'ajout de l'ImageIcon au JButton deleteLogo
+		// Tentative d'obtiention de l'image
 		final ImageIcon removePictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[4]);
+		// Si l'image n'a pas d'erreur
 	    if (removePictureIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
+	    	// Definition de la largeur de l'image en fonction de la taille du JButton
 	    	iconWidth = (int) (deleteLogo.getPreferredSize().getWidth() - deleteLogo.getPreferredSize().getWidth() / 2);
+	    	// Definition de la hauteur de l'image en fonction de la taille du JButton
 		    iconHeight  = removePictureIcon.getIconHeight() / (removePictureIcon.getIconWidth() / iconWidth);
 		    
+		    // Redimensionne l'image selon la largeur et la hauteur precedente
 		    tmpImg = removePictureIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
 		    removePictureIcon.setImage(tmpImg);
 		    deleteLogo.setIcon(removePictureIcon);
 	    }
 		
 		deleteLogo.setVisible(false);
+		// Suppression du logo
 		deleteLogo.addActionListener(new ActionListener() {
 			
 			@Override
@@ -745,13 +797,17 @@ public class Form extends JFrame{
 		constraint.fill = GridBagConstraints.HORIZONTAL;
 		mainContainer.add(deleteLogo, constraint);
 		
+		// Creation d'un filtre par extension de nom de fichier pour image
 	    final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	            "Fichiers images", ImageIO.getReaderFileSuffixes());
 
+	    // Creation d'un JFileChooser pour choisir le logo du client
 	    final JFileChooser fileChooser = new JFileChooser();
 	    fileChooser.setFileFilter(filter);
+	    // Ajout d'un ImagePreview pour avoir un apercu d'une image lorsque selectionnee
 	    fileChooser.setAccessory(new ImagePreview(fileChooser));
 	    
+	    // Creation du JButton d'ajout de logo
 	    final JButton addLogo = new JButton("Choisir logo...");
 	    
 	    final ImageIcon addPictureIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[2]);
@@ -1919,9 +1975,9 @@ public class Form extends JFrame{
 		    	System.out.println(code.getText() + codeField.getText()); 				//affichage console des données code
 		    	System.out.println(customerAdr.getText() + customerAdrArea.getText()); 				//affichage console des données adrCl
 		    	System.out.println(postalCode.getText() + finalPostalCodeField.getText()); 	//affichage console des données codePostal
-		    	System.out.println(ville.getText() + textFieldVille.getText()); 			//affichage console des données ville
-		    	System.out.println(telCl.getText() + finalTextFieldTelCl.getText()); 			//affichage console des données telCl
-		    	System.out.println(emailCl.getText() + textFieldEmailCl.getText()); 		//affichage console des données emailCl  
+		    	System.out.println(city.getText() + cityField.getText()); 			//affichage console des données ville
+		    	System.out.println(customerPhone.getText() + finalTextFieldTelCl.getText()); 			//affichage console des données telCl
+		    	System.out.println(customerMail.getText() + customerMailField.getText()); 		//affichage console des données emailCl  
 		    	//partie rapport
 		    	System.out.println(titreRapport.getText()); 													//affichage console du titre de la partie du formulaire
 		    	System.out.println(rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//affichage console des données duree rapport d'activite
@@ -1988,9 +2044,9 @@ public class Form extends JFrame{
 			    fw.println (code.getText() + codeField.getText()); 				//ecriture des données code
 			    fw.println (customerAdr.getText() + customerAdrArea.getText()); 		    //ecriture des données adrCl
 			    fw.println (postalCode.getText() + finalPostalCodeField.getText());  //ecriture des données codePostal
-			    fw.println (ville.getText() + textFieldVille.getText()); 			//ecriture des données ville
-			    fw.println (telCl.getText() + finalTextFieldTelCl.getText()); 			//ecriture des données telCl
-			    fw.println (emailCl.getText() + textFieldEmailCl.getText()); 		//ecriture des données emailCl
+			    fw.println (city.getText() + cityField.getText()); 			//ecriture des données ville
+			    fw.println (customerPhone.getText() + finalTextFieldTelCl.getText()); 			//ecriture des données telCl
+			    fw.println (customerMail.getText() + customerMailField.getText()); 		//ecriture des données emailCl
 		    	//partie rapport
 			    fw.println (titreRapport.getText()); 													//ecriture du titre de la partie du formulaire
 		    	fw.println (rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//ecriture console des données rpportActivite
@@ -2166,37 +2222,37 @@ public class Form extends JFrame{
 				    		clientPart.addString(finalPostalCodeField.getText(), postalCode.getText()); // code postal
 				    	}
 				    	
-				    	if (textFieldVille.getText().equals("")) {
+				    	if (cityField.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + ville.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + city.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		clientPart.addString(textFieldVille.getText(), ville.getText());      // ville
+				    		clientPart.addString(cityField.getText(), city.getText());      // ville
 				    	}
 				    	
 				    	if (finalTextFieldTelCl.getValue().equals("              ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + telCl.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + customerPhone.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		clientPart.addString(finalTextFieldTelCl.getText(), telCl.getText());      // telephone client
+				    		clientPart.addString(finalTextFieldTelCl.getText(), customerPhone.getText());      // telephone client
 				    	}
 				    	
-				    	if (textFieldEmailCl.getText().equals("")) {
+				    	if (customerMailField.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + emailCl.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + customerMail.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		clientPart.addString(textFieldEmailCl.getText(), emailCl.getText());    // email client
+				    		clientPart.addString(customerMailField.getText(), customerMail.getText());    // email client
 				    	}
 				    	
 				    	if (logoIcon != null) {
@@ -3239,6 +3295,7 @@ public class Form extends JFrame{
 								
 								// Le JFileChooser pour choisir le repertoire
 								final JFileChooser destinationChooser = new JFileChooser();
+								destinationChooser.setCurrentDirectory(new File("." + File.separator));
 								// Obligation de ne choisir qu'un repertoire
 								destinationChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 								
