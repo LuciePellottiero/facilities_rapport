@@ -296,6 +296,34 @@ public class NewStrategie implements IWriteStrategie{
         document.add(paragraph2);
         document.add(Chunk.NEWLINE);
 		
+        IDataHandler currentDataPart = datasIterator.next();
+		Iterator<Collection<Object>> currentPartIter = currentDataPart.getDataStorage().iterator();
+		
+		Iterator<Object> datasTypeIter = currentPartIter.next().iterator();
+		Iterator<Object> datasIter     = currentPartIter.next().iterator();
+		
+		
+		// On creer un paragraphe
+		Paragraph para = new Paragraph();
+		
+		datasIter.next();
+		para.add(new Phrase ("Rapport d'activité ", baseConcreteFont));
+		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		para.add(Chunk.NEWLINE);
+		datasIter.next();
+		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		para.add(new Phrase (" au ", baseConcreteFont));
+		datasIter.next();
+		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		datasIter.next();
+		datasIter.next();
+		
+		para.add(Chunk.NEXTPAGE);
+		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
+		
+		
+		/*
 		// On itere sur les parties
 		while (datasIterator.hasNext()) {
 			
@@ -308,62 +336,14 @@ public class NewStrategie implements IWriteStrategie{
 			// On creer un paragraphe
 			Paragraph para = new Paragraph();
 			
-			para.add(new Chunk (("Facilities rapport"), baseConcreteFont));
-			para.add(Chunk.NEWLINE);
-			
 			para.add(new Phrase(currentDataPart.getPartTitle(), baseConcreteFont));
 			para.add(Chunk.NEWLINE);
 			
-			// On cree un tableau a 2 colonnes : titre donnee
-			//PdfPTable table = new PdfPTable(2);
-			// On enleve les bordures (ne fonctionne pas mais bon...)
-			//table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-			
-			/*
-			// On creer des float pour determiner la largeur que doivent prendre les colonnes
-			float[] tableCellsWidths = new float[] {0f, 0f};
-			
-			// On creer un tableau de cellules a ajouter a la fin
-			ArrayList<PdfPCell> tableCells = new ArrayList<PdfPCell>();
-			*/
-			
-			
+				
 			while (datasTypeIter.hasNext()) {
 			
 				switch ((int)datasTypeIter.next()) {
 					case IDataHandler.DATA_TYPE_STRING:
-						
-						// On obtient le titre
-						/*String stringTitle = (String)datasIter.next();
-						
-						// On calcul sa largeur pour la mise en page
-						float titleWidth = baseConcreteFont.getCalculatedBaseFont(true).getWidthPoint(stringTitle, baseConcreteFont.getCalculatedSize()); 
-						if (titleWidth > tableCellsWidths[0]) {
-							tableCellsWidths[0] = titleWidth;
-						}
-						// On ajoute le titre dans la premiere colonne
-						PdfPCell title = new PdfPCell(new Phrase (stringTitle, baseConcreteFont));
-						// On enleve les bordures
-						title.setBorder(Rectangle.NO_BORDER);
-						
-						tableCells.add(title);
-	
-						// On obtient la donnee correspondante
-						String stringData = (String)datasIter.next();
-						
-						// On calcul sa largeur pour la mise en page
-						float dataWidth = baseConcreteFont.getCalculatedBaseFont(true).getWidthPoint(stringData, baseConcreteFont.getCalculatedSize()); 
-						if (dataWidth > tableCellsWidths[1]) {
-							tableCellsWidths[1] = dataWidth;
-						}
-						
-						// Puis on met la valeur dans la seconde colonne
-						PdfPCell stringDataCell = new PdfPCell(new Phrase (stringData, baseConcreteFont));
-						// On enleve les bordures
-						stringDataCell.setBorder(Rectangle.NO_BORDER);
-						
-						tableCells.add(stringDataCell);
-						*/
 						
 						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
 						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
@@ -407,17 +387,9 @@ public class NewStrategie implements IWriteStrategie{
 				
 				//para.add(Chunk.NEWLINE);
 			}
-			// On definit les largeurs du tableau
-			/*table.setWidths(tableCellsWidths);
-			
-			// On ajoute toutes les cellules
-			for (PdfPCell cell : tableCells) {
-				table.addCell(cell);
-			}
-			
-			// Enfin, on ajoute le tableau au paragraphe
-			para.add(table);
 			*/
+			
+			
 			para.add(Chunk.NEWLINE);
 			
 			// On ajout le paragraphe au document
@@ -427,7 +399,7 @@ public class NewStrategie implements IWriteStrategie{
 			final int finalCounter = counter + progressIncrement;
 	
 			pBFrame.updateBar(finalCounter);
-		}
+		
 		
 		// A la fin, on ferme tous les flux
 		document.close();

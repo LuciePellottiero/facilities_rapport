@@ -539,7 +539,7 @@ public class Formulaire extends JFrame{
 		constraint.gridwidth = GridBagConstraints.RELATIVE;
 		conteneurPrincipal.add(rapportActivite, constraint); //ajout du label rapportActivite
 		
-		final String[] choixRapport = {"Hebdomadaire", "Mensuel", "Bimensuel", "Trimestriel", "Semestriel", "Annuel"}; //liste des differents choix de la duree du rapport d'activite
+		final String[] choixRapport = {"hebdomadaire", "mensuel", "bimensuel", "trimestriel", "semestriel", "annuel"}; //liste des differents choix de la duree du rapport d'activite
 		final JComboBox<String> comboBoxRapport = new JComboBox<String>(choixRapport); //initialisation du comboBox comboBoxRapport avec la liste choixRapport
 		comboBoxRapport.setPreferredSize(new Dimension(100, 20)); //dimension de la comboBoxRapport
 		
@@ -1692,68 +1692,39 @@ public class Formulaire extends JFrame{
 				    	// On prepare les donnees
 				    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
 				    	
-						/*-----------------Partie Redacteur-----------------*/
+				    	/*-----------------Partie Rapport-----------------*/
 				    	
-				    	IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
+				    	IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
 						
-				    	if (textFieldNom.getText().equals("")) {
+						reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
+						
+				    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		writerPart.addString(textFieldNom.getText(), nom.getText());   // nom
+				    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
 				    	}
 				    	
-				    	if (textAreaAdr.getText().equals("")) {
+				    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
+				    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
 				    	}
 				    	
-				    	if (finalTextFieldTelRedac.getValue().equals("              ")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		writerPart.addString(finalTextFieldTelRedac.getText(), tel.getText());   // telephone 
-				    	}
+				    	datas.add(reportPart);
 				    	
-				    	if (textFieldEmail.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		writerPart.addString(textFieldEmail.getText(), email.getText()); // email
-				    	}
+						publish(pBarFrame.getProgress() + incrementUnit);
 				    	
-				    	if (textFieldNomCA.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		writerPart.addString(textFieldNomCA.getText(), nomCA.getText()); // nom du chage d'affaire
-				    	}
-				    	
-				    	datas.add(writerPart);
-
-				    	publish(pBarFrame.getProgress() + incrementUnit);
+						
 				    	
 				    	/*-----------------Partie client-----------------*/
 				    	
@@ -1843,38 +1814,72 @@ public class Formulaire extends JFrame{
 				    	datas.add(clientPart);
 				    	
 						publish(pBarFrame.getProgress() + incrementUnit);
-				    	
-				    	/*-----------------Partie Rapport-----------------*/
-				    	
-				    	IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
 						
-						reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
 						
-				    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
+						/*-----------------Partie Redacteur-----------------*/
+				    	
+				    	IDataHandler writerPart = new DefaultDataHandler(titreRedacteur.getText());
+						
+				    	if (textFieldNom.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + nom.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
+				    		writerPart.addString(textFieldNom.getText(), nom.getText());   // nom
 				    	}
 				    	
-				    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
+				    	if (textAreaAdr.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+				    				"le champs \"" + adr.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
 									JOptionPane.WARNING_MESSAGE);
 				    		stopPdfCreation(pBarFrame);
 				    		return null;
 				    	}
 				    	else {
-				    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
+				    		writerPart.addString(textAreaAdr.getText(), adr.getText());   // adresse 
 				    	}
 				    	
-				    	datas.add(reportPart);
+				    	if (finalTextFieldTelRedac.getValue().equals("              ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + tel.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(finalTextFieldTelRedac.getText(), tel.getText());   // telephone 
+				    	}
 				    	
-						publish(pBarFrame.getProgress() + incrementUnit);
+				    	if (textFieldEmail.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + email.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textFieldEmail.getText(), email.getText()); // email
+				    	}
+				    	
+				    	if (textFieldNomCA.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nomCA.getText() + "\" de la partie " + titreRedacteur.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		writerPart.addString(textFieldNomCA.getText(), nomCA.getText()); // nom du chage d'affaire
+				    	}
+				    	
+				    	datas.add(writerPart);
+
+				    	publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+				    	
 
 				    	/*-----------------Partie Bons preventifs-----------------*/
 				    	
