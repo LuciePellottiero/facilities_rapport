@@ -1,17 +1,17 @@
 Redacteur
-Nom : sef
-Adresse : se
-Téléphone : 00 00 00 00 00
-Email : sefse
-Nom du chargé d'affaire : gessefsef
+Nom : wesges
+Adresse : efwsgews
+Téléphone : 24 24 23 52 35
+Email : RGSF
+Nom du chargé d'affaire : SEFSFSEG
 Client
-Nom du site : gesf
-Code : seg
-Adresse : sefseg
+Nom du site : SEF
+Code : GSE
+Adresse : SEF
 Code postal : 00 000
-Ville : sefse
+Ville : GSE
 Téléphone : 00 00 00 00 00
-Email : efseg
+Email : SGEFSE
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000

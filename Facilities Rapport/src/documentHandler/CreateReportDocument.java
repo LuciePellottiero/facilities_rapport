@@ -13,7 +13,6 @@ import dataHandler.IDataHandler;
 import documentHandler.writeStrategies.DefaultWriteStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
 import ihm.ProgressBarFrame;
-import utilities.FileUtilities;
 
 /**
  * Ceci est la classe permettant de creer les fichiers de rapport
@@ -33,7 +32,7 @@ public class CreateReportDocument {
 	/**
 	 * Creer le document PDF du rapport a l'emplacement precise.
 	 * @param datas La liste des donnees indexee par leur type (voir les constantes dans IDataHandler)
-	 * @param reportPathName Le nom complet du fichier
+	 * @param reportPathName Le nom complet du fichier (avec chemin absolue)
 	 * @param writeStrategieNumber Le numero de la strategie d'ecriture a appliquer (voir IWriteStrategie)
 	 * @param pBFrame La barre de progression a mettre a jour
 	 * @return true si reussi, false sinon
@@ -43,7 +42,7 @@ public class CreateReportDocument {
 			final ProgressBarFrame pBFrame) 
 			throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
-		final File pdfReport = FileUtilities.getResource(reportPathName);
+		final File pdfReport = new File(reportPathName);
 		// Puis on creer le fichier a l'emplacement precise dans les parametres
 		pdfReport.createNewFile();
 		

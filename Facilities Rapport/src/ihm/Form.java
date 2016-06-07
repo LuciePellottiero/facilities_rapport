@@ -16,8 +16,14 @@ import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,6 +48,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -51,6 +60,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.MaskFormatter;
 
 import org.jfree.chart.JFreeChart;
@@ -75,8 +85,8 @@ public class Form extends JFrame{
 	/**
 	 * Numero de serialisation genere par defaut
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 5604247470620479438L;
+	
 	/**
 	 * JButton d'ajout de mois de bon preventif
 	 */
@@ -184,6 +194,8 @@ public class Form extends JFrame{
 	 */
 	private int monthNumber;
 	
+	private final Collection<JTextComponent> datasToSerialize;
+	
 	/**
 	 * Construteur principal du Form
 	 */
@@ -213,7 +225,7 @@ public class Form extends JFrame{
 		// Taille fenetre
 		this.setSize(700, 600);
 		// Pour fermer l'application lorsque l'on ferme la fenetre
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// Position de la fenetre au centre de l'ecran
 	    this.setLocationRelativeTo(null);
 	    // Couleur de fond de la fenetre
@@ -234,8 +246,130 @@ public class Form extends JFrame{
 		constraint.fill = GridBagConstraints.BOTH;   
 		
 		// Marges autour des titres
-		final Insets titleInset = new Insets(20, 0, 5, 0); 
+		final Insets titleInset = new Insets(20, 0, 5, 0);
 		
+		final JMenuBar menuBar = new JMenuBar();
+		final JMenu menu = new JMenu("Rapport");
+		menu.getAccessibleContext().setAccessibleDescription("Operations sur ce rapport");
+		
+		final JMenuItem newReport = new JMenuItem("Nouveau rapport");
+		newReport.getAccessibleContext().setAccessibleDescription("Créer un nouveau rapport vierge prêt à être éditer");
+		newReport.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {	
+				// Delegation a l'EDT (Event Dispatch Thread) pour la gestion des threads (le formulaire + la barre de progression)
+				new Thread(new Runnable() {
+		            public void run() {
+		                try {
+		                	// Creation du formulaire
+							new Form();
+						} 
+		                catch (Exception e) {
+							e.printStackTrace();
+							// Affichage de l'erreur
+							JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+						}
+		            }
+		        }).start();
+			}
+		});
+		menu.add(newReport);
+		
+		menu.addSeparator();
+		
+		final JMenuItem save = new JMenuItem("Enregistrer partie rédacteur");
+		save.getAccessibleContext().setAccessibleDescription("Sauvegarder la partie rédacteur de ce rapport pour pouvoir être réeditée plus tard");
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				final JFileChooser saveDestination = new JFileChooser();
+				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			            "xml file", "xml");
+				saveDestination.setFileFilter(filter);
+				// Ouverture du JFileChooser et recuperation de la reponse de l'utilisateur
+				final int returnVal = saveDestination.showSaveDialog(mainFrame);
+			    
+				// Si la reponse est une validation
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					try {
+						
+						File selectedDestination = saveDestination.getSelectedFile();
+						// Si le fichier existe deja
+						if (selectedDestination.exists()) {
+							// Demande a l'utilisateur si on doit l'ecraser
+							final int dialogResult = JOptionPane.showConfirmDialog (contentPane, 
+	    							"Le fichier " + selectedDestination.getName() + " existe déjà, voulez-vous l'écraser?",
+	    							"Erreur", JOptionPane.YES_NO_OPTION);
+							// Si l'utilisateur refuse, alors on empeche la creation du rapport
+	    					if(dialogResult == JOptionPane.NO_OPTION){
+	    						return;
+	    					}
+						}
+						else {
+							selectedDestination = new File (saveDestination.getSelectedFile() + ".xml");
+						}
+						xmlSerialization(selectedDestination);
+					}
+					catch (Exception ex) {
+						JOptionPane.showMessageDialog(mainFrame, 
+			    				"Le répertoire choisi est invalide", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
+		});
+		menu.add(save);
+		
+		final JMenuItem load = new JMenuItem("Charger partie rédacteur");
+		load.getAccessibleContext().setAccessibleDescription("Charger la partie rédacteur d'un rapport enregistrée ulterieurement");
+		load.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final JFileChooser loadPath = new JFileChooser();
+				
+				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			            "xml file", "xml");
+				loadPath.setFileFilter(filter);
+				// Ouverture du JFileChooser et recuperation de la reponse de l'utilisateur
+				final int returnVal = loadPath.showOpenDialog(mainFrame);
+			    
+				// Si la reponse est une validation
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					try {
+						xmlUnserialization(loadPath.getSelectedFile());
+					}
+					catch (Exception ex) {
+						JOptionPane.showMessageDialog(mainFrame, 
+			    				"Le répertoire choisi est invalide", "Erreur", 
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
+		});
+		menu.add(load);
+		
+		menu.addSeparator();
+		
+		final JMenuItem exit = new JMenuItem("Quitter");
+		exit.getAccessibleContext().setAccessibleDescription("Quitter l'application");
+		exit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.dispose();
+			}
+		});
+		menu.add(exit);
+		
+		menuBar.add(menu);
+		this.setJMenuBar(menuBar);
+		
+		datasToSerialize = new LinkedList<JTextComponent>();
 		/*-----------------------------------------formulaire redacteur--------------------------------------------*/
 	    
 		// Titre de la partie redacteur du formulaire
@@ -264,7 +398,8 @@ public class Form extends JFrame{
 		// Creation de la zone de texte du nom de taille 15
 		final JTextField writerNameField = new JTextField(15);
 		// Attribution du JLabel du nom a la zone de texte
-		writerName.setLabelFor(writerNameField); 
+		writerName.setLabelFor(writerNameField);
+		datasToSerialize.add(writerNameField);
 		
 		constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -283,6 +418,7 @@ public class Form extends JFrame{
 	    
 	    // Creation de la zone de texte adr de taille 3 en hauteur et 15 en largeur
 	    final JTextArea writerAdrArea = new JTextArea(3, 15);
+	    datasToSerialize.add(writerAdrArea);
 	    
 	    final JScrollPane scrollPaneAdr = new JScrollPane(writerAdrArea);
 	    // Attribution de la zone de texte au label adr
@@ -313,6 +449,7 @@ public class Form extends JFrame{
 			writerPhoneField = new JFormattedTextField(phoneMask);
 			// Attribution d'une valeur par defaut
 			writerPhoneField.setValue("00 00 00 00 00");
+			datasToSerialize.add(writerPhoneField);
 	    }
 	    catch(ParseException e){
 	    	// Exception
@@ -341,7 +478,8 @@ public class Form extends JFrame{
 	    // Creation de la zone de texte email de taille 15
 	    final JTextField writerEmailField = new JTextField(15);
 	    // Attribution de la zone de texte au label email
-	    writerEmail.setLabelFor(writerEmailField); 
+	    writerEmail.setLabelFor(writerEmailField);
+	    datasToSerialize.add(writerEmailField);
 		
 	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -362,6 +500,7 @@ public class Form extends JFrame{
 	    final JTextField writerResponsibleNameField = new JTextField(15);
 	    // Attribution du JLabel au JTextField
 	    writerResponsibleName.setLabelFor(writerResponsibleNameField); 
+	    datasToSerialize.add(writerResponsibleNameField);
 		
 	    constraint.gridx = 1;
 		constraint.gridwidth = GridBagConstraints.REMAINDER;
@@ -3111,13 +3250,13 @@ public class Form extends JFrame{
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										// Ouverture du JFileChooser et recuperation de la reponse de l'utilisateur
-										int returnVal = destinationChooser.showOpenDialog(mainFrame);
+										final int returnVal = destinationChooser.showSaveDialog(mainFrame);
 									    
 										// Si la reponse est une validation
 										if(returnVal == JFileChooser.APPROVE_OPTION) {
 											try {
 												// Affichage du nom du repertoir choisi
-												directoryName.setText(destinationChooser.getSelectedFile().getAbsolutePath());
+												directoryName.setText(destinationChooser.getSelectedFile().getAbsolutePath() + File.separator);
 												
 												// Au cas ou le nom serait assez long, on reajuste la taille du JDialog
 												reportConfig.pack();
@@ -3187,7 +3326,7 @@ public class Form extends JFrame{
 												// Creation du rapport a l'emplacement souhaite + recuperation du nom di fichier
 												// (retour de la fonction CreateReportDocument)
 												filePath = CreateReportDocument.createPdf(datas, 
-														directoryName.getText() + File.separator + 
+														directoryName.getText() + 
 														reportName.getText() + reportFileType.getText(), 
 														IWriteStrategie.DEFAULT_STRATEGIE,
 														pBarFrame);
@@ -3200,6 +3339,8 @@ public class Form extends JFrame{
 												publish(ProgressBarFrame.MY_MAXIMUM);
 												// Indique que l'on a plus besoin du JDialog
 												reportConfig.dispose();
+												
+												stopPdfCreation(pBarFrame);
 											}
 										} 
 										catch (Exception e) {
@@ -3665,5 +3806,56 @@ public class Form extends JFrame{
 		this.setEnabled(true);
 		
 		pBFrame.dispose();
+	}
+	
+	private String xmlSerialization(final File fileToSaveInto) {
+		try {
+			final XMLEncoder xmlEncoder = new XMLEncoder(new BufferedOutputStream(
+			        new FileOutputStream(fileToSaveInto)));
+			
+			xmlEncoder.writeObject(datasToSerialize);
+			
+			xmlEncoder.flush();
+			xmlEncoder.close();
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		return "";
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void xmlUnserialization(final File fileToLoadFrom) {
+		try {
+			final XMLDecoder xmlDecoder = new XMLDecoder(new FileInputStream(fileToLoadFrom));
+			
+        	this.setUnserializedDatas((Collection<JTextComponent>) xmlDecoder.readObject());
+        	
+        	this.revalidate();
+        	this.repaint();
+			
+			xmlDecoder.close();
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	public void setUnserializedDatas (final Collection<JTextComponent> datasToSerialize) {
+		if (this.datasToSerialize.size() != datasToSerialize.size()) {
+			JOptionPane.showMessageDialog(this, "Impossible de charger ces données, versions incompatibles", "Erreur", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		final Iterator<JTextComponent> dataToSet = datasToSerialize.iterator();
+		
+		for (JTextComponent textComponent : this.datasToSerialize) {
+			textComponent.setText(dataToSet.next().getText());
+		}
 	}
 }

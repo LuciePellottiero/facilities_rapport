@@ -24,8 +24,8 @@ public class FileUtilities {
  
 	
 	/**
-	 * Obtient l'objet File d'un fichier a partir de son nom relatif
-	 * @param fileName Le nom (relatif ou absolue) du fichier
+	 * Obtient l'objet File d'un fichier a partir de son nom relati
+	 * @param fileName Le nom relatif du fichier
 	 * @return L'objet File
 	 */ 
 	public static File getResource(final String fileName) { 
