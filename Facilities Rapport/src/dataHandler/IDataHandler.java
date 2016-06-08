@@ -13,17 +13,13 @@ import org.jfree.chart.JFreeChart;
 public interface IDataHandler {
 	
 	/**
-	 * Type de donne String. Utilise pour la lecture des donnees.
+	 * Type des donnees
+	 * @author Lucie PELOTTIERRO
+	 *
 	 */
-	public static final int DATA_TYPE_STRING     = 0;
-	/**
-	 * Type de donne JFreeChart. Utilise pour la lecture des donnees.
-	 */
-	public static final int DATA_TYPE_JFREECHART = 1;
-	/**
-	 * Type de donne Image. Utilise pour la lecture des donnees.
-	 */
-	public static final int DATA_TYPE_IMAGE      = 2;
+	public enum DataType {
+		STRING, IMAGE, JFREECHART
+	}
 
 	/**
 	 * Ajouter une String au stockage des donnees.

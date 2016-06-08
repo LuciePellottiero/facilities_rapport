@@ -105,9 +105,9 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 			// On itere sur le type de donne
 			while (datasTypeIter.hasNext()) {
 			
-				switch ((int)datasTypeIter.next()) {
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
 					// Si c'est une String
-					case IDataHandler.DATA_TYPE_STRING:
+					case STRING:
 						
 						// On obtient le titre
 						/*String stringTitle = (String)datasIter.next();
@@ -150,7 +150,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 						break;
 						
 					// Si c'est un graphe
-					case IDataHandler.DATA_TYPE_JFREECHART :
+					case JFREECHART :
 						
 						// On obtient le PdfContentByte du PdfWriter
 						PdfContentByte contentByte = writer.getDirectContent();
@@ -182,7 +182,7 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 						break;
 						
 					// Si c'est une Image
-					case IDataHandler.DATA_TYPE_IMAGE :
+					case IMAGE :
 						
 						// On obtient l'objet awt.Image (different de IText.Image)
 						java.awt.Image image = (java.awt.Image) datasIter.next();

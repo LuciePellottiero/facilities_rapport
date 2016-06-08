@@ -37,7 +37,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est attrapee
 	 */
-	public static String createPdf (final Collection<IDataHandler> datas, final String reportPathName, final int writeStrategieNumber,
+	public static String createPdf (final Collection<IDataHandler> datas, final String reportPathName, final IWriteStrategie.Strategie strategie,
 			final ProgressBarFrame pBFrame) 
 			throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
@@ -61,9 +61,9 @@ public class CreateReportDocument {
 		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
 		// On cree la strategie que l'on va utiliser pour creer le document
-		switch (writeStrategieNumber) {
+		switch (strategie) {
 			// Strategie par defaut
-			case IWriteStrategie.DEFAULT_STRATEGIE :
+			case DEFAULT :
 				writeStrategie = new DefaultWriteStrategie();
 				break;
 			// Si strategie non reconnue

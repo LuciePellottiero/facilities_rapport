@@ -51,7 +51,7 @@ public class DefaultDataHandler implements IDataHandler {
 	@Override
 	public void addString(final String strToAdd, final String title){
 		// Par defaut, lors de l'ajout de String, on ajoute d'abore le titre suivi de la String avec une seule entree dans dataTypes.
-		dataTypes.add(DATA_TYPE_STRING);
+		dataTypes.add(IDataHandler.DataType.STRING);
 		datas.add(title);
 		datas.add(strToAdd);
 	}
@@ -59,13 +59,13 @@ public class DefaultDataHandler implements IDataHandler {
 	@Override
 	public void addJFreeChart(final JFreeChart chartToAdd){
 
-		dataTypes.add(DATA_TYPE_JFREECHART);
+		dataTypes.add(IDataHandler.DataType.JFREECHART);
 		datas.add(chartToAdd);
 	}
 
 	@Override
 	public void addImage(final Image imageToAdd) {
-		dataTypes.add(DATA_TYPE_IMAGE);
+		dataTypes.add(IDataHandler.DataType.IMAGE);
 		datas.add(imageToAdd);
 	}
 

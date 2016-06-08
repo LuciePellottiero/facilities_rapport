@@ -1,17 +1,17 @@
 Redacteur
-Nom : MEDARD
-Adresse : 57 Les Ombrées Allée Guy de Maupassant
-Téléphone : 06 16 29 34 74
-Email : dark1wador@ymail.com
-Nom du chargé d'affaire : Lucie PELOTTIERRO
-Client
-Nom du site : ef
-Code : sewg
-Adresse : wfse
-Code postal : 00 000
-Ville : wsef
+Nom : dfsdf
+Adresse : esfs
 Téléphone : 00 00 00 00 00
-Email : wsef
+Email : sefefsgsef
+Nom du chargé d'affaire : ef
+Client
+Nom du site : sef
+Code : sef
+Adresse : fse
+Code postal : 00 000
+Ville : sefse
+Téléphone : 00 00 00 00 00
+Email : sefse
 Rapport
 Rapport d'activité : Hebdomadaire
 Date de début : 00/00/0000

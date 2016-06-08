@@ -165,7 +165,7 @@ public class Form extends JFrame{
 	/**
 	 * Nombre de compteur que l'on peut ajouter
 	 */
-	private static final int NUMBER_METER_ALLOWED = 30;
+	private static final int NUMBER_METER_ALLOWED = Integer.MAX_VALUE;
 	
 	/**
 	 * Nombre de mois de demande d'intervention que l'on peut ajouter
@@ -3386,7 +3386,7 @@ public class Form extends JFrame{
 												filePath = CreateReportDocument.createPdf(datas, 
 														directoryName.getText() + 
 														reportName.getText() + reportFileType.getText(), 
-														IWriteStrategie.DEFAULT_STRATEGIE,
+														IWriteStrategie.Strategie.DEFAULT,
 														pBarFrame);
 												
 												// Indique que le rapport a bien ete genere et ou
