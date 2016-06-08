@@ -256,6 +256,7 @@ public class NewStrategie implements IWriteStrategie{
 	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer,
 			ProgressBarFrame pBFrame) throws Exception {
 		
+		// Creation de l'en-tête et pied de page
 		MyFooter event = new MyFooter();
 	    writer.setPageEvent(event);
 	    
@@ -305,27 +306,33 @@ public class NewStrategie implements IWriteStrategie{
 		
 		/*---------page 2, coordonnées client - redacteur-----------*/
 		
-		//passage à la partie suivante : redacteur
-		datasIterator.next();
+		//passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
 		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
 		
-		//on récupère les données pour les mettre ensuite dans un tableau
+		//on recupere les donnees pour les mettre ensuite dans un tableau
 		datasIter.next();
-		Phrase nomRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase nomSiteClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
-		Phrase adresseRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
-		Phrase telRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase adresseClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
-		Phrase emailRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codePostalClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
-		Phrase nomCARedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase villeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase nomClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		//datasIter.next();
+		//Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 	
-		//passage à la partie suivante, client
-		datasIterator.next();
+		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
 		datasTypeIter = currentPartIter.next().iterator();
@@ -336,14 +343,32 @@ public class NewStrategie implements IWriteStrategie{
 		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
 		para.add(Chunk.NEWLINE);
 		
+		//tableau contenant les donnees client et redacteur
 		PdfPTable table = new PdfPTable(2);
+		table.getDefaultCell().setBorder(0);
 		table.addCell("CLIENT");
 		table.addCell("PRESTATAIRE");
+		table.addCell(nomClient);
 		datasIter.next();
 		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(nomRedac);
-		
-		
+		table.addCell(nomSiteClient);
+		datasIter.next();
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(codeClient);
+		datasIter.next();
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(adresseClient);
+		datasIter.next();
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(codePostalClient);
+		datasIter.next();
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(villeClient);
+		table.addCell("");
+		table.addCell(telClient);
+		table.addCell("");
+		table.addCell(emailClient);
+		table.addCell("");
 		para.add(table);
 		
 		

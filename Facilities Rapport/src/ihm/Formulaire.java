@@ -1793,6 +1793,17 @@ public class Formulaire extends JFrame{
 				    		return null;
 				    	}
 				    	else {
+				    		clientPart.addString(textFieldNomClient.getText(), nomClient.getText());      // ville
+				    	}
+				    	
+				    	if (textFieldNomClient.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + nomClient.getText() + "\" de la partie " + titreClient.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
 				    		clientPart.addString(finalTextFieldTelCl.getText(), telCl.getText());      // telephone client
 				    	}
 				    	
