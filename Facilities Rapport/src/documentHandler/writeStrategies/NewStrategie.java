@@ -212,20 +212,6 @@ public class NewStrategie implements IWriteStrategie{
             Phrase header1 = new Phrase("Centre d’Expertises VFPA", footerFont);
             Phrase header2 = new Phrase("Aix en Provence", footerFont);
             Phrase header3 = new Phrase("Support aux Opérations", footerFont);
-            
-            Image img;
-			try {
-				img = Image.getInstance("/Facilities Rapport/Files/Icons/vinciFacilitiesIcon.png");
-			} catch (BadElementException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
             //en-tête position
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
@@ -306,6 +292,7 @@ public class NewStrategie implements IWriteStrategie{
 		// On creer un paragraphe
 		Paragraph para = new Paragraph();
 		
+		/*----------page 1, page de garde--------------*/
 		datasIter.next();
 		para.add(new Phrase ("Rapport d'activité ", baseConcreteFont));
 		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
@@ -316,9 +303,48 @@ public class NewStrategie implements IWriteStrategie{
 		datasIter.next();
 		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
 		
+		/*---------page 2, coordonnées client - redacteur-----------*/
 		
+		//passage à la partie suivante : redacteur
+		datasIterator.next();
+		currentDataPart = datasIterator.next();
+		currentPartIter = currentDataPart.getDataStorage().iterator();
+		datasTypeIter = currentPartIter.next().iterator();
+		datasIter     = currentPartIter.next().iterator();
+		
+		//on récupère les données pour les mettre ensuite dans un tableau
+		datasIter.next();
+		Phrase nomRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase adresseRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase telRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase emailRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		datasIter.next();
+		Phrase nomCARedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+	
+		//passage à la partie suivante, client
+		datasIterator.next();
+		currentDataPart = datasIterator.next();
+		currentPartIter = currentDataPart.getDataStorage().iterator();
+		datasTypeIter = currentPartIter.next().iterator();
+		datasIter     = currentPartIter.next().iterator();
+		
+		//nouvelle page
 		para.add(Chunk.NEXTPAGE);
 		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
+		para.add(Chunk.NEWLINE);
+		
+		PdfPTable table = new PdfPTable(2);
+		table.addCell("CLIENT");
+		table.addCell("PRESTATAIRE");
+		datasIter.next();
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(nomRedac);
+		
+		
+		para.add(table);
 		
 		
 		/*
