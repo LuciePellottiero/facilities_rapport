@@ -21,7 +21,7 @@ public interface IWriteStrategie {
 	 *
 	 */
 	public enum Strategie{
-		DEFAULT
+		DEFAULT, CUSTOMER
 	}
 
 	/**
@@ -33,6 +33,8 @@ public interface IWriteStrategie {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est pas attrapee
 	 */
-	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer, 
+	public boolean writeDocument (final Collection<IDataHandler> datas, final Document document, final PdfWriter writer, 
 			ProgressBarFrame pBFrame) throws Exception;
+	
+	public IDataHandler getDataHandler(final String partTitle);
 }

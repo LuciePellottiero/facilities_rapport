@@ -10,7 +10,6 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import dataHandler.IDataHandler;
-import documentHandler.writeStrategies.DefaultWriteStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
 import ihm.ProgressBarFrame;
 
@@ -37,7 +36,7 @@ public class CreateReportDocument {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est attrapee
 	 */
-	public static String createPdf (final Collection<IDataHandler> datas, final String reportPathName, final IWriteStrategie.Strategie strategie,
+	public static String createPdf (final Collection<IDataHandler> datas, final String reportPathName, final IWriteStrategie strategie,
 			final ProgressBarFrame pBFrame) 
 			throws Exception{
 		// Tout d'abord, on creer le descripteur de ficher (l'objet File)
@@ -54,26 +53,11 @@ public class CreateReportDocument {
 		// Le PdfWriter precise que le document doit etre au format PDF.
 		final PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
-		// Initialisation de la strategie
-		final IWriteStrategie writeStrategie;
-		
 		// On met a jour la barre de progression
-		pBFrame.updateBar(pBFrame.getProgress() + 1);
-		
-		// On cree la strategie que l'on va utiliser pour creer le document
-		switch (strategie) {
-			// Strategie par defaut
-			case DEFAULT :
-				writeStrategie = new DefaultWriteStrategie();
-				break;
-			// Si strategie non reconnue
-			default :
-				throw new Exception ("Unknown strategie type, use final static attributs from IWriteStrategie interface.");
-		}
-		 
+		pBFrame.updateBar(pBFrame.getProgress() + 1);		 
 		
 		// On effectue l'edition du PDF par la strategie
-		writeStrategie.writeDocument(datas, document, pdfWriter, pBFrame);
+		strategie.writeDocument(datas, document, pdfWriter, pBFrame);
 		
 		// On oublie pas de fermer tous les flux
 		pdfWriter.close();

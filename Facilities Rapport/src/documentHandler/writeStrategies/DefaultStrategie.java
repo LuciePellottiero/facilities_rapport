@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import ihm.ProgressBarFrame;
 
@@ -26,23 +27,23 @@ import ihm.ProgressBarFrame;
  * @author Lucie PELLOTTIERO
  *
  */
-public class DefaultWriteStrategie implements IWriteStrategie{
+public class DefaultStrategie implements IWriteStrategie{
 	
 	/**
 	 * La largeur des graphes.
 	 */
-	private int chartWidth;
+	private final int chartWidth;
 	/**
 	 * La hauteur des grahes.
 	 */
-	private int chartHeight;
+	private final int chartHeight;
 	
 	/**
 	 * Le constructeur par defaut.<br>
 	 * chartWidth = 500<br>
 	 * charHeight = 350
 	 */
-	public DefaultWriteStrategie () {
+	public DefaultStrategie () {
 		chartWidth  = 500;
 		chartHeight = 350;
 	}
@@ -232,5 +233,10 @@ public class DefaultWriteStrategie implements IWriteStrategie{
 	
 		// Renvoie de réussite
 		return true;
+	}
+
+	@Override
+	public IDataHandler getDataHandler(String partTitle) {
+		return new DefaultDataHandler(partTitle);
 	}
 }

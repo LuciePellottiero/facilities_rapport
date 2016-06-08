@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,6 +54,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -71,6 +73,8 @@ import org.jfree.data.general.DefaultPieDataset;
 import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
+import documentHandler.writeStrategies.CustomerReport;
+import documentHandler.writeStrategies.DefaultStrategie;
 import documentHandler.writeStrategies.IWriteStrategie;
 import utilities.OperationUtilities;
 import utilities.chartGenerator.DefaultChartGenerator;
@@ -200,6 +204,8 @@ public class Form extends JFrame{
 	 */
 	private final Collection<JTextComponent> datasToSerialize;
 	
+	private IWriteStrategie selectedStrategie;
+	
 	/**
 	 * Construteur principal du Form
 	 */
@@ -252,11 +258,17 @@ public class Form extends JFrame{
 		// Marges autour des titres
 		final Insets titleInset = new Insets(20, 0, 5, 0);
 		
+		// Strategie de creation de rapport
+		final IWriteStrategie customerStrategie = new CustomerReport();
+		final IWriteStrategie defaultStrategie  = new DefaultStrategie();
+		
+		selectedStrategie = customerStrategie;
+		
 		// La barre de menu a mettre sur le Form
 		final JMenuBar menuBar = new JMenuBar();
 		// Le menu qui concerne le rapoort (pas pdf)
-		final JMenu menu = new JMenu("Rapport");
-		menu.getAccessibleContext().setAccessibleDescription("Operations sur ce rapport");
+		final JMenu reportMenu = new JMenu("Rapport");
+		reportMenu.getAccessibleContext().setAccessibleDescription("Operations sur ce rapport");
 		
 		// Creation d'une nouvelle fenetre Form
 		final JMenuItem newReport = new JMenuItem("Nouveau rapport");
@@ -282,9 +294,9 @@ public class Form extends JFrame{
 		        });
 			}
 		});
-		menu.add(newReport);
+		reportMenu.add(newReport);
 		
-		menu.addSeparator();
+		reportMenu.addSeparator();
 		
 		// Permet d'enregistrer les donnees dans la partie redacteur
 		final JMenuItem save = new JMenuItem("Enregistrer partie rédacteur");
@@ -334,7 +346,7 @@ public class Form extends JFrame{
 				}
 			}
 		});
-		menu.add(save);
+		reportMenu.add(save);
 		
 		// Chargement des donnees pour la parties redacteur
 		final JMenuItem load = new JMenuItem("Charger partie rédacteur");
@@ -366,9 +378,9 @@ public class Form extends JFrame{
 				}
 			}
 		});
-		menu.add(load);
+		reportMenu.add(load);
 		
-		menu.addSeparator();
+		reportMenu.addSeparator();
 		
 		// Permet de fermer la fenetre
 		final JMenuItem exit = new JMenuItem("Quitter");
@@ -380,9 +392,28 @@ public class Form extends JFrame{
 				mainFrame.dispose();
 			}
 		});
-		menu.add(exit);
+		reportMenu.add(exit);
 		
-		menuBar.add(menu);
+		menuBar.add(reportMenu);
+		
+		// Menu de choix de strategie
+		final JMenu strategie = new JMenu("Mise en page");
+		// Groupe de JRadioButtonMenuItem
+		final ButtonGroup group = new ButtonGroup();
+		
+		JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem("Rapport pour client", true);
+		// Utilisation des Lambda Expression (java 8)
+		radioButton.addActionListener((ActionEvent e) -> selectedStrategie = customerStrategie);
+		group.add(radioButton);
+		strategie.add(radioButton);
+		
+		radioButton = new JRadioButtonMenuItem("Rapport par défaut", true);
+		// Utilisation des Lambda Expression (java 8)
+		radioButton.addActionListener((ActionEvent e) -> selectedStrategie = defaultStrategie);
+		group.add(radioButton);
+		strategie.add(radioButton);
+		
+		menuBar.add(strategie);
 		this.setJMenuBar(menuBar);
 		
 		// Initialisation de la Collection des donnees a sauvegarder
@@ -2114,7 +2145,7 @@ public class Form extends JFrame{
 				    	
 						/*-----------------Partie Redacteur-----------------*/
 				    	
-				    	IDataHandler writerPart = new DefaultDataHandler(writerTitle.getText());
+				    	IDataHandler writerPart = selectedStrategie.getDataHandler(writerTitle.getText());
 						
 				    	if (writerNameField.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
@@ -2177,7 +2208,7 @@ public class Form extends JFrame{
 				    	
 				    	/*-----------------Partie client-----------------*/
 				    	
-				    	IDataHandler clientPart = new DefaultDataHandler(customerTitle.getText());
+				    	IDataHandler clientPart = selectedStrategie.getDataHandler(customerTitle.getText());
 				    	
 				    	if (siteNameField.getText().equals("")) {
 				    		JOptionPane.showMessageDialog(mainFrame, 
@@ -2298,7 +2329,7 @@ public class Form extends JFrame{
 
 				    	/*-----------------Partie Bons preventifs-----------------*/
 				    	
-				    	IDataHandler preventivesVouchers = new DefaultDataHandler(titreBP.getText());
+				    	IDataHandler preventivesVouchers = selectedStrategie.getDataHandler(titreBP.getText());
 				    	
 				    	Iterator<JComboBox<String>> preventivesVouchersMonthsIter   = preventivesVouchersMonths.iterator();
 				    	Iterator<JTextField>        nbPreventivesVouchersOpenedIter = nbPreventivesVouchersOpened.iterator();
@@ -2423,10 +2454,6 @@ public class Form extends JFrame{
 							}
 				    	}
 				    	
-				    	if (!textAreaCommentaireBP.getText().equals("")) {
-				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
-				    	}
-				    	
 				    	if (preventivesVouchersMonths.size() < monthNumber || preventivesVouchersMonths.size() > monthNumber) {
 				    		final int dialogResult = JOptionPane.showConfirmDialog (contentPane, 
 	    							"Le nombre de mois de " + titreBP.getText() + " (" + preventivesVouchersMonths.size() + 
@@ -2462,6 +2489,10 @@ public class Form extends JFrame{
 					    	
 				    	}
 				    	
+				    	if (!textAreaCommentaireBP.getText().equals("")) {
+				    		preventivesVouchers.addString(textAreaCommentaireBP.getText(), commentaireBP.getText());
+				    	}
+				    	
 				    	if (!preventivesVouchers.isEmpty()) {
 				    		datas.add(preventivesVouchers);
 				    	}
@@ -2472,7 +2503,7 @@ public class Form extends JFrame{
 						
 						fontToFit = 0;
 				    	
-				    	IDataHandler domainPreventivesVouchers = new DefaultDataHandler(titreBPDomaine.getText());
+				    	IDataHandler domainPreventivesVouchers = selectedStrategie.getDataHandler(titreBPDomaine.getText());
 				    	
 				    	// On obtient l'iterator des domaines
 				    	Iterator<JCheckBox> domainsIter = preventiveVoucherDomains.iterator();
@@ -2626,6 +2657,10 @@ public class Form extends JFrame{
 										JOptionPane.WARNING_MESSAGE);
 							}
 				    		
+				    		if (!textAreaCommentaireBPDomaine.getText().equals("")) {
+				    			domainPreventivesVouchers.addString(textAreaCommentaireBPDomaine.getText(), commentaireBPDomaine.getText());
+				    		}
+				    		
 				    		datas.add(domainPreventivesVouchers);
 				    		
 							publish(pBarFrame.getProgress() + incrementUnit);
@@ -2651,7 +2686,7 @@ public class Form extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree1 = new DefaultDataHandler(currentTree.getTitleTextField().getText());
+				    		IDataHandler freeTree1 = selectedStrategie.getDataHandler(currentTree.getTitleTextField().getText());
 				    		
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		
@@ -2692,10 +2727,6 @@ public class Form extends JFrame{
 				    			}
 				    		}
 				    		
-				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
-				    			freeTree1.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
-				    		}
-				    		
 				    		if (isElement) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
@@ -2712,6 +2743,10 @@ public class Form extends JFrame{
 								}
 				    		}
 				    		
+				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
+				    			freeTree1.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
+				    		}
+				    		
 				    		datas.add(freeTree1);
 				    	}
 				    	
@@ -2721,7 +2756,7 @@ public class Form extends JFrame{
 						
 						fontToFit = 0;
 
-				    	IDataHandler interventionDemand = new DefaultDataHandler(titreDI.getText());
+				    	IDataHandler interventionDemand = selectedStrategie.getDataHandler(titreDI.getText());
 				    	
 				    	barChartDatas = new DefaultCategoryDataset();
 				    	
@@ -2749,10 +2784,6 @@ public class Form extends JFrame{
 					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", 
 					    				currentInterventionMonths.getSelectedItem().toString());
 					    	}	
-				    	}
-				    	
-				    	if (!textAreaCommentaireDI.getText().equals("")) {
-				    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
 				    	}
 				    	
 				    	if (interventionMonths.size() < monthNumber || interventionMonths.size() > monthNumber) {
@@ -2787,6 +2818,10 @@ public class Form extends JFrame{
 										JOptionPane.WARNING_MESSAGE);
 							}
 					    	
+					    	if (!textAreaCommentaireDI.getText().equals("")) {
+					    		interventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+					    	}
+					    	
 					    	datas.add(interventionDemand);
 				    	}
 				    	 	
@@ -2796,7 +2831,7 @@ public class Form extends JFrame{
 						
 						fontToFit = 0;
 				    	
-				    	IDataHandler stateInterventionDemand = new DefaultDataHandler(titreDIEtat.getText());
+				    	IDataHandler stateInterventionDemand = selectedStrategie.getDataHandler(titreDIEtat.getText());
 				    	
 				    	
 				    	pieChartDatas = new DefaultPieDataset();
@@ -2866,10 +2901,6 @@ public class Form extends JFrame{
 				    		}
 				    	}
 				    	
-				    	if (!textAreaCommentaireDI.getText().equals("")) {
-				    		stateInterventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
-				    	}
-				    	
 				    	if (pieChartDatas.getItemCount() > 0) {
 				    		
 				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
@@ -2897,6 +2928,10 @@ public class Form extends JFrame{
 								stopPdfCreation(pBarFrame);
 							}
 				    		
+				    		if (!textAreaCommentaireDI.getText().equals("")) {
+					    		stateInterventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
+					    	}
+				    		
 				    		datas.add(stateInterventionDemand);
 				    		
 							publish(pBarFrame.getProgress() + incrementUnit);
@@ -2906,7 +2941,7 @@ public class Form extends JFrame{
 				    	
 				    	fontToFit = 0;
 				    	
-				    	IDataHandler domainInterventionDemand = new DefaultDataHandler(titreDIDomaine.getText());
+				    	IDataHandler domainInterventionDemand = selectedStrategie.getDataHandler(titreDIDomaine.getText());
 				    	
 				    	// On obtient l'iterator des domaines
 				    	Iterator<JCheckBox> interventionDomainsIter = interventionDomains.iterator();
@@ -2995,10 +3030,6 @@ public class Form extends JFrame{
 				    		}
 				    	}		
 				    	
-				    	if (!textAreaComDIDomaine.getText().equals("")) {
-				    		domainInterventionDemand.addString(textAreaComDIDomaine.getText(), commentaireDIDomaine.getText());
-				    	}
-				    	
 				    	if (!pourcentages.isEmpty()) {
 				    		
 				    		if (total < 100) {
@@ -3041,6 +3072,10 @@ public class Form extends JFrame{
 								stopPdfCreation(pBarFrame);
 							}
 				    		
+				    		if (!textAreaComDIDomaine.getText().equals("")) {
+					    		domainInterventionDemand.addString(textAreaComDIDomaine.getText(), commentaireDIDomaine.getText());
+					    	}
+				    		
 				    		datas.add(domainInterventionDemand);
 				    		
 							publish(pBarFrame.getProgress() + incrementUnit);
@@ -3065,7 +3100,7 @@ public class Form extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree = new DefaultDataHandler(currentTree.getTitleTextField().getText());
+				    		IDataHandler freeTree = selectedStrategie.getDataHandler(currentTree.getTitleTextField().getText());
 				    		
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		
@@ -3106,10 +3141,6 @@ public class Form extends JFrame{
 				    			}
 				    		}
 				    		
-				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
-				    			freeTree.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
-				    		}
-				    		
 				    		if (barChartDatas.getColumnCount() > 0) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
@@ -3124,6 +3155,10 @@ public class Form extends JFrame{
 											+ e.getMessage(), "Erreur", 
 											JOptionPane.WARNING_MESSAGE);
 								}
+				    		}
+				    		
+				    		if (!currentTree.getTextAreaComment().getText().equals("")) {
+				    			freeTree.addString(currentTree.getTextAreaComment().getText(), "Commentaire : ");
 				    		}
 				    		
 				    		datas.add(freeTree);
@@ -3141,7 +3176,7 @@ public class Form extends JFrame{
 						
 						while (meterIter.hasNext()) {
 							
-							IDataHandler currentMeterData = new DefaultDataHandler(meterTitle.getText());
+							IDataHandler currentMeterData = selectedStrategie.getDataHandler(meterTitle.getText());
 							
 							barChartDatas = new DefaultCategoryDataset();
 							
@@ -3221,10 +3256,6 @@ public class Form extends JFrame{
 		    					
 		    					++counter;
 		    				}
-							
-							if (!currentMeter.getTextAreaCommentaire().getText().equals("")) {
-								currentMeterData.addString(currentMeter.getTextAreaCommentaire().getText(), "Commentaire : ");
-							}
 								
 							if (barChartDatas.getColumnCount() > 0) {
 					    		try {
@@ -3241,6 +3272,10 @@ public class Form extends JFrame{
 											JOptionPane.WARNING_MESSAGE);
 								}
 				    		}
+							
+							if (!currentMeter.getTextAreaCommentaire().getText().equals("")) {
+								currentMeterData.addString(currentMeter.getTextAreaCommentaire().getText(), "Commentaire : ");
+							}
 							
 							if (!currentMeterData.isEmpty()) {
 								datas.add(currentMeterData);
@@ -3386,7 +3421,7 @@ public class Form extends JFrame{
 												filePath = CreateReportDocument.createPdf(datas, 
 														directoryName.getText() + 
 														reportName.getText() + reportFileType.getText(), 
-														IWriteStrategie.Strategie.DEFAULT,
+														selectedStrategie,
 														pBarFrame);
 												
 												// Indique que le rapport a bien ete genere et ou
