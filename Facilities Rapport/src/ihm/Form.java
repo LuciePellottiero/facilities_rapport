@@ -358,8 +358,9 @@ public class Form extends JFrame{
 						xmlUnserialization(loadPath.getSelectedFile());
 					}
 					catch (Exception ex) {
+						ex.printStackTrace();
 						JOptionPane.showMessageDialog(mainFrame, 
-			    				"Le répertoire choisi est invalide", "Erreur", 
+			    				"Le répertoire ou le fichier choisi est invalide", "Erreur", 
 								JOptionPane.WARNING_MESSAGE);
 					}
 				}
