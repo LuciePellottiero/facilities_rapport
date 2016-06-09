@@ -70,7 +70,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import dataHandler.DefaultDataHandler;
 import dataHandler.IDataHandler;
 import documentHandler.CreateReportDocument;
 import documentHandler.writeStrategies.CustomerReport;
@@ -385,13 +384,7 @@ public class Form extends JFrame{
 		// Permet de fermer la fenetre
 		final JMenuItem exit = new JMenuItem("Quitter");
 		exit.getAccessibleContext().setAccessibleDescription("Quitter l'application");
-		exit.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mainFrame.dispose();
-			}
-		});
+		exit.addActionListener((ActionEvent e) -> mainFrame.dispose());
 		reportMenu.add(exit);
 		
 		menuBar.add(reportMenu);
@@ -2143,6 +2136,138 @@ public class Form extends JFrame{
 				    	// On prepare les donnees
 				    	Collection<IDataHandler> datas = new ArrayList<IDataHandler>();
 				    	
+				    	/*-----------------Partie Rapport-----------------*/
+				    	
+				    	IDataHandler reportPart = selectedStrategie.getDataHandler(titreRapport.getText());
+						
+						reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
+						
+				    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
+				    	}
+				    	
+				    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
+				    	}
+				    	
+				    	datas.add(reportPart);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+				    	
+				    	/*-----------------Partie client-----------------*/
+				    	
+				    	IDataHandler clientPart = selectedStrategie.getDataHandler(customerTitle.getText());
+				    	
+				    	if (siteNameField.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + siteName.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(siteNameField.getText(), siteName.getText());    // nom
+				    	}
+				    	
+				    	if (codeField.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + code.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(codeField.getText(), code.getText());       // code
+				    	}
+				    	
+				    	if (customerAdrArea.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + customerAdr.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(customerAdrArea.getText(), customerAdr.getText());      // adresse
+				    	}
+				    	
+				    	if (finalPostalCodeField.getValue().equals("      ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + postalCode.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(finalPostalCodeField.getText(), postalCode.getText()); // code postal
+				    	}
+				    	
+				    	if (cityField.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + city.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(cityField.getText(), city.getText());      // ville
+				    	}
+				    	
+				    	if (customerNameField.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + customerName.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(customerNameField.getText(), customerName.getText());    // email client
+				    	}
+				    	
+				    	if (finalTextFieldTelCl.getValue().equals("              ")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + customerPhone.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(finalTextFieldTelCl.getText(), customerPhone.getText());      // telephone client
+				    	}
+				    	
+				    	if (customerMailField.getText().equals("")) {
+				    		JOptionPane.showMessageDialog(mainFrame, 
+				    				"le champs \"" + customerMail.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
+									JOptionPane.WARNING_MESSAGE);
+				    		stopPdfCreation(pBarFrame);
+				    		return null;
+				    	}
+				    	else {
+				    		clientPart.addString(customerMailField.getText(), customerMail.getText());    // email client
+				    	}
+				    	
+				    	if (logoIcon != null) {
+				    		clientPart.addImage(logoIcon.getImage());
+				    	}
+				    	
+				    	datas.add(clientPart);
+				    	
+						publish(pBarFrame.getProgress() + incrementUnit);
+						
 						/*-----------------Partie Redacteur-----------------*/
 				    	
 				    	IDataHandler writerPart = selectedStrategie.getDataHandler(writerTitle.getText());
@@ -2205,127 +2330,6 @@ public class Form extends JFrame{
 				    	datas.add(writerPart);
 
 				    	publish(pBarFrame.getProgress() + incrementUnit);
-				    	
-				    	/*-----------------Partie client-----------------*/
-				    	
-				    	IDataHandler clientPart = selectedStrategie.getDataHandler(customerTitle.getText());
-				    	
-				    	if (siteNameField.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + siteName.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(siteNameField.getText(), siteName.getText());    // nom
-				    	}
-				    	
-				    	if (codeField.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + code.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(codeField.getText(), code.getText());       // code
-				    	}
-				    	
-				    	if (customerAdrArea.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + customerAdr.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(customerAdrArea.getText(), customerAdr.getText());      // adresse
-				    	}
-				    	
-				    	if (finalPostalCodeField.getValue().equals("      ")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + postalCode.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(finalPostalCodeField.getText(), postalCode.getText()); // code postal
-				    	}
-				    	
-				    	if (cityField.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + city.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(cityField.getText(), city.getText());      // ville
-				    	}
-				    	
-				    	if (finalTextFieldTelCl.getValue().equals("              ")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + customerPhone.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(finalTextFieldTelCl.getText(), customerPhone.getText());      // telephone client
-				    	}
-				    	
-				    	if (customerMailField.getText().equals("")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + customerMail.getText() + "\" de la partie " + customerTitle.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		clientPart.addString(customerMailField.getText(), customerMail.getText());    // email client
-				    	}
-				    	
-				    	if (logoIcon != null) {
-				    		clientPart.addImage(logoIcon.getImage());
-				    	}
-				    	
-				    	datas.add(clientPart);
-				    	
-						publish(pBarFrame.getProgress() + incrementUnit);
-				    	
-				    	/*-----------------Partie Rapport-----------------*/
-				    	
-				    	IDataHandler reportPart = new DefaultDataHandler(titreRapport.getText());
-						
-						reportPart.addString(comboBoxRapport.getSelectedItem().toString(), rapportActivite.getText()); // Type de rapport
-						
-				    	if (finalTextFieldDateDebut.getText().equals("  /  /    ")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + dateDebut.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		reportPart.addString(finalTextFieldDateDebut.getText(), dateDebut.getText());
-				    	}
-				    	
-				    	if (finalTextFieldDateFin.getText().equals("  /  /    ")) {
-				    		JOptionPane.showMessageDialog(mainFrame, 
-				    				"le champs \"" + dateFin.getText() + "\" de la partie " + titreRapport.getText() + " doit être remplis", "Erreur", 
-									JOptionPane.WARNING_MESSAGE);
-				    		stopPdfCreation(pBarFrame);
-				    		return null;
-				    	}
-				    	else {
-				    		reportPart.addString(finalTextFieldDateFin.getText(), dateFin.getText());
-				    	}
-				    	
-				    	datas.add(reportPart);
-				    	
-						publish(pBarFrame.getProgress() + incrementUnit);
 
 				    	/*-----------------Partie Bons preventifs-----------------*/
 				    	

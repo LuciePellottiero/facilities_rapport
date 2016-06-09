@@ -54,7 +54,7 @@ public class CreateReportDocument {
 		final PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfReport));
 		
 		// On met a jour la barre de progression
-		pBFrame.updateBar(pBFrame.getProgress() + 1);		 
+		pBFrame.updateBar(pBFrame.getProgress() + 1);
 		
 		// On effectue l'edition du PDF par la strategie
 		strategie.writeDocument(datas, document, pdfWriter, pBFrame);
