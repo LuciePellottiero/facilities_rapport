@@ -159,22 +159,6 @@ public class CustomerReport implements IWriteStrategie{
 		Phrase nomClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
-		
-		para.add(nomSiteClient);
-		para.add(codeClient);
-		para.add(adresseClient);
-		para.add(codePostalClient);
-		para.add(villeClient);
-		para.add(nomClient);
-		para.add(telClient);
-		para.add(emailClient);
-		
-		Paragraph para1 = new Paragraph();
-		
-		para1.add("BORDER DE MERDE TU VA MARCHER OUI!");
-		document.add(para1);
-		
-		System.out.println("nom Client : " + nomClient);
 	
 		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
