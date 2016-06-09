@@ -1,7 +1,9 @@
 package documentHandler.writeStrategies;
 
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -14,10 +16,12 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Header;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -26,6 +30,8 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -205,10 +211,15 @@ public class NewStrategie implements IWriteStrategie{
 		return true;
 	}
 	
+	
+	
 	//en-tête et pied de page
 	class MyFooter extends PdfPageEventHelper {
         Font footerFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
         Font colorFooterFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
+		
+        String logoVinciPath = "Facilities Rapport" + File.separator + "Files" + File.separator + "Icons" + File.separator + "vinciFacilitiesIcon.png";
+		java.awt.Image logoVinci = Toolkit.getDefaultToolkit().getImage(logoVinciPath);
 		
         public void onStartPage(PdfWriter writer, Document document) {
             PdfContentByte cb = writer.getDirectContent();
@@ -218,7 +229,9 @@ public class NewStrategie implements IWriteStrategie{
             Phrase header2 = new Phrase("Aix en Provence", footerFont);
             Phrase header3 = new Phrase("Support aux Opérations", footerFont);
 			
+            
             //en-tête position
+            //logoVinci.setAbsolutePosition((PageSize.POSTCARD.getWidth() / 2), 22);
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
                     header1,
                     document.right() - document.rightMargin() - 30,
@@ -273,14 +286,12 @@ public class NewStrategie implements IWriteStrategie{
 		// Creation de la font concrete
 	    Font baseConcreteFont = new Font (basefont, 12, Font.NORMAL);
 	    
-		// On creer un Iterator pour les donnees
+		// On cre un Iterator pour les donnees
 		Iterator<IDataHandler> datasIterator = datas.iterator();
 		
 		int counter = pBFrame.getProgress();
 		
 		int progressIncrement = ProgressBarFrame.MY_MAXIMUM - counter / datas.size();
-		
-		
 		
 		Paragraph paragraph1 = new Paragraph("First paragraph");
         Paragraph paragraph2 = new Paragraph("Second paragraph");
@@ -295,21 +306,17 @@ public class NewStrategie implements IWriteStrategie{
 		Iterator<Object> datasIter     = currentPartIter.next().iterator();
 		
 		
-		// On creer un paragraphe
+		// On cre un paragraphe
 		Paragraph para = new Paragraph();
 		
-		/*----------page 1, page de garde--------------*/
+		//donnees rapport
 		datasIter.next();
-		para.add(new Phrase ("Rapport d'activité ", baseConcreteFont));
-		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		para.add(Chunk.NEWLINE);
+		Phrase titreRapport = new Phrase ("Rapport d'activité " + (String)datasIter.next() , baseConcreteFont);
 		datasIter.next();
-		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		para.add(new Phrase (" au ", baseConcreteFont));
+		String dateDebut = new String((String)datasIter.next());
 		datasIter.next();
-		para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		
-		/*---------page 2, coordonnées client - redacteur-----------*/
+		String dateFin = new String((String)datasIter.next());
+		Phrase date = new Phrase (dateDebut + " au " + dateFin, baseConcreteFont);
 		
 		//passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
@@ -317,9 +324,9 @@ public class NewStrategie implements IWriteStrategie{
 		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
 		
-		//on recupere les donnees pour les mettre ensuite dans un tableau
+		//donnees client
 		datasIter.next();
-		Phrase nomSiteClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		nomSiteClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
 		Phrase codeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
@@ -335,12 +342,38 @@ public class NewStrategie implements IWriteStrategie{
 		datasIter.next();
 		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		logoClient = (java.awt.Image) datasIter.next();
-	
+		
 		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
 		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
+		
+		/*-----------------------------page 1, page de garde------------------------------*/
+		
+		PdfContentByte cb = writer.getDirectContent();
+		
+		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+				nomSiteClient,
+                (document.right() - document.left()) / 2 + document.leftMargin(),
+                document.top() - 200, 0);
+		
+		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+				 titreRapport,
+                 (document.right() - document.left()) / 2 + document.leftMargin(),
+                 document.top() - 230, 0);
+		
+		Image.getInstance(logoClient, null);
+		
+		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+				date,
+                (document.right() - document.left()) / 2 + document.leftMargin(),
+                document.top() - 400, 0);
+		
+		
+		/*---------page 2, coordonnées client - redacteur-----------*/
+		
+		
 		
 		//nouvelle page
 		para.add(Chunk.NEXTPAGE);
@@ -400,7 +433,66 @@ public class NewStrategie implements IWriteStrategie{
 		
 		para.add(table);
 		
+		/*---------------------------------partie preventif-------------------------------------------*/
 		
+		//nouvelle page, titre preventif
+		para.add(Chunk.NEXTPAGE);
+		Phrase titrePreventif = new Phrase ("Préventif", baseConcreteFont);
+		para.add(titrePreventif);
+		
+		
+		para.add(Chunk.NEXTPAGE);
+		
+		
+		// On itere sur les parties
+		while (datasIterator.hasNext()) {
+			currentDataPart = datasIterator.next();
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter = currentPartIter.next().iterator();
+			datasIter     = currentPartIter.next().iterator();
+			
+			para.add(Chunk.NEWLINE);
+			
+				
+			while (datasTypeIter.hasNext()) {
+			
+				switch ((int)datasTypeIter.next()) {
+					case IDataHandler.DATA_TYPE_STRING:
+						
+						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case IDataHandler.DATA_TYPE_JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+		}
 		/*
 		// On itere sur les parties
 		while (datasIterator.hasNext()) {
