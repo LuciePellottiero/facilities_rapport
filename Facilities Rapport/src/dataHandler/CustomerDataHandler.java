@@ -6,13 +6,8 @@ import java.util.Collection;
 
 import org.jfree.chart.JFreeChart;
 
-/**
- * Cette classe permet de gerer les String, les Image et les JFreeChart lors de la creation du rapport PDF./n
- * Par défaut, un DefaultDataHandler représente une partie du rapport.
- * @author Lucie PELLOTIERRO
- *
- */
-public class DefaultDataHandler implements IDataHandler {
+public class CustomerDataHandler implements IDataHandler {
+
 	/**
 	 * Le titre de la partie
 	 */
@@ -35,7 +30,7 @@ public class DefaultDataHandler implements IDataHandler {
 	 * Le constructeur
 	 * @param partTitle Le titre de la partie
 	 */
-	public DefaultDataHandler(final String partTitle) {
+	public CustomerDataHandler(final String partTitle) {
 		// Initialisations
 		this.partTitle = partTitle;
 		dataStorage = new ArrayList<Collection<Object>>();
@@ -50,9 +45,8 @@ public class DefaultDataHandler implements IDataHandler {
 
 	@Override
 	public void addString(final String strToAdd, final String title){
-		// Par defaut, lors de l'ajout de String, on ajoute d'abore le titre suivi de la String avec une seule entree dans dataTypes.
+		// Pour le rapport, lors de l'ajout de String, on ajoute juste la donnee avec le DataType
 		dataTypes.add(IDataHandler.DataType.STRING);
-		datas.add(title);
 		datas.add(strToAdd);
 	}
 
@@ -83,4 +77,5 @@ public class DefaultDataHandler implements IDataHandler {
 	public boolean isEmpty() {
 		return (dataTypes.isEmpty() && datas.isEmpty());
 	}
+
 }

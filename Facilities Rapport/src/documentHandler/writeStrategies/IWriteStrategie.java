@@ -16,10 +16,14 @@ import ihm.ProgressBarFrame;
 public interface IWriteStrategie {
 	
 	/**
-	 * Identifiant de la strategie par defaut
+	 * Les strategies utilisables
+	 * @author Lucie PELOTTIERRO
+	 *
 	 */
-	public static final int DEFAULT_STRATEGIE = 0;
-	
+	public enum Strategie{
+		DEFAULT, CUSTOMER
+	}
+
 	/**
 	 * Edite le Document avec les donnees en se servant du PdfWriter tout en mettant a jour la ProgressBar
 	 * @param datas Les donnees a mettre dans le Document
@@ -29,6 +33,8 @@ public interface IWriteStrategie {
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est pas attrapee
 	 */
-	public boolean writeDocument (Collection<IDataHandler> datas, Document document, PdfWriter writer, 
+	public boolean writeDocument (final Collection<IDataHandler> datas, final Document document, final PdfWriter writer, 
 			ProgressBarFrame pBFrame) throws Exception;
+	
+	public IDataHandler getDataHandler(final String partTitle);
 }

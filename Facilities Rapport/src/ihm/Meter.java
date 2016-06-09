@@ -176,7 +176,7 @@ public class Meter extends JPanel{
 		addMonth = new JButton(ADD_BUTTON_TEXT[0]);
 		// Tentative d'ajout de l'ImageIcon au JButton addMonth
         // Tentative d'obtiention de l'image
-		addElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[1]);
+		addElementIcon = new ImageIcon(Form.ICONS_PATH + File.separator + Form.ICONS_NAME[1]);
 		// Si l'image n'a pas d'erreur
 	    if (addElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
 	    	// Definition de la hauteur de l'image en fonction de la taille du JButton
@@ -301,7 +301,7 @@ public class Meter extends JPanel{
 		
 		// Tentative d'ajout de l'ImageIcon au JButton addMonth
         // Tentative d'obtiention de l'image
-		final ImageIcon deleteElementIcon = new ImageIcon(Formulaire.ICONS_PATH + File.separator + Formulaire.ICONS_NAME[4]);
+		final ImageIcon deleteElementIcon = new ImageIcon(Form.ICONS_PATH + File.separator + Form.ICONS_NAME[4]);
 		// Si l'image n'a pas d'erreur
 	    if (deleteElementIcon.getImageLoadStatus() != MediaTracker.ERRORED) {
 	    	// Definition de la hauteur de l'image en fonction de la taille du JButton
