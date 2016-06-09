@@ -55,9 +55,6 @@ public class NewStrategie implements IWriteStrategie{
 		chartHeight = 350;
 	}
 	
-	private Phrase nomSiteClient;
-	private java.awt.Image logoClient;
-	
 	
 	/**
 	 * Fonction d'edition de document
@@ -211,14 +208,15 @@ public class NewStrategie implements IWriteStrategie{
 		return true;
 	}
 	
-	
+	/*------------------------------------------------------------------------------------------------------------------------------*/
 	
 	//en-tête et pied de page
 	class MyFooter extends PdfPageEventHelper {
         Font footerFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
         Font colorFooterFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
 		
-        String logoVinciPath = "Facilities Rapport" + File.separator + "Files" + File.separator + "Icons" + File.separator + "vinciFacilitiesIcon.png";
+        String logoVinciPath = "Facilities Rapport" + File.separator + "Files" + File.separator + 
+        		"Icons" + File.separator + "vinciFacilitiesIcon.png";
 		java.awt.Image logoVinci = Toolkit.getDefaultToolkit().getImage(logoVinciPath);
 		
         public void onStartPage(PdfWriter writer, Document document) {
@@ -228,10 +226,14 @@ public class NewStrategie implements IWriteStrategie{
             Phrase header1 = new Phrase("Centre d’Expertises VFPA", footerFont);
             Phrase header2 = new Phrase("Aix en Provence", footerFont);
             Phrase header3 = new Phrase("Support aux Opérations", footerFont);
-			
+            Phrase provisoire = new Phrase("logo vinci", footerFont);
             
             //en-tête position
             //logoVinci.setAbsolutePosition((PageSize.POSTCARD.getWidth() / 2), 22);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
+            		provisoire,
+                    document.left() + document.leftMargin() - 60,
+                    document.top() + 20, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,
                     header1,
                     document.right() - document.rightMargin() - 30,
@@ -268,8 +270,11 @@ public class NewStrategie implements IWriteStrategie{
                     (document.right() - document.left()) / 2 + document.leftMargin(),
                     document.bottom() - 30, 0);
         }
-    }
+    }//fin MyFooter
 
+	
+	
+	
 	@Override
 	public boolean writeDocument(Collection<IDataHandler> datas, Document document, PdfWriter writer,
 			ProgressBarFrame pBFrame) throws Exception {
@@ -285,6 +290,9 @@ public class NewStrategie implements IWriteStrategie{
 	    BaseFont basefont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
 		// Creation de la font concrete
 	    Font baseConcreteFont = new Font (basefont, 12, Font.NORMAL);
+	    Font basicTitleFont = new Font (basefont, 18, Font.NORMAL);
+	    Font mainTitleFont = new Font (basefont, 35, Font.NORMAL);
+	    Font firstPageFont = new Font (basefont, 26, Font.NORMAL);
 	    
 		// On cre un Iterator pour les donnees
 		Iterator<IDataHandler> datasIterator = datas.iterator();
@@ -292,12 +300,6 @@ public class NewStrategie implements IWriteStrategie{
 		int counter = pBFrame.getProgress();
 		
 		int progressIncrement = ProgressBarFrame.MY_MAXIMUM - counter / datas.size();
-		
-		Paragraph paragraph1 = new Paragraph("First paragraph");
-        Paragraph paragraph2 = new Paragraph("Second paragraph");
-        document.add(paragraph1);
-        document.add(paragraph2);
-        document.add(Chunk.NEWLINE);
 		
         IDataHandler currentDataPart = datasIterator.next();
 		Iterator<Collection<Object>> currentPartIter = currentDataPart.getDataStorage().iterator();
@@ -309,14 +311,15 @@ public class NewStrategie implements IWriteStrategie{
 		// On cre un paragraphe
 		Paragraph para = new Paragraph();
 		
+		/*-----------------recuperation des données---------------*/
 		//donnees rapport
 		datasIter.next();
-		Phrase titreRapport = new Phrase ("Rapport d'activité " + (String)datasIter.next() , baseConcreteFont);
+		Phrase titreRapport = new Phrase ("Rapport d'activité " + (String)datasIter.next() , firstPageFont);
 		datasIter.next();
 		String dateDebut = new String((String)datasIter.next());
 		datasIter.next();
 		String dateFin = new String((String)datasIter.next());
-		Phrase date = new Phrase (dateDebut + " au " + dateFin, baseConcreteFont);
+		Phrase date = new Phrase (dateDebut + " au " + dateFin, firstPageFont);
 		
 		//passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
@@ -326,7 +329,8 @@ public class NewStrategie implements IWriteStrategie{
 		
 		//donnees client
 		datasIter.next();
-		nomSiteClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		String siteClient = new String((String)datasIter.next());
+		Phrase nomSiteClient = (new Phrase (siteClient, baseConcreteFont));
 		datasIter.next();
 		Phrase codeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
@@ -341,7 +345,7 @@ public class NewStrategie implements IWriteStrategie{
 		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
 		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
-		logoClient = (java.awt.Image) datasIter.next();
+		java.awt.Image logoClient = (java.awt.Image) datasIter.next();
 		
 		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
@@ -353,8 +357,9 @@ public class NewStrategie implements IWriteStrategie{
 		
 		PdfContentByte cb = writer.getDirectContent();
 		
+		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-				nomSiteClient,
+				titrePrincipal,
                 (document.right() - document.left()) / 2 + document.leftMargin(),
                 document.top() - 200, 0);
 		
@@ -371,13 +376,15 @@ public class NewStrategie implements IWriteStrategie{
                 document.top() - 400, 0);
 		
 		
-		/*---------page 2, coordonnées client - redacteur-----------*/
+		/*---------page 2, coordonnees client - redacteur-----------*/
 		
 		
 		
 		//nouvelle page
 		para.add(Chunk.NEXTPAGE);
-		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
+		para.add(Chunk.NEWLINE);
+		para.add(new Phrase ("Pilotage du marché multitechnique", basicTitleFont));
+		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		
 		//paragraphe contenant les donnees client 
@@ -424,8 +431,10 @@ public class NewStrategie implements IWriteStrategie{
 		PdfPTable table = new PdfPTable(2); //tableau de deux colonnes
 		table.getDefaultCell().setBorder(0); //pas de bordure
 		
-		table.addCell("CLIENT");
-		table.addCell("PRESTATAIRE");
+		Phrase titreClient = new Phrase ("CLIENT", basicTitleFont);
+		Phrase titrePrestataire = new Phrase ("PRESTATAIRE", basicTitleFont);
+		table.addCell(titreClient);
+		table.addCell(titrePrestataire);
 		table.addCell(Image.getInstance(logoClient, null));
 		table.addCell(logoVinci);
 		table.addCell(paraClient);
@@ -437,7 +446,7 @@ public class NewStrategie implements IWriteStrategie{
 		
 		//nouvelle page, titre preventif
 		para.add(Chunk.NEXTPAGE);
-		Phrase titrePreventif = new Phrase ("Préventif", baseConcreteFont);
+		Phrase titrePreventif = new Phrase ("Préventif", mainTitleFont);
 		para.add(titrePreventif);
 		
 		
@@ -564,7 +573,7 @@ public class NewStrategie implements IWriteStrategie{
 			
 			// On ajout le paragraphe au document
 			document.add(para);
-			document.newPage();
+			//document.newPage();
 			
 			final int finalCounter = counter + progressIncrement;
 	
