@@ -1,6 +1,7 @@
 package documentHandler.writeStrategies;
 
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -47,6 +48,10 @@ public class NewStrategie implements IWriteStrategie{
 		chartWidth  = 500;
 		chartHeight = 350;
 	}
+	
+	private Phrase nomSiteClient;
+	private java.awt.Image logoClient;
+	
 	
 	/**
 	 * Fonction d'edition de document
@@ -329,8 +334,7 @@ public class NewStrategie implements IWriteStrategie{
 		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
 		datasIter.next();
 		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
-		//datasIter.next();
-		//Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		logoClient = (java.awt.Image) datasIter.next();
 	
 		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
@@ -343,32 +347,57 @@ public class NewStrategie implements IWriteStrategie{
 		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
 		para.add(Chunk.NEWLINE);
 		
+		//paragraphe contenant les donnees client 
+		Paragraph paraClient = new Paragraph();
+		paraClient.add(nomClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(nomSiteClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(codeClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(adresseClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(codePostalClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(villeClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add("Tél : ");
+		paraClient.add(telClient);
+		paraClient.add(Chunk.NEWLINE);
+		paraClient.add(emailClient);
+        
+		//paragraphe contenant les donnees redacteur
+		Paragraph paraRedac = new Paragraph();
+		datasIter.next();
+		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(Chunk.NEWLINE);
+		datasIter.next();
+		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(Chunk.NEWLINE);
+		datasIter.next();
+		paraRedac.add("Tél : ");
+		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(Chunk.NEWLINE);
+		datasIter.next();
+		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(Chunk.NEWLINE);
+		datasIter.next();
+		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		
+		String logoVinciPath = "Facilities Rapport" + File.separator + "Files" + File.separator + "Icons" + File.separator + "vinciFacilitiesIcon.png";
+		Image logoVinci = Image.getInstance(logoVinciPath);
+		
 		//tableau contenant les donnees client et redacteur
-		PdfPTable table = new PdfPTable(2);
-		table.getDefaultCell().setBorder(0);
+		PdfPTable table = new PdfPTable(2); //tableau de deux colonnes
+		table.getDefaultCell().setBorder(0); //pas de bordure
+		
 		table.addCell("CLIENT");
 		table.addCell("PRESTATAIRE");
-		table.addCell(nomClient);
-		datasIter.next();
-		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(nomSiteClient);
-		datasIter.next();
-		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(codeClient);
-		datasIter.next();
-		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(adresseClient);
-		datasIter.next();
-		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(codePostalClient);
-		datasIter.next();
-		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(villeClient);
-		table.addCell("");
-		table.addCell(telClient);
-		table.addCell("");
-		table.addCell(emailClient);
-		table.addCell("");
+		table.addCell(Image.getInstance(logoClient, null));
+		table.addCell(logoVinci);
+		table.addCell(paraClient);
+		table.addCell(paraRedac);
+		
 		para.add(table);
 		
 		
