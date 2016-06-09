@@ -22,22 +22,30 @@ import dataHandler.IDataHandler;
 import ihm.ProgressBarFrame;
 
 /**
- * Cette classe est la strategie d'edition de document pour les rapports des clients
- * @author Lucie PELOTTIERRO
+ * Cette classe est la strategie d'edition de document par defaut
+ * @author Lucie PELLOTTIERO
  *
  */
 public class CustomerReport implements IWriteStrategie{
 	
+	@SuppressWarnings("unused")
+	private int chartWidth;
+	@SuppressWarnings("unused")
+	private int chartHeight;
+	
+	public static final int MAX_DOMAIN_SIZE = 9;
+	
 	public CustomerReport () {
+		chartWidth  = 500;
+		chartHeight = 350;
 	}
 	
 	//en-tête et pied de page
-	class HeaderFooter extends PdfPageEventHelper {
-		
+	class MyFooter extends PdfPageEventHelper {
         Font footerFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
         Font colorFooterFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
 		
-        public void onStartPage(final PdfWriter writer, final Document document) {
+        public void onStartPage(PdfWriter writer, Document document) {
             PdfContentByte cb = writer.getDirectContent();
             
             //contenu en-tête
@@ -60,7 +68,7 @@ public class CustomerReport implements IWriteStrategie{
                     document.top() + 0, 0);
         }
         
-        public void onEndPage(final PdfWriter writer, final Document document) {
+        public void onEndPage(PdfWriter writer, Document document) {
             PdfContentByte cb = writer.getDirectContent();
             
             //contenu pied de page
@@ -85,10 +93,11 @@ public class CustomerReport implements IWriteStrategie{
     }
 
 	@Override
-	public boolean writeDocument(final Collection<IDataHandler> datas, final Document document, final PdfWriter writer,
-			final ProgressBarFrame pBFrame) throws Exception {
+	public boolean writeDocument(final Collection<IDataHandler> datas, final Document document, final PdfWriter writer, 
+			ProgressBarFrame pBFrame) throws Exception {
 		
-		HeaderFooter event = new HeaderFooter();
+		// Creation de l'en-tête et pied de page
+		MyFooter event = new MyFooter();
 	    writer.setPageEvent(event);
 	    
 		// On ouvre le document a la modification
@@ -117,7 +126,8 @@ public class CustomerReport implements IWriteStrategie{
         IDataHandler currentDataPart = datasIterator.next();
 		Iterator<Collection<Object>> currentPartIter = currentDataPart.getDataStorage().iterator();
 		
-		currentPartIter.next().iterator();
+		@SuppressWarnings("unused")
+		Iterator<Object> datasTypeIter = currentPartIter.next().iterator();
 		Iterator<Object> datasIter     = currentPartIter.next().iterator();
 		
 		
@@ -134,23 +144,42 @@ public class CustomerReport implements IWriteStrategie{
 		
 		/*---------page 2, coordonnées client - redacteur-----------*/
 		
-		//passage à la partie suivante : redacteur
+		//passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
-		currentPartIter.next().iterator();
+		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
 		
-		//on récupère les données pour les mettre ensuite dans un tableau
-		Phrase nomRedac = (new Phrase ((String)datasIter.next(), baseConcreteFont));
-		new Phrase ((String)datasIter.next(), baseConcreteFont);
-		new Phrase ((String)datasIter.next(), baseConcreteFont);
-		new Phrase ((String)datasIter.next(), baseConcreteFont);
-		new Phrase ((String)datasIter.next(), baseConcreteFont);
+		//on recupere les donnees pour les mettre ensuite dans un tableau
+		Phrase nomSiteClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase adresseClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codePostalClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase villeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase nomClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		
+		para.add(nomSiteClient);
+		para.add(codeClient);
+		para.add(adresseClient);
+		para.add(codePostalClient);
+		para.add(villeClient);
+		para.add(nomClient);
+		para.add(telClient);
+		para.add(emailClient);
+		
+		Paragraph para1 = new Paragraph();
+		
+		para1.add("BORDER DE MERDE TU VA MARCHER OUI!");
+		document.add(para1);
+		
+		System.out.println("nom Client : " + nomClient);
 	
-		//passage à la partie suivante, client
+		//passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
-		currentPartIter.next().iterator();
+		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
 		
 		//nouvelle page
@@ -158,14 +187,27 @@ public class CustomerReport implements IWriteStrategie{
 		para.add(new Phrase ("Pilotage du marché multitechnique", baseConcreteFont));
 		para.add(Chunk.NEWLINE);
 		
+		//tableau contenant les donnees client et redacteur
 		PdfPTable table = new PdfPTable(2);
+		table.getDefaultCell().setBorder(0);
 		table.addCell("CLIENT");
 		table.addCell("PRESTATAIRE");
-		datasIter.next();
+		table.addCell(nomClient);
 		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
-		table.addCell(nomRedac);
-		
-		
+		table.addCell(nomSiteClient);
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(codeClient);
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(adresseClient);
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(codePostalClient);
+		table.addCell(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		table.addCell(villeClient);
+		table.addCell("");
+		table.addCell(telClient);
+		table.addCell("");
+		table.addCell(emailClient);
+		table.addCell("");
 		para.add(table);
 		
 		
@@ -255,7 +297,7 @@ public class CustomerReport implements IWriteStrategie{
 	}
 
 	@Override
-	public IDataHandler getDataHandler(final String partTitle) {
+	public IDataHandler getDataHandler(String partTitle) {
 		return new CustomerDataHandler(partTitle);
 	}
 	
