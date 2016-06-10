@@ -28,6 +28,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
@@ -289,10 +290,14 @@ public class NewStrategie implements IWriteStrategie{
 		// Creation de la font par defaut
 	    BaseFont basefont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
 		// Creation de la font concrete
-	    Font baseConcreteFont = new Font (basefont, 12, Font.NORMAL);
+	    Font basicFont = new Font (basefont, 12, Font.NORMAL);
+	    Font boldBasicFont = new Font (basefont, 12, Font.BOLD);
+	    Font underlineBasicFont = new Font (basefont, 12, Font.UNDERLINE);
+	    Font boldTitleFont = new Font (basefont, 18, Font.BOLD);
 	    Font basicTitleFont = new Font (basefont, 18, Font.NORMAL);
-	    Font mainTitleFont = new Font (basefont, 35, Font.NORMAL);
+	    Font mainTitleFont = new Font (basefont, 35, Font.BOLD);
 	    Font firstPageFont = new Font (basefont, 26, Font.NORMAL);
+	   
 	    
 		// On cre un Iterator pour les donnees
 		Iterator<IDataHandler> datasIterator = datas.iterator();
@@ -330,21 +335,21 @@ public class NewStrategie implements IWriteStrategie{
 		//donnees client
 		datasIter.next();
 		String siteClient = new String((String)datasIter.next());
-		Phrase nomSiteClient = (new Phrase (siteClient, baseConcreteFont));
+		Phrase nomSiteClient = (new Phrase (siteClient, basicFont));
 		datasIter.next();
-		Phrase codeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codeClient = (new Phrase ((String)datasIter.next(), basicFont));
 		datasIter.next();
-		Phrase adresseClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase adresseClient = (new Phrase ((String)datasIter.next(), basicFont));
 		datasIter.next();
-		Phrase codePostalClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase codePostalClient = (new Phrase ((String)datasIter.next(), basicFont));
 		datasIter.next();
-		Phrase villeClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase villeClient = (new Phrase ((String)datasIter.next(), basicFont));
 		datasIter.next();
-		Phrase nomClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase nomClient = (new Phrase ((String)datasIter.next(), boldBasicFont));
 		datasIter.next();
-		Phrase telClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase telClient = (new Phrase ((String)datasIter.next(), basicFont));
 		datasIter.next();
-		Phrase emailClient = (new Phrase ((String)datasIter.next(), baseConcreteFont));
+		Phrase emailClient = (new Phrase ((String)datasIter.next(), basicFont));
 		java.awt.Image logoClient = (java.awt.Image) datasIter.next();
 		
 		//passage a la partie suivante, redacteur
@@ -366,7 +371,7 @@ public class NewStrategie implements IWriteStrategie{
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
 				 titreRapport,
                  (document.right() - document.left()) / 2 + document.leftMargin(),
-                 document.top() - 230, 0);
+                 document.top() - 240, 0);
 		
 		Image.getInstance(logoClient, null);
 		
@@ -383,7 +388,7 @@ public class NewStrategie implements IWriteStrategie{
 		//nouvelle page
 		para.add(Chunk.NEXTPAGE);
 		para.add(Chunk.NEWLINE);
-		para.add(new Phrase ("Pilotage du marché multitechnique", basicTitleFont));
+		para.add(new Phrase ("Pilotage du marché multitechnique", boldTitleFont));
 		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		
@@ -409,20 +414,32 @@ public class NewStrategie implements IWriteStrategie{
 		//paragraphe contenant les donnees redacteur
 		Paragraph paraRedac = new Paragraph();
 		datasIter.next();
-		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(new Phrase ((String)datasIter.next(), boldBasicFont));
+		
 		paraRedac.add(Chunk.NEWLINE);
 		datasIter.next();
-		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(new Phrase ((String)datasIter.next(), basicFont));
+		
 		paraRedac.add(Chunk.NEWLINE);
 		datasIter.next();
 		paraRedac.add("Tél : ");
-		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(new Phrase ((String)datasIter.next(), basicFont));
+		
 		paraRedac.add(Chunk.NEWLINE);
 		datasIter.next();
-		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(new Phrase ((String)datasIter.next(), basicFont));
+		
 		paraRedac.add(Chunk.NEWLINE);
+		Chunk chargeAffaire = new Chunk("Chargé d'affaire", basicFont);
+		chargeAffaire.setUnderline(0.7f, -2f);
+		Chunk espace = new Chunk(" : ", basicFont);
+		Phrase chargedAffaire = new Phrase();
+		chargedAffaire.add(chargeAffaire);
+		chargedAffaire.add(espace);
+		paraRedac.add(chargedAffaire);
+		
 		datasIter.next();
-		paraRedac.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+		paraRedac.add(new Phrase((String)datasIter.next(), boldBasicFont));
 		
 		String logoVinciPath = "Facilities Rapport" + File.separator + "Files" + File.separator + "Icons" + File.separator + "vinciFacilitiesIcon.png";
 		Image logoVinci = Image.getInstance(logoVinciPath);
@@ -431,10 +448,20 @@ public class NewStrategie implements IWriteStrategie{
 		PdfPTable table = new PdfPTable(2); //tableau de deux colonnes
 		table.getDefaultCell().setBorder(0); //pas de bordure
 		
-		Phrase titreClient = new Phrase ("CLIENT", basicTitleFont);
-		Phrase titrePrestataire = new Phrase ("PRESTATAIRE", basicTitleFont);
-		table.addCell(titreClient);
-		table.addCell(titrePrestataire);
+		Paragraph titreClient = new Paragraph ("CLIENT", basicTitleFont);
+		titreClient.setAlignment(Element.ALIGN_CENTER);
+		Paragraph titrePrestataire = new Paragraph ("PRESTATAIRE", basicTitleFont);
+		titrePrestataire.setAlignment(Element.ALIGN_CENTER);
+		PdfPCell cell1 = new PdfPCell(titreClient);
+		
+		cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell1.setBorder(0);
+		
+		PdfPCell cell2 = new PdfPCell(titrePrestataire);
+		cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell2.setBorder(0);
+		table.addCell(cell1);
+		table.addCell(cell2);
 		table.addCell(Image.getInstance(logoClient, null));
 		table.addCell(logoVinci);
 		table.addCell(paraClient);
@@ -446,9 +473,12 @@ public class NewStrategie implements IWriteStrategie{
 		
 		//nouvelle page, titre preventif
 		para.add(Chunk.NEXTPAGE);
-		Phrase titrePreventif = new Phrase ("Préventif", mainTitleFont);
+		for(int i = 0; i < 15; ++i){
+			para.add(Chunk.NEWLINE);
+		}
+		Paragraph titrePreventif = new Paragraph("Préventif", mainTitleFont);
+		titrePreventif.setAlignment(Element.ALIGN_CENTER);
 		para.add(titrePreventif);
-		
 		
 		para.add(Chunk.NEXTPAGE);
 		
@@ -468,8 +498,8 @@ public class NewStrategie implements IWriteStrategie{
 				switch ((int)datasTypeIter.next()) {
 					case IDataHandler.DATA_TYPE_STRING:
 						
-						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
+						para.add(new Phrase ((String)datasIter.next(), basicFont));
+						para.add(new Phrase ((String)datasIter.next(), basicFont));
 						para.add(Chunk.NEWLINE);
 						break;
 						
