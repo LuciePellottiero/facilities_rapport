@@ -11,7 +11,11 @@ import java.awt.Container;
 public abstract class OperationUtilities {
 
 	/**
+<<<<<<< HEAD
 	 * Renvoie si l'argument est numerique ou non (avec '.' et un '-' optionnel pris en compte)
+=======
+	 * Renvoie si l'argument est numerique ou non (avec '.' et un '-' pris en compte)
+>>>>>>> branch 'Thomas' of https://github.com/LuciePellottiero/facilities_rapport.git
 	 * @param str la String a tester
 	 * @return true si c'est un nombre, false sinon
 	 */
