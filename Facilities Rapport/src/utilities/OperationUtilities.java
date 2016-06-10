@@ -11,7 +11,7 @@ import java.awt.Container;
 public abstract class OperationUtilities {
 
 	/**
-	 * Renvoie si l'argument est numerique ou non (avec '.' et un '-' pris en compte)
+	 * Renvoie si l'argument est numerique ou non (avec '.' et un '-' optionnel pris en compte)
 	 * @param str la String a tester
 	 * @return true si c'est un nombre, false sinon
 	 */
@@ -30,10 +30,10 @@ public abstract class OperationUtilities {
 	    
 		// Si le Component et son parent ne sont pas null
 		if (component != null && component.getParent() != null) {
-			// On obtient le parent
+			// Obtient le parent
 			Container container = component.getParent();
 		    
-			// On itere sur tous les Component du parent
+			// Itere sur tous les Component du parent
 			for (int i = 0; i < container.getComponentCount(); i++) {
 		    	
 				// Une fois que l'on a retrouvé celui que l'on cherche, on renvoie son index

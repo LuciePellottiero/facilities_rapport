@@ -19,14 +19,10 @@ import java.awt.event.WindowAdapter;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -254,6 +250,8 @@ public class Form extends JFrame{
 		final GridBagConstraints constraint = new GridBagConstraints();
 		constraint.fill = GridBagConstraints.BOTH;   
 		
+		final JButton valideForm = new JButton("Génerer le rapport");
+		
 		// Marges autour des titres
 		final Insets titleInset = new Insets(20, 0, 5, 0);
 		
@@ -296,6 +294,13 @@ public class Form extends JFrame{
 		reportMenu.add(newReport);
 		
 		reportMenu.addSeparator();
+		
+		JMenuItem generate = new JMenuItem("Générer rapport");
+	    generate.addActionListener((ActionEvent e) -> valideForm.doClick());
+	    
+	    reportMenu.add(generate);
+	    
+	    reportMenu.addSeparator();
 		
 		// Permet d'enregistrer les donnees dans la partie redacteur
 		final JMenuItem save = new JMenuItem("Enregistrer partie rédacteur");
@@ -1962,7 +1967,6 @@ public class Form extends JFrame{
 		
 		/*-----------------------------------------Bouton de validation du formulaire--------------------------------------------------- */
 		
-		final JButton valideForm = new JButton("Génerer le rapport"); //bouton de validation du formulaire 
 		//valideForm.setBackground(new Color(224, 35, 60));
 		
 		final ImageIcon generateReportIcon = new ImageIcon(ICONS_PATH + File.separator + ICONS_NAME[3]);
@@ -1986,135 +1990,6 @@ public class Form extends JFrame{
 	    valideForm.addActionListener(new ActionListener() {
 	    	
 		    public void actionPerformed(ActionEvent arg0) {	
-		    	/*---affichage console---*/
-		    	//partie rapport
-		    	System.out.println(writerTitle.getText()); 						//affichage console du titre de la partie du formulare 	
-		    	System.out.println(writerName.getText() + writerNameField.getText()); 		//affichage console des données nom
-		    	System.out.println(writerAdr.getText() + writerAdrArea.getText()); 			//affichage console des données adr
-		    	//System.out.println(tel.getText() + textFieldTelRedac.getText()); 	//affichage console des données tel
-		    	System.out.println(writerEmail.getText() + writerEmailField.getText()); 	//affichage console des données email
-		    	System.out.println(writerResponsibleName.getText() + writerResponsibleNameField.getText());		//affichage console des données nomCA
-		    	//partie client
-		    	System.out.println(customerTitle.getText()); 									//affichage console du titre de la partie du formulaire
-		    	System.out.println(siteName.getText() + siteNameField.getText()); 		//affichage console des données nomSite
-		    	System.out.println(code.getText() + codeField.getText()); 				//affichage console des données code
-		    	System.out.println(customerAdr.getText() + customerAdrArea.getText()); 				//affichage console des données adrCl
-		    	System.out.println(postalCode.getText() + finalPostalCodeField.getText()); 	//affichage console des données codePostal
-		    	System.out.println(city.getText() + cityField.getText()); 			//affichage console des données ville
-		    	System.out.println(customerPhone.getText() + finalTextFieldTelCl.getText()); 			//affichage console des données telCl
-		    	System.out.println(customerMail.getText() + customerMailField.getText()); 		//affichage console des données emailCl  
-		    	//partie rapport
-		    	System.out.println(titreRapport.getText()); 													//affichage console du titre de la partie du formulaire
-		    	System.out.println(rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//affichage console des données duree rapport d'activite
-		    	System.out.println(dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//affichage console des données code
-		    	System.out.println(dateFin.getText() + finalTextFieldDateFin.getText()); 							//affichage console des données adr
-		    	//partie bons preventifs
-		    	System.out.println(titreBP.getText()); 												//affichage console du titre de la partie du formulaire
-		    	/*System.out.println(moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString()); //affichage console des données mois
-		    	System.out.println(nbBPOuverts.getText() + textFieldNbBPOuverts.getText()); 		//affichage console des données nbBPOuverts
-		    	System.out.println(nbBPFermes.getText() + textFieldNbBPFermes.getText()); 			//affichage console des données nbBPFermes
-		    	System.out.println(commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//affichage console des données commentaireBP
-		    	*///partie bons preventifs par domaine
-		    	System.out.println(titreBPDomaine.getText()); //affichage console du titre de la partie du formulaire
-
-		    	//System.out.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 	//ecriture des données commentaireBP
-		    	//partie arborescence libre
-		    	/*System.out.println(titreArboLibre.getText()); 								//affichage console du titre de la partie du formulaire
-		    	/*System.out.println(titre.getText() + textFieldTitre.getText()); 			//affichage console des données titre
-		    	System.out.println(element.getText() + textFieldElement.getText()); 		//affichage console des données element
-		    	System.out.println(nombre.getText() + textFieldNombre.getText()); 			//affichage console des données nombre
-		    	//System.out.println(commentaire.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire
-		    	//partie domaines d'intervention
-		    	System.out.println(titreDI.getText()); 												//affichage console du titre de la partie du formulaire
-		    	System.out.println(moisDI.getText() + comboBoxMoisDI.getSelectedItem().toString()); //affichage console des données moisDI
-		    	System.out.println(nbIntervention.getText() + textFieldNbIntervention.getText()); 	//affichage console des données nbIntervention
-		    	System.out.println(commentaireDI.getText() + textAreaCommentaireDI.getText()); 		//affichage console des données commentaireDI
-		    	//partie domaines d'intervention par etat
-		    	System.out.println(titreBPDomaine.getText()); 													//affichage console du titre de la partie du formulaire
-		    	System.out.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//affichage console des données commentaireBPDomaine
-
-		    	//partie arborescence libre 2
-		    	System.out.println(titreArboLibre2.getText()); 									//affichage console du titre de la partie du formulaire
-		    	/*System.out.println(titre2.getText() + textFieldTitre.getText()); 				//affichage console des données titre2
-		    	System.out.println(element2.getText() + textFieldElement.getText()); 			//affichage console des données element2
-		    	System.out.println(nombre2.getText() + textFieldNombre.getText()); 				//affichage console des données nombre2
-		    	//System.out.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//affichage console des données commentaire2
-		    	//partie compteurs
-		    	System.out.println(titreCompteurs.getText()); 																	//affichage console du titre de la partie du formulaire
-		    	System.out.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//affichage console des données typeCompteur
-		    	System.out.println(moisCompteur.getText() + comboBoxMoisCompteur.getSelectedItem().toString()); 				//affichage console des données moisCompteur
-		    	System.out.println(consommation.getText() + textFieldConsommation.getText() + comboBoxUnite.getSelectedItem()); //affichage console des données consommation
-		         
-		    	/*---ecriture dans le fichier texte rapport---*/
-		    	
-		    	File f = new File ("rapport.txt"); //creation d'un rapport au format txt
-		    	PrintWriter fw = null;
-				try {
-					fw = new PrintWriter (new BufferedWriter (new FileWriter (f)));
-				} 
-				catch (IOException e1) {
-					e1.printStackTrace();
-				}
-		    	
-		    	//partie redacteur
-		    	fw.println (writerTitle.getText()); 					 	//ecriture du titre de la partie du formulare 	
-		    	fw.println (writerName.getText() + writerNameField.getText()); 	 	//ecriture des donnees nom
-		    	fw.println (writerAdr.getText() + writerAdrArea.getText()); 	 	//ecriture des donnees adr
-		    	fw.println (writerPhone.getText() + finalWriterPhoneField.getText()); 	//ecriture des donnees tel
-		    	fw.println (writerEmail.getText() + writerEmailField.getText()); 	//ecriture des donnees email
-		    	fw.println (writerResponsibleName.getText() + writerResponsibleNameField.getText()); 	//ecriture des donnees nomCA
-		    	//partie client
-		    	fw.println (customerTitle.getText()); 								//ecriture du titre de la partie du formulaire
-			    fw.println (siteName.getText() + siteNameField.getText());		//ecriture des données nomSite
-			    fw.println (code.getText() + codeField.getText()); 				//ecriture des données code
-			    fw.println (customerAdr.getText() + customerAdrArea.getText()); 		    //ecriture des données adrCl
-			    fw.println (postalCode.getText() + finalPostalCodeField.getText());  //ecriture des données codePostal
-			    fw.println (city.getText() + cityField.getText()); 			//ecriture des données ville
-			    fw.println (customerPhone.getText() + finalTextFieldTelCl.getText()); 			//ecriture des données telCl
-			    fw.println (customerMail.getText() + customerMailField.getText()); 		//ecriture des données emailCl
-		    	//partie rapport
-			    fw.println (titreRapport.getText()); 													//ecriture du titre de la partie du formulaire
-		    	fw.println (rapportActivite.getText() + comboBoxRapport.getSelectedItem().toString()); 	//ecriture console des données rpportActivite
-		    	fw.println (dateDebut.getText() + finalTextFieldDateDebut.getText()); 						//ecriture console des données codeDebut
-		    	fw.println (dateFin.getText() + finalTextFieldDateFin.getText()); 							//ecriture console des données dateFin
-		    	//partie bons preventifs
-			    fw.println (titreBP.getText()); 												//ecriture du titre de la partie du formulaire
-		    	/*fw.println (moisBP.getText() + comboBoxMoisBP.getSelectedItem().toString());	//ecriture des données moisBP
-		    	fw.println (nbBPOuverts.getText() + textFieldNbBPOuverts.getText()); 			//ecriture des données nbBPOuverts
-		    	fw.println (nbBPFermes.getText() + textFieldNbBPFermes.getText()); 				//ecriture des données nbBPFermes
-		    	fw.println (commentaireBP.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireBP
-		    	//partie bons preventifs par domaine
-			    */fw.println (titreBPDomaine.getText()); 										//ecriture du titre de la partie du formulaire
-		    	fw.println (commentaireBPDomaine.getText() + textAreaCommentaireBPDomaine.getText()); 	//ecriture des données commentaireBPDomaine
-		    	//partie arborescence libre
-		    	/*fw.println (titreArboLibre.getText()); 								//ecriture du titre de la partie du formulaire
-		    	/*fw.println (titre.getText() + textFieldTitre.getText()); 			//ecriture des données titre
-		    	fw.println (element.getText() + textFieldElement.getText()); 		//ecriture des données element
-		    	fw.println (nombre.getText() + textFieldNombre.getText()); 			//ecriture des données nombre
-		    	fw.println (commentaire.getText() + textAreaCommentaire.getText()); //ecriture des données commentaire
-		    	//partie domaines d'intervention
-		    	/*fw.println(titreDI.getText()); 												//ecriture du titre de la partie du formulaire
-		    	//fw.println(moisDI.getText() + comboBoxMoisBP.getSelectedItem().toString()); //ecriture des données moisDI
-		    	fw.println(nbIntervention.getText() + textFieldNbIntervention.getText()); 	//ecriture des données nbIntervention
-		    	//fw.println(commentaireDI.getText() + textAreaCommentaireBP.getText()); 		//ecriture des données commentaireDI
-		    	//partie domaines d'intervention par etat
-		    	System.out.println(titreDIEtat.getText()); 													//ecriture du titre de la partie du formulaire
-		    	System.out.println (commentaireDIEtat.getText() + textAreaCommentaireDIEtat.getText()); 	//ecriture des données commentaireBPDomaine
-
-		    	//partie arborescence libre 2
-		    	fw.println(titreArboLibre2.getText()); 									//ecriture du titre de la partie du formulaire
-		    	/*fw.println(titre2.getText() + textFieldTitre.getText()); 				//ecriture des données titre2
-		    	fw.println(element2.getText() + textFieldElement.getText()); 			//ecriture des données element2
-		    	fw.println(nombre2.getText() + textFieldNombre.getText()); 				//ecriture des données nombre2
-		    	fw.println(commentaire2.getText() + textAreaCommentaire.getText()); 	//ecriture des données commentaire2
-		    	*///partie compteurs
-		    	/*fw.println(titreCompteurs.getText()); 																	//ecriture du titre de la partie du formulaire
-		    	fw.println(typeCompteur.getText() + comboBoxTypeCompteur.getSelectedItem().toString()); 				//ecriture console des données typeCompteur
-		    	fw.println(moisCompteur.getText() + comboBoxMoisCompteur.getSelectedItem().toString()); 				//ecriture console des données moisCompteur
-		    	fw.println(consommation.getText() + textFieldConsommation.getText() + comboBoxUnite.getSelectedItem()); //ecriture console des données consommation
-		    	*/
-		    	fw.println ("\r\n"); //retour ligne
-		    	fw.close();
 		    	
 		    	/*-----------------Ecriture du PDF-----------------*/
 		    	
@@ -2340,6 +2215,8 @@ public class Form extends JFrame{
 				    	Iterator<JTextField>        nbPreventivesVouchersClosedIter = nbPreventivesVouchersClosed.iterator();
 				    	
 				    	int counter = 1;
+				    	int nbOpen = 0;
+				    	int nbClosed = 0;
 				    	
 				    	DefaultCategoryDataset barChartDatas = new DefaultCategoryDataset();
 				    	IChartGenerator chartGenerator = new DefaultChartGenerator();
@@ -2373,8 +2250,11 @@ public class Form extends JFrame{
 						    	}
 						    	else {
 									//preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
+									final Double currentNbOpen = Double.parseDouble(textFieldNbBPOuverts.getText());
 									
-									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
+									nbOpen += currentNbOpen;
+									
+									barChartDatas.addValue(currentNbOpen, "Nombre de bons préventifs ouverts", 
 											comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
@@ -2396,7 +2276,11 @@ public class Form extends JFrame{
 						    	}
 						    	else {
 						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
-						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
+						    		final Double currentNbClosed = Double.parseDouble(textFieldNbBPFermes.getText());
+						    		
+						    		nbClosed += currentNbClosed;
+						    		
+						    		barChartDatas.addValue(currentNbClosed, "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
 						    	}						    	
 						    	++counter;
 							}
@@ -2425,7 +2309,11 @@ public class Form extends JFrame{
 						    	}
 						    	else {
 									//preventivesVouchers.addString(textFieldNbBPOuverts.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[1]);
-									barChartDatas.addValue(Double.parseDouble(textFieldNbBPOuverts.getText()), "Nombre de bons préventifs ouverts", 
+						    		final Double currentNbOpen = Double.parseDouble(textFieldNbBPOuverts.getText());
+									
+									nbOpen += currentNbOpen;
+									
+									barChartDatas.addValue(currentNbOpen, "Nombre de bons préventifs ouverts", 
 											comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
@@ -2449,9 +2337,11 @@ public class Form extends JFrame{
 						    	}
 						    	else {
 						    		//preventivesVouchers.addString(textFieldNbBPFermes.getText(), PREVENTIVE_VOUCHER_MONTH_LABELS[2]);
-						    		barChartDatas.addValue(Double.parseDouble(textFieldNbBPFermes.getText()), 
-						    				"Nombre de bons préventifs clôturés", 
-						    				comboBoxMoisBP.getSelectedItem().toString());
+						    		final Double currentNbClosed = Double.parseDouble(textFieldNbBPFermes.getText());
+						    		
+						    		nbClosed += currentNbClosed;
+						    		
+						    		barChartDatas.addValue(currentNbClosed, "Nombre de bons préventifs clôturés", comboBoxMoisBP.getSelectedItem().toString());
 						    	}
 						    	
 						    	++counter;
@@ -2473,6 +2363,15 @@ public class Form extends JFrame{
 	    					else {
 	    						pBarFrame.toFront();
 	    					}
+				    	}
+				    	
+				    	if (nbOpen > 0) {
+				    		final Integer nbOpenInteger = nbOpen;
+				    		preventivesVouchers.addString(nbOpenInteger.toString(), "Total bon préventid ouverts : ");
+				    	}
+				    	if (nbClosed > 0) {
+				    		final Integer nbClosedInteger = nbClosed;
+				    		preventivesVouchers.addString(nbClosedInteger.toString(), "Total bon préventid fermés : ");
 				    	}
 				    	
 				    	if (counter > 1) {
