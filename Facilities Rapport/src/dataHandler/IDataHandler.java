@@ -7,7 +7,7 @@ import org.jfree.chart.JFreeChart;
 
 /**
  * Decrit les classes de gestion des donnees pour le traitement du rapport PDF.
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public interface IDataHandler {

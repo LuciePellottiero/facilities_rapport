@@ -863,15 +863,21 @@ public class Form extends JFrame{
 				        logoIcon = new ImageIcon(tmpImage);
 				        
 				        if (logoIcon != null) {
-				            if (logoIcon.getIconWidth() > 90) {
-				            	logoIcon = new ImageIcon(logoIcon.getImage().
-				                                          getScaledInstance(90, -1,
+				        	customerLogoFile.setPreferredSize(new Dimension(90, 60));
+				            if (logoIcon.getIconWidth() > customerLogoFile.getPreferredSize().getWidth() ||
+				            		logoIcon.getIconHeight() > customerLogoFile.getPreferredSize().getHeight()) {
+				            	
+				            	final ImageIcon labelLogoIcon = new ImageIcon(logoIcon.getImage().
+				                                          getScaledInstance((int)customerLogoFile.getPreferredSize().getWidth(),
+				                                          (int)customerLogoFile.getPreferredSize().getHeight(),
 				                                          Image.SCALE_SMOOTH));
-				            	customerLogoFile.setPreferredSize(new Dimension(logoIcon.getIconWidth(), logoIcon.getIconHeight()));
-				            } 
+				            	customerLogoFile.setIcon(labelLogoIcon);
+				            }
+				            else {
+				            	customerLogoFile.setIcon(logoIcon);
+				            }
 				        }
 				        
-				        customerLogoFile.setIcon(logoIcon);
 				        //customerLogoFile.setText(fileChooser.getSelectedFile().getName());
 						
 				        deleteLogo.setVisible(true);
