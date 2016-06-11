@@ -2595,8 +2595,8 @@ public class Form extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree1 = selectedStrategie.getDataHandler(currentTree.getTitleTextField().getText());
-				    		
+				    		IDataHandler freeTree1 = selectedStrategie.getDataHandler("Arborescence Libre");
+				    		freeTree1.addString(currentTree.getTitleTextField().getText(), "Title : ");
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		
 				    		Iterator<JTextField> currentTreeElementIter = currentTree.getElements().iterator();
@@ -2638,7 +2638,7 @@ public class Form extends JFrame{
 				    		
 				    		if (isElement) {
 					    		try {
-									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
+									final JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
 											"Element", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree1.addJFreeChart(barchart);
@@ -2664,6 +2664,8 @@ public class Form extends JFrame{
 				    	/*-----------------Partie demande d'intervention-----------------*/
 						
 						fontToFit = 0;
+						
+						int nbInterventionDemand = 0;
 
 				    	IDataHandler interventionDemand = selectedStrategie.getDataHandler(titreDI.getText());
 				    	
@@ -2692,6 +2694,7 @@ public class Form extends JFrame{
 					    		//interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
 					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", 
 					    				currentInterventionMonths.getSelectedItem().toString());
+					    		++nbInterventionDemand;
 					    	}	
 				    	}
 				    	
@@ -2712,7 +2715,12 @@ public class Form extends JFrame{
 	    					}
 				    	}
 				    	
-				    	if (!interventionDemand.isEmpty()) {
+				    	if (barChartDatas.getColumnCount() > 0) {
+				    		if (nbInterventionDemand > 0) {
+				    			final Integer finalNbInterventionDemand = nbInterventionDemand;
+				    			interventionDemand.addString(finalNbInterventionDemand.toString(), 
+				    					"Nombre de demande d'intervention : ");
+				    		}
 					    	try {
 								JFreeChart barChart = chartGenerator.generateBarChart(titreDI.getText(), 
 										"Mois", "Nombre d'intervention", barChartDatas, true, fontToFit);
@@ -2810,7 +2818,7 @@ public class Form extends JFrame{
 				    		}
 				    	}
 				    	
-				    	if (pieChartDatas.getItemCount() > 0) {
+				    	if (!pourcentages.isEmpty()) {
 				    		
 				    		Iterator<Entry<String, Double>> mapIter = pourcentages.entrySet().iterator();
 				    		
@@ -2824,7 +2832,7 @@ public class Form extends JFrame{
 				    		}
 				    		
 				    		try {
-								JFreeChart pieChart = chartGenerator.generatePieChart(titreBPDomaine.getText(), pieChartDatas, false);
+								JFreeChart pieChart = chartGenerator.generatePieChart(titreDIEtat.getText(), pieChartDatas, false);
 								
 								stateInterventionDemand.addJFreeChart(pieChart);
 				    		} 
@@ -2837,7 +2845,7 @@ public class Form extends JFrame{
 								stopPdfCreation(pBarFrame);
 							}
 				    		
-				    		if (!textAreaCommentaireDI.getText().equals("")) {
+				    		if (!textAreaCommentaireDIEtat.getText().equals("")) {
 					    		stateInterventionDemand.addString(textAreaCommentaireDI.getText(), commentaireDI.getText());
 					    	}
 				    		
@@ -3009,7 +3017,9 @@ public class Form extends JFrame{
 					    		return null;
 				    		}
 				    		
-				    		IDataHandler freeTree = selectedStrategie.getDataHandler(currentTree.getTitleTextField().getText());
+				    		IDataHandler freeTree = selectedStrategie.getDataHandler("Arborescence Libre");
+				    		
+				    		freeTree.addString(currentTree.getTitleTextField().getText(), "Title : ");
 				    		
 				    		barChartDatas = new DefaultCategoryDataset();
 				    		

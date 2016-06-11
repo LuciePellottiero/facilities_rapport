@@ -52,7 +52,7 @@ public class CustomerReport implements IWriteStrategie{
 	
 	public CustomerReport () {
 		chartWidth  = 500;
-		chartHeight = 350;
+		chartHeight = 400;
 		
 		try {
 			logoVinci = Image.getInstance(LOGO_VINCI_PATH);
@@ -106,6 +106,9 @@ public class CustomerReport implements IWriteStrategie{
         }
         
         public void onEndPage(PdfWriter writer, Document document) {
+        	
+        	// Permet de creer une nouvelle page meme si elle est vide
+        	writer.setPageEmpty(false);
             PdfContentByte cb = writer.getDirectContent();
             
             //contenu pied de page
@@ -164,10 +167,6 @@ public class CustomerReport implements IWriteStrategie{
 		Iterator<Object> datasTypeIter = currentPartIter.next().iterator();
 		Iterator<Object> datasIter     = currentPartIter.next().iterator();
 		
-		
-		// On cre un paragraphe
-		Paragraph para = new Paragraph();
-		
 		/*-----------------recuperation des données---------------*/
 		
 		Phrase titreRapport = new Phrase ("Rapport d'activité " + (String)datasIter.next() , firstPageFont);
@@ -205,16 +204,19 @@ public class CustomerReport implements IWriteStrategie{
 		/*-----------------------------page 1, page de garde------------------------------*/
 		
 		final Paragraph mainTitle = new Paragraph();
-		for(int i = 0; i < 15; ++i){
+		for(int i = 0; i < 12; ++i){
 			mainTitle.add(Chunk.NEWLINE);
 		}
 		mainTitle.setAlignment(Element.ALIGN_CENTER);
 		
 		//donnees rapport
-		mainTitle.add(titreRapport);
-		mainTitle.add(Chunk.NEWLINE);
 		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
 		mainTitle.add(titrePrincipal);
+		mainTitle.add(Chunk.NEWLINE);
+		mainTitle.add(Chunk.NEWLINE);
+		mainTitle.add(titreRapport);
+		mainTitle.add(Chunk.NEWLINE);
+		mainTitle.add(Chunk.NEWLINE);
 		if (logoClient != null) {
 			final ImageIcon resizedCustomerLogo = new ImageIcon(logoClient.
                     getScaledInstance(-1,
@@ -223,11 +225,14 @@ public class CustomerReport implements IWriteStrategie{
 			final Image titleLogo = Image.getInstance(resizedCustomerLogo.getImage(), null);
 			titleLogo.setAlignment(Image.ALIGN_CENTER);
 			mainTitle.add(titleLogo);
+			mainTitle.add(Chunk.NEWLINE);
+		}
+		for(int i = 0; i < 4; ++i){
+			mainTitle.add(Chunk.NEWLINE);
 		}
 		Phrase date = new Phrase (dateDebut + " au " + dateFin, firstPageFont);
 		mainTitle.add(date);
 		
-		mainTitle.add(Chunk.NEXTPAGE);
 		document.add(mainTitle);
 		
 		/*PdfContentByte cb = writer.getDirectContent();
@@ -251,12 +256,15 @@ public class CustomerReport implements IWriteStrategie{
 		
 		/*---------page 2, coordonnees client - redacteur-----------*/
 		
-		
+		Paragraph para = new Paragraph();
 		
 		//nouvelle page
-		para.add(Chunk.NEXTPAGE);
+		
+		document.newPage();
+		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		para.add(new Phrase ("Pilotage du marché multitechnique", boldTitleFont));
+		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		
@@ -349,20 +357,532 @@ public class CustomerReport implements IWriteStrategie{
 		
 		para.add(table);
 		
-		/*---------------------------------partie preventif-------------------------------------------*/
+		document.add(para);
 		
+		/*---------------------------------partie preventif-------------------------------------------*/
+		counter = 0;
+		while (!(currentDataPart.getPartTitle().equals("Bons préventifs") ||
+				currentDataPart.getPartTitle().equals("Bons préventifs par domaines") ||
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) ||
+				!datasIterator.hasNext() || counter > 2) {
+			
+			currentDataPart = datasIterator.next();
+			++counter;
+		}
+		
+		para = new Paragraph();
+		
+		document.newPage();
 		//nouvelle page, titre preventif
-		para.add(Chunk.NEXTPAGE);
-		for(int i = 0; i < 15; ++i){
+		for(int i = 0; i < 12; ++i){
 			para.add(Chunk.NEWLINE);
 		}
 		Paragraph titrePreventif = new Paragraph("Préventif", mainTitleFont);
 		titrePreventif.setAlignment(Element.ALIGN_CENTER);
 		para.add(titrePreventif);
 		
-		para.add(Chunk.NEXTPAGE);
+		document.add(para);
 		
+		if (currentDataPart.getPartTitle().equals("Bons préventifs")) {
 		
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			Paragraph preventivPar = new Paragraph();
+			preventivPar.add(Chunk.NEXTPAGE);
+			preventivPar.add(Chunk.NEWLINE);
+			preventivPar.add(Chunk.NEWLINE);
+			preventivPar.add(Chunk.NEWLINE);
+			preventivPar.add(Chunk.NEWLINE);
+			
+			preventivPar.add(new Phrase("Préventif – Bilan maintenance préventive", boldTitleFont));
+			preventivPar.add(Chunk.NEWLINE);
+			preventivPar.add(Chunk.NEWLINE);
+			preventivPar.add(Chunk.NEWLINE);
+			
+			counter = 0;
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						if (counter == 0) {
+							data += "nombre de bons préventifs ouverts : ";
+						}
+						else if (counter == 1) {
+							data += "nombre de bons préventifs clôturés : ";
+						}
+						
+						++counter;
+						
+						data += (String)datasIter.next();
+						preventivPar.add(new Phrase (data, basicFont));
+						preventivPar.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            preventivPar.add(chartImage);
+			            preventivPar.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(preventivPar);
+			currentDataPart = datasIterator.next();
+		}
+		
+		if (currentDataPart.getPartTitle().equals("Bons préventifs par domaines")) {
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			para.add(new Phrase("Préventif – Domaine technique", boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		while (currentDataPart.getPartTitle().equals("Arborescence Libre")){
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			final String title = (String) datasIter.next();
+			datasTypeIter.next();
+			
+			para.add(new Phrase("Préventif – " + title, boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		/*---------------------------------partie correctif-------------------------------------------*/
+		
+		counter = 0;
+		while (!(currentDataPart.getPartTitle().equals("Demandes d'intervention") ||
+				currentDataPart.getPartTitle().equals("Demandes d'intervention par états") ||
+				currentDataPart.getPartTitle().equals("Demandes d'intervention par domaines") ||
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) ||
+				!datasIterator.hasNext() || counter > 3) {
+			
+			currentDataPart = datasIterator.next();
+			++counter;
+		}
+		
+		para = new Paragraph();
+		
+		document.newPage();
+		//nouvelle page, titre preventif
+		for(int i = 0; i < 12; ++i){
+			para.add(Chunk.NEWLINE);
+		}
+		Paragraph correctiveTitle = new Paragraph("Correctif", mainTitleFont);
+		correctiveTitle.setAlignment(Element.ALIGN_CENTER);
+		para.add(correctiveTitle);
+		
+		document.add(para);
+		
+		if (currentDataPart.getPartTitle().equals("Demandes d'intervention")) {
+		
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			para.add(new Phrase("Correctif – Evolution annuelle", boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			counter = 0;
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						if (counter == 0) {
+							data += "nombre de demandes d'interventions : ";
+						}
+						
+						++counter;
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		if (currentDataPart.getPartTitle().equals("Demandes d'intervention par états")) {
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			para.add(new Phrase("Correctif – Etat", boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		if (currentDataPart.getPartTitle().equals("Demandes d'intervention par domaines")) {
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			para.add(new Phrase("Correctif – Domaine technique", boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			counter = 0;
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						if (counter == 1) {
+							para = new Paragraph();
+							
+							document.newPage();
+							para.add(Chunk.NEWLINE);
+							para.add(Chunk.NEWLINE);
+							
+							para.add(new Phrase("Correctif – Objet des demandes", basicTitleFont));
+							para.add(Chunk.NEWLINE);
+						}
+						
+						++counter;
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		while (currentDataPart.getPartTitle().equals("Arborescence Libre")){
+			currentPartIter = currentDataPart.getDataStorage().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			final String title = (String) datasIter.next();
+			datasTypeIter.next();
+			
+			para.add(new Phrase("Correctif – " + title, boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+			while (datasTypeIter.hasNext()) {
+				
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
+			document.add(para);
+			currentDataPart = datasIterator.next();
+		}
+		
+		para = new Paragraph();
 		// On itere sur les parties
 		while (datasIterator.hasNext()) {
 			currentDataPart = datasIterator.next();
@@ -409,74 +929,7 @@ public class CustomerReport implements IWriteStrategie{
 					default:
 						throw new Exception ("data type not handled");
 				}
-			}
-		}
-		/*
-		// On itere sur les parties
-		while (datasIterator.hasNext()) {
-			
-			IDataHandler currentDataPart = datasIterator.next();
-			Iterator<Collection<Object>> currentPartIter = currentDataPart.getDataStorage().iterator();
-			
-			Iterator<Object> datasTypeIter = currentPartIter.next().iterator();
-			Iterator<Object> datasIter     = currentPartIter.next().iterator();
-			
-			// On creer un paragraphe
-			Paragraph para = new Paragraph();
-			
-			para.add(new Phrase(currentDataPart.getPartTitle(), baseConcreteFont));
-			para.add(Chunk.NEWLINE);
-			
-				
-			while (datasTypeIter.hasNext()) {
-			
-				switch ((int)datasTypeIter.next()) {
-					case IDataHandler.DATA_TYPE_STRING:
-						
-						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-						para.add(new Phrase ((String)datasIter.next(), baseConcreteFont));
-						para.add(Chunk.NEWLINE);
-						break;
-						
-					case IDataHandler.DATA_TYPE_JFREECHART :
-						
-						PdfContentByte contentByte = writer.getDirectContent();
-			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
-			            
-						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
-			            
-			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
-			            		chartHeight);
-			     
-			            JFreeChart chart = (JFreeChart) datasIter.next();
-			            chart.draw(graphics2d, rectangle2d);
-			             
-			            graphics2d.dispose();
-			            //contentByte.addTemplate(template, 0, 0);
-			            
-			            Image chartImage = Image.getInstance(template);
-			            
-			            
-			            para.add(chartImage);
-			            para.add(Chunk.NEWLINE);
-			            
-						break;
-						
-					case IDataHandler.DATA_TYPE_IMAGE :
-						
-						java.awt.Image image = (java.awt.Image) datasIter.next();
-						
-						para.add(Image.getInstance(image, null));
-						break;	
-						
-					default:
-						throw new Exception ("data type not handled");
-				}
-				
-				//para.add(Chunk.NEWLINE);
-			}
-			*/
-			
+			}			
 			
 			para.add(Chunk.NEWLINE);
 			
@@ -487,7 +940,7 @@ public class CustomerReport implements IWriteStrategie{
 			final int finalCounter = counter + progressIncrement;
 	
 			pBFrame.updateBar(finalCounter);
-		
+		}
 		
 		// A la fin, on ferme tous les flux
 		document.close();
