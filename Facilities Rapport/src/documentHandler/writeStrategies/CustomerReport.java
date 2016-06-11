@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.swing.ImageIcon;
+
 import org.jfree.chart.JFreeChart;
 
 import com.itextpdf.awt.PdfGraphics2D;
@@ -167,11 +169,10 @@ public class CustomerReport implements IWriteStrategie{
 		Paragraph para = new Paragraph();
 		
 		/*-----------------recuperation des données---------------*/
-		//donnees rapport
+		
 		Phrase titreRapport = new Phrase ("Rapport d'activité " + (String)datasIter.next() , firstPageFont);
 		String dateDebut = new String((String)datasIter.next());
 		String dateFin = new String((String)datasIter.next());
-		Phrase date = new Phrase (dateDebut + " au " + dateFin, firstPageFont);
 		
 		//passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
@@ -203,7 +204,33 @@ public class CustomerReport implements IWriteStrategie{
 		
 		/*-----------------------------page 1, page de garde------------------------------*/
 		
-		PdfContentByte cb = writer.getDirectContent();
+		final Paragraph mainTitle = new Paragraph();
+		for(int i = 0; i < 15; ++i){
+			mainTitle.add(Chunk.NEWLINE);
+		}
+		mainTitle.setAlignment(Element.ALIGN_CENTER);
+		
+		//donnees rapport
+		mainTitle.add(titreRapport);
+		mainTitle.add(Chunk.NEWLINE);
+		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
+		mainTitle.add(titrePrincipal);
+		if (logoClient != null) {
+			final ImageIcon resizedCustomerLogo = new ImageIcon(logoClient.
+                    getScaledInstance(-1,
+                    150,
+                    java.awt.Image.SCALE_SMOOTH));
+			final Image titleLogo = Image.getInstance(resizedCustomerLogo.getImage(), null);
+			titleLogo.setAlignment(Image.ALIGN_CENTER);
+			mainTitle.add(titleLogo);
+		}
+		Phrase date = new Phrase (dateDebut + " au " + dateFin, firstPageFont);
+		mainTitle.add(date);
+		
+		mainTitle.add(Chunk.NEXTPAGE);
+		document.add(mainTitle);
+		
+		/*PdfContentByte cb = writer.getDirectContent();
 		
 		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
@@ -216,15 +243,11 @@ public class CustomerReport implements IWriteStrategie{
                  (document.right() - document.left()) / 2 + document.leftMargin(),
                  document.top() - 240, 0);
 		
-		if (logoClient != null) {
-			Image.getInstance(logoClient, null);
-		}
-		
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
 				date,
                 (document.right() - document.left()) / 2 + document.leftMargin(),
                 document.top() - 400, 0);
-		
+		*/
 		
 		/*---------page 2, coordonnees client - redacteur-----------*/
 		
