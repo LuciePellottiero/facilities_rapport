@@ -884,54 +884,86 @@ public class CustomerReport implements IWriteStrategie{
 			currentDataPart = datasIterator.next();
 		}
 		
+		/*------------------------------------------------partie compteurs-----------------------------------------------------------*/
+		
 		para = new Paragraph();
-		// On itere sur les parties
-		while (datasIterator.hasNext()) {
-			currentDataPart = datasIterator.next();
+		document.newPage();
+		//nouvelle page, titre compteur
+		for(int i = 0; i < 12; ++i){
+			para.add(Chunk.NEWLINE);
+		}
+		Paragraph meterTitle = new Paragraph("Fluides et énergies", mainTitleFont);
+		meterTitle.setAlignment(Element.ALIGN_CENTER);
+		para.add(meterTitle);
+		
+		document.add(para);
+		
+		while (currentDataPart.getPartTitle().equals("Compteur")){
 			currentPartIter = currentDataPart.getDataStorage().iterator();
-			datasTypeIter = currentPartIter.next().iterator();
-			datasIter     = currentPartIter.next().iterator();
+			datasTypeIter   = currentPartIter.next().iterator();
+			datasIter       = currentPartIter.next().iterator();
+			
+			para = new Paragraph();
+			
+			document.newPage();
 			
 			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
 			
-				
-			while (datasTypeIter.hasNext()) {
+			final String title = (String) datasIter.next();
+			datasTypeIter.next();
 			
-				switch ((IDataHandler.DataType)datasTypeIter.next()) {
-					case STRING:
-						
-						para.add(new Phrase ((String)datasIter.next(), basicFont));
-						para.add(Chunk.NEWLINE);
-						break;
-						
-					case JFREECHART :
-						
-						PdfContentByte contentByte = writer.getDirectContent();
-			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
-			            
-						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
-			            
-			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
-			            		chartHeight);
-			     
-			            JFreeChart chart = (JFreeChart) datasIter.next();
-			            chart.draw(graphics2d, rectangle2d);
-			             
-			            graphics2d.dispose();
-			            //contentByte.addTemplate(template, 0, 0);
-			            
-			            Image chartImage = Image.getInstance(template);
-			            
-			            
-			            para.add(chartImage);
-			            para.add(Chunk.NEWLINE);
-			            
-						break;
+			para.add(new Phrase(title, boldTitleFont));
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			para.add(Chunk.NEWLINE);
+			
+				while (datasTypeIter.hasNext()) {
 					
-					default:
-						throw new Exception ("data type not handled");
+					switch ((IDataHandler.DataType)datasTypeIter.next()) {
+						case STRING:
+							
+							String data = "";
+							
+							data += (String)datasIter.next();
+							para.add(new Phrase (data, basicFont));
+							para.add(Chunk.NEWLINE);
+							break;
+							
+						case JFREECHART :
+							
+							PdfContentByte contentByte = writer.getDirectContent();
+				            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+				            
+							Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+				            
+				            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+				            		chartHeight);
+				     
+				            JFreeChart chart = (JFreeChart) datasIter.next();
+				            chart.draw(graphics2d, rectangle2d);
+				             
+				            graphics2d.dispose();
+				            //contentByte.addTemplate(template, 0, 0);
+				            
+				            Image chartImage = Image.getInstance(template);
+				            
+				            
+				            para.add(chartImage);
+				            para.add(Chunk.NEWLINE);
+				            
+							break;
+						
+						default:
+							throw new Exception ("data type not handled");
+					}
 				}
-			}			
+				
+			
+			currentDataPart = datasIterator.next();
+			
 			
 			para.add(Chunk.NEWLINE);
 			
