@@ -513,6 +513,7 @@ public class CustomerReport implements IWriteStrategie{
 						throw new Exception ("data type not handled");
 				}
 			}
+			para.add(Chunk.NEXTPAGE);
 			document.add(para);
 			currentDataPart = datasIterator.next();
 		}
@@ -525,6 +526,7 @@ public class CustomerReport implements IWriteStrategie{
 			para = new Paragraph();
 			
 			document.newPage();
+			
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
@@ -596,9 +598,8 @@ public class CustomerReport implements IWriteStrategie{
 		}
 		
 		para = new Paragraph();
-		
 		document.newPage();
-		//nouvelle page, titre preventif
+		//nouvelle page, titre correctif
 		for(int i = 0; i < 12; ++i){
 			para.add(Chunk.NEWLINE);
 		}
@@ -825,6 +826,7 @@ public class CustomerReport implements IWriteStrategie{
 			para = new Paragraph();
 			
 			document.newPage();
+			
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
