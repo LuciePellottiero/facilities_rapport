@@ -892,7 +892,6 @@ public class CustomerReport implements IWriteStrategie{
 			
 			currentDataPart = datasIterator.next();
 			++counter;
-			System.out.println("salut " + counter);
 		}
 		
 		para = new Paragraph();
@@ -915,8 +914,6 @@ public class CustomerReport implements IWriteStrategie{
 			para = new Paragraph();
 			
 			document.newPage();
-			
-			System.out.println("Cc");
 			
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
