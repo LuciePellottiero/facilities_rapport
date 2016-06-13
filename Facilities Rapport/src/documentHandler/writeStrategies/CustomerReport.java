@@ -363,8 +363,8 @@ public class CustomerReport implements IWriteStrategie{
 		counter = 0;
 		while (!(currentDataPart.getPartTitle().equals("Bons préventifs") ||
 				currentDataPart.getPartTitle().equals("Bons préventifs par domaines") ||
-				currentDataPart.getPartTitle().equals("Arborescence Libre")) ||
-				!datasIterator.hasNext() || counter > 2) {
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) &&
+				datasIterator.hasNext() && counter < 2) {
 			
 			currentDataPart = datasIterator.next();
 			++counter;
@@ -590,8 +590,8 @@ public class CustomerReport implements IWriteStrategie{
 		while (!(currentDataPart.getPartTitle().equals("Demandes d'intervention") ||
 				currentDataPart.getPartTitle().equals("Demandes d'intervention par états") ||
 				currentDataPart.getPartTitle().equals("Demandes d'intervention par domaines") ||
-				currentDataPart.getPartTitle().equals("Arborescence Libre")) ||
-				!datasIterator.hasNext() || counter > 3) {
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) &&
+				datasIterator.hasNext() && counter < 3) {
 			
 			currentDataPart = datasIterator.next();
 			++counter;
@@ -886,19 +886,28 @@ public class CustomerReport implements IWriteStrategie{
 		
 		/*------------------------------------------------partie compteurs-----------------------------------------------------------*/
 		
+		counter = 0;
+		while (!(currentDataPart.getPartTitle().equals("Compteurs")) &&
+				datasIterator.hasNext() && counter < 1) {
+			
+			currentDataPart = datasIterator.next();
+			++counter;
+			System.out.println("salut " + counter);
+		}
+		
 		para = new Paragraph();
 		document.newPage();
 		//nouvelle page, titre compteur
 		for(int i = 0; i < 12; ++i){
 			para.add(Chunk.NEWLINE);
 		}
-		Paragraph meterTitle = new Paragraph("Fluides et énergies", mainTitleFont);
+		Paragraph meterTitle = new Paragraph("Compteur", mainTitleFont);
 		meterTitle.setAlignment(Element.ALIGN_CENTER);
 		para.add(meterTitle);
 		
 		document.add(para);
 		
-		while (currentDataPart.getPartTitle().equals("Compteur")){
+		while (currentDataPart.getPartTitle().equals("Compteurs")){
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
 			datasIter       = currentPartIter.next().iterator();
@@ -906,6 +915,8 @@ public class CustomerReport implements IWriteStrategie{
 			para = new Paragraph();
 			
 			document.newPage();
+			
+			System.out.println("Cc");
 			
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
@@ -920,53 +931,46 @@ public class CustomerReport implements IWriteStrategie{
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
 			
-				while (datasTypeIter.hasNext()) {
-					
-					switch ((IDataHandler.DataType)datasTypeIter.next()) {
-						case STRING:
-							
-							String data = "";
-							
-							data += (String)datasIter.next();
-							para.add(new Phrase (data, basicFont));
-							para.add(Chunk.NEWLINE);
-							break;
-							
-						case JFREECHART :
-							
-							PdfContentByte contentByte = writer.getDirectContent();
-				            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
-				            
-							Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
-				            
-				            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
-				            		chartHeight);
-				     
-				            JFreeChart chart = (JFreeChart) datasIter.next();
-				            chart.draw(graphics2d, rectangle2d);
-				             
-				            graphics2d.dispose();
-				            //contentByte.addTemplate(template, 0, 0);
-				            
-				            Image chartImage = Image.getInstance(template);
-				            
-				            
-				            para.add(chartImage);
-				            para.add(Chunk.NEWLINE);
-				            
-							break;
-						
-						default:
-							throw new Exception ("data type not handled");
-					}
-				}
+			while (datasTypeIter.hasNext()) {
 				
-			
-			currentDataPart = datasIterator.next();
-			
-			
-			para.add(Chunk.NEWLINE);
-			
+				switch ((IDataHandler.DataType)datasTypeIter.next()) {
+					case STRING:
+						
+						String data = "";
+						
+						data += (String)datasIter.next();
+						para.add(new Phrase (data, basicFont));
+						para.add(Chunk.NEWLINE);
+						break;
+						
+					case JFREECHART :
+						
+						PdfContentByte contentByte = writer.getDirectContent();
+			            PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+			            
+						Graphics2D graphics2d = new PdfGraphics2D(template, chartWidth, chartHeight);
+			            
+			            java.awt.geom.Rectangle2D rectangle2d = new java.awt.geom.Rectangle2D.Double(0, 0, chartWidth,
+			            		chartHeight);
+			     
+			            JFreeChart chart = (JFreeChart) datasIter.next();
+			            chart.draw(graphics2d, rectangle2d);
+			             
+			            graphics2d.dispose();
+			            //contentByte.addTemplate(template, 0, 0);
+			            
+			            Image chartImage = Image.getInstance(template);
+			            
+			            
+			            para.add(chartImage);
+			            para.add(Chunk.NEWLINE);
+			            
+						break;
+					
+					default:
+						throw new Exception ("data type not handled");
+				}
+			}
 			// On ajout le paragraphe au document
 			document.add(para);
 			//document.newPage();
@@ -974,6 +978,13 @@ public class CustomerReport implements IWriteStrategie{
 			final int finalCounter = counter + progressIncrement;
 	
 			pBFrame.updateBar(finalCounter);
+			
+			if (!datasIterator.hasNext()) {
+				break;
+			}
+			else {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
 		// A la fin, on ferme tous les flux
