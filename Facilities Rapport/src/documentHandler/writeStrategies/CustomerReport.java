@@ -51,6 +51,8 @@ public class CustomerReport implements IWriteStrategie{
 	 */
 	private int chartHeight;
 	
+	private static final String[] PICTURES_NAMES = {"imageCompteur.jpg", "imageCorrectif.jpg", "imagePreventif.jpg"};
+	
 	/**
 	 * Chemin vers le logo de Vinci
 	 */
@@ -443,20 +445,22 @@ public class CustomerReport implements IWriteStrategie{
 			titrePreventif.setAlignment(Element.ALIGN_CENTER);
 			para.add(titrePreventif);
 			
-			String IMG_PREV_PATH = Form.ICONS_PATH + File.separator + "imagePreventif.jpg";
-			
-			Image imgPrev;
-		
-			imgPrev = Image.getInstance(IMG_PREV_PATH);
-			
-			imgPrev.setAbsolutePosition(document.right() - document.left() / 2 - 300,
-										document.bottom() + 300);
-			
-            try {
-            	// Ajout du logo
-				writer.getDirectContent().addImage(imgPrev);
-			} 
-            catch (DocumentException e) {
+			try {
+				final String IMG_PREV_PATH = Form.ICONS_PATH + File.separator + PICTURES_NAMES[2];
+				
+				final Image imgPrev = Image.getInstance(IMG_PREV_PATH);
+				
+				imgPrev.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+											document.bottom() + 300);
+				try {
+	            	// Ajout de l'image
+					writer.getDirectContent().addImage(imgPrev);
+				} 
+	            catch (DocumentException e) {
+					e.printStackTrace();
+				}
+			}
+			catch(Exception e) {
 				e.printStackTrace();
 			}
 			
@@ -706,20 +710,22 @@ public class CustomerReport implements IWriteStrategie{
 			correctiveTitle.setAlignment(Element.ALIGN_CENTER);
 			para.add(correctiveTitle);
 			
-			String IMG_CORRECT_PATH = Form.ICONS_PATH + File.separator + "imageCorrectif.jpg";
-			
-			Image imgCorrect;
-		
-			imgCorrect = Image.getInstance(IMG_CORRECT_PATH);
-			
-			imgCorrect.setAbsolutePosition(document.right() - document.left() / 2 - 300,
-										document.bottom() + 300);
-			
-            try {
-            	// Ajout du logo
-				writer.getDirectContent().addImage(imgCorrect);
-			} 
-            catch (DocumentException e) {
+			try {
+				final String IMG_PREV_PATH = Form.ICONS_PATH + File.separator + PICTURES_NAMES[1];
+				
+				final Image imgPrev = Image.getInstance(IMG_PREV_PATH);
+				
+				imgPrev.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+											document.bottom() + 300);
+				try {
+	            	// Ajout de l'image
+					writer.getDirectContent().addImage(imgPrev);
+				} 
+	            catch (DocumentException e) {
+					e.printStackTrace();
+				}
+			}
+			catch(Exception e) {
 				e.printStackTrace();
 			}
             
@@ -1039,20 +1045,22 @@ public class CustomerReport implements IWriteStrategie{
 			meterTitle.setAlignment(Element.ALIGN_CENTER);
 			para.add(meterTitle);
 			
-			String IMG_COMPTEUR_PATH = Form.ICONS_PATH + File.separator + "imageCompteur.jpg";
-			
-			Image imgCompteur;
-		
-			imgCompteur = Image.getInstance(IMG_COMPTEUR_PATH);
-			
-			imgCompteur.setAbsolutePosition(document.right() - document.left() / 2 - 300,
-										document.bottom() + 300);
-			
-            try {
-            	// Ajout du logo
-				writer.getDirectContent().addImage(imgCompteur);
-			} 
-            catch (DocumentException e) {
+			try {
+				final String IMG_PREV_PATH = Form.ICONS_PATH + File.separator + PICTURES_NAMES[0];
+				
+				final Image imgPrev = Image.getInstance(IMG_PREV_PATH);
+				
+				imgPrev.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+											document.bottom() + 300);
+				try {
+	            	// Ajout de l'image
+					writer.getDirectContent().addImage(imgPrev);
+				} 
+	            catch (DocumentException e) {
+					e.printStackTrace();
+				}
+			}
+			catch(Exception e) {
 				e.printStackTrace();
 			}
             

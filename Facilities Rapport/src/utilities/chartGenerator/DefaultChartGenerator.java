@@ -40,7 +40,7 @@ public class DefaultChartGenerator implements IChartGenerator {
 				PlotOrientation.VERTICAL, legends, true, false);
 		
 		// Obtient les categories
-		CategoryPlot plot = chart.getCategoryPlot(); 
+		CategoryPlot plot = chart.getCategoryPlot();
 		// Obtient l'axe des domaines
 		CategoryAxis domainAxis = plot.getDomainAxis();
 		
@@ -51,8 +51,12 @@ public class DefaultChartGenerator implements IChartGenerator {
 			final Font font = new Font("Dialog", Font.PLAIN, fontToFit);
 			// Modifie la Font de l'axe des domaines
 			domainAxis.setTickLabelFont(font);
+			// Generate JFreeChart with anti-aliasing
+			chart.setAntiAlias(true);
+			domainAxis.setUpperMargin(0.00);
+			domainAxis.setLowerMargin(0.00);
 			// Fixe arbitrairement (evedntuellement a revoir), le ratio place disponnible/charactere affiche
-			domainAxis.setMaximumCategoryLabelWidthRatio(32);
+			domainAxis.setMaximumCategoryLabelWidthRatio(1.0f);
 		}
 		
 		// Modifie le rendu des barres
