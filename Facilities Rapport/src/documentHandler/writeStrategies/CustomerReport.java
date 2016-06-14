@@ -36,20 +36,33 @@ import ihm.Form;
 import ihm.ProgressBarFrame;
 
 /**
- * Cette classe est la strategie d'edition de document par defaut
+ * Cette classe est la strategie d'edition de rapport pour le client
  * @author Lucie PELLOTTIERO
  *
  */
 public class CustomerReport implements IWriteStrategie{
 	
+	/**
+	 * Largeur des graphes
+	 */
 	private int chartWidth;
+	/**
+	 * Hauteur des graphes
+	 */
 	private int chartHeight;
 	
+	/**
+	 * Chemin vers le logo de Vinci
+	 */
 	private static final String LOGO_VINCI_PATH = Form.ICONS_PATH + File.separator + Form.ICONS_NAME[0];
+	/**
+	 * Logo de Vinci
+	 */
 	private static Image logoVinci;
 	
-	public static final int MAX_DOMAIN_SIZE = 9;
-	
+	/**
+	 * Constructeur
+	 */
 	public CustomerReport () {
 		chartWidth  = 500;
 		chartHeight = 400;
@@ -62,31 +75,90 @@ public class CustomerReport implements IWriteStrategie{
 		}
 	}
 	
-	//en-tête et pied de page
-	static class MyFooter extends PdfPageEventHelper {
-        private static final Font FOOTER_FONT = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
-        private static final Font COLOR_FOOTER_FONT = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
+	/**
+	 * En-tete et pied de page
+	 * @author Lucie PELLOTTIERO
+	 *
+	 */
+	static class MyHeaderFooter extends PdfPageEventHelper {
+		/**
+		 * {@link Font} utilisee dans l'en-tete et le pied de page
+		 */
+        private final Font defaultFont;
+        /**
+         * Font coloree utilisee dans le pied de page
+         */
+        private final Font coloredFooterFont;
         
-        private static final Image VINCI_LOGO_HEADER = Image.getInstance(logoVinci);
-        static {
-        	VINCI_LOGO_HEADER.scaleAbsolute(VINCI_LOGO_HEADER.getWidth() / 2,
-        									VINCI_LOGO_HEADER.getHeight() / 2);
+        /**
+         * Contenu d'en-tete
+         */
+        private final Phrase header1;
+        /**
+         * Contenu d'en-tete
+         */
+        private final Phrase header2;
+        /**
+         * Contenu d'en-tete
+         */
+        private final Phrase header3;
+        
+        /**
+         * Logo de Vinci utilise dans l'en-tete.
+         */
+        private final Image VinciLogoHeader;
+        
+        /**
+         * Contenu de pied de page
+         */
+        private final Phrase footer1;
+        /**
+         * Contenu de pied de page
+         */
+        private final Phrase footer2;
+        /**
+         * Contenu de pied de page
+         */
+        private final Phrase footer3;
+        
+        /**
+         * Constructeur
+         */
+        public MyHeaderFooter() {
+        	// Initialisation des fields
+        	defaultFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL);
+        	coloredFooterFont = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, BaseColor.RED);
+        	
+        	// Contenus d'en-tete
+        	header1 = new Phrase("Centre d’Expertises VFPA", defaultFont);
+            header2 = new Phrase("Aix en Provence", defaultFont);
+            header3 = new Phrase("Support aux Opérations", defaultFont);
+            
+            VinciLogoHeader = Image.getInstance(logoVinci);
+            // Le logo doit etre redimensionne
+        	VinciLogoHeader.scaleAbsolute(VinciLogoHeader.getWidth() / 2,
+        									VinciLogoHeader.getHeight() / 2);
+        	
+        	// Contenus de pied de page
+        	footer1 = new Phrase("PROVENCE MAINTENANCE SERVICES - Immeuble Le Rubis - 165 av Galilée -"
+        			+ " 13 857 Aix En Provence Cedex 3", defaultFont);
+        	footer2 = new Phrase("Tél. : 04 42 90 55 80 - Fax. : 04 42 90 55 81  -  www.vinci-facilities.com -"
+        			+ " RCS 433 899 788 Aix en Provence – TVA FR 194 433 899 788", defaultFont);
+        	footer3 = new Phrase("Ce document est la propriété du Centre d’Expertises VFPA."
+        			+ " Toute reproduction est interdite sans autorisations", coloredFooterFont);
         }
         
-        public void onStartPage(PdfWriter writer, Document document) {
+        @Override
+        public void onStartPage(final PdfWriter writer, final Document document) {
+        	// Obtention du ContentByte
             PdfContentByte cb = writer.getDirectContent();
             
-            //contenu en-tête
-            Phrase header1 = new Phrase("Centre d’Expertises VFPA", FOOTER_FONT);
-            Phrase header2 = new Phrase("Aix en Provence", FOOTER_FONT);
-            Phrase header3 = new Phrase("Support aux Opérations", FOOTER_FONT);
-            
-            //en-tête position
-            //logoVinci.setAbsolutePosition((PageSize.POSTCARD.getWidth() / 2), 22);
-            VINCI_LOGO_HEADER.setAbsolutePosition(document.left() + document.leftMargin() - 60, 
+            // En-tête position
+            VinciLogoHeader.setAbsolutePosition(document.left() + document.leftMargin() - 60, 
             		document.top() - document.topMargin() + 43);
             try {
-				writer.getDirectContent().addImage(VINCI_LOGO_HEADER);
+            	// Ajout du logo
+				writer.getDirectContent().addImage(VinciLogoHeader);
 			} 
             catch (DocumentException e) {
 				e.printStackTrace();
@@ -105,16 +177,12 @@ public class CustomerReport implements IWriteStrategie{
                     document.top() + 0, 0);
         }
         
+        @Override
         public void onEndPage(PdfWriter writer, Document document) {
         	
         	// Permet de creer une nouvelle page meme si elle est vide
         	writer.setPageEmpty(false);
             PdfContentByte cb = writer.getDirectContent();
-            
-            //contenu pied de page
-            Phrase footer1 = new Phrase("PROVENCE MAINTENANCE SERVICES - Immeuble Le Rubis - 165 av Galilée - 13 857 Aix En Provence Cedex 3", FOOTER_FONT);
-            Phrase footer2 = new Phrase("Tél. : 04 42 90 55 80 - Fax. : 04 42 90 55 81  -  www.vinci-facilities.com - RCS 433 899 788 Aix en Provence – TVA FR 194 433 899 788", FOOTER_FONT);
-            Phrase footer3 = new Phrase("Ce document est la propriété du Centre d’Expertises VFPA. Toute reproduction est interdite sans autorisations", COLOR_FOOTER_FONT);
             
             //pied de page position
             ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
@@ -130,14 +198,14 @@ public class CustomerReport implements IWriteStrategie{
                     (document.right() - document.left()) / 2 + document.leftMargin(),
                     document.bottom() - 30, 0);
         }
-    }//fin MyFooter
+    }
 
 	@Override
 	public boolean writeDocument(final Collection<IDataHandler> datas, final Document document, final PdfWriter writer, 
 		ProgressBarFrame pBFrame) throws Exception {
 	
 		// Creation de l'en-tête et pied de page
-		MyFooter event = new MyFooter();
+		MyHeaderFooter event = new MyHeaderFooter();
 	    writer.setPageEvent(event);
 	    
 		// On ouvre le document a la modification
@@ -158,8 +226,8 @@ public class CustomerReport implements IWriteStrategie{
 		// On cre un Iterator pour les donnees
 		Iterator<IDataHandler> datasIterator = datas.iterator();
 		
+		// Obtention de l'increment de progression
 		int counter = pBFrame.getProgress();
-		
 		int progressIncrement = ProgressBarFrame.MY_MAXIMUM - counter / datas.size();
 		
         IDataHandler currentDataPart = datasIterator.next();
@@ -174,13 +242,13 @@ public class CustomerReport implements IWriteStrategie{
 		String dateDebut = new String((String)datasIter.next());
 		String dateFin = new String((String)datasIter.next());
 		
-		//passage à la partie suivante : client
+		// Passage à la partie suivante : client
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
 		datasTypeIter = currentPartIter.next().iterator();
 		datasIter     = currentPartIter.next().iterator();
 		
-		//donnees client
+		// Donnees client
 		String siteClient = new String((String)datasIter.next());
 		Phrase nomSiteClient = (new Phrase (siteClient, basicFont));
 		Phrase codeClient = (new Phrase ((String)datasIter.next(), basicFont));
@@ -196,7 +264,7 @@ public class CustomerReport implements IWriteStrategie{
 			logoClient = (java.awt.Image) datasIter.next();
 		}
 		
-		//passage a la partie suivante, redacteur
+		// Passage a la partie suivante, redacteur
 		currentDataPart = datasIterator.next();
 		currentPartIter = currentDataPart.getDataStorage().iterator();
 		datasTypeIter = currentPartIter.next().iterator();
@@ -204,13 +272,14 @@ public class CustomerReport implements IWriteStrategie{
 		
 		/*-----------------------------page 1, page de garde------------------------------*/
 		
+		// Ajout de nouvelles lignes pour se mettre au milieu
 		final Paragraph mainTitle = new Paragraph();
 		for(int i = 0; i < 12; ++i){
 			mainTitle.add(Chunk.NEWLINE);
 		}
 		mainTitle.setAlignment(Element.ALIGN_CENTER);
 		
-		//donnees rapport
+		// Donnees rapport
 		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
 		mainTitle.add(titrePrincipal);
 		mainTitle.add(Chunk.NEWLINE);
@@ -236,30 +305,11 @@ public class CustomerReport implements IWriteStrategie{
 		
 		document.add(mainTitle);
 		
-		/*PdfContentByte cb = writer.getDirectContent();
-		
-		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
-		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-				titrePrincipal,
-                (document.right() - document.left()) / 2 + document.leftMargin(),
-                document.top() - 200, 0);
-		
-		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-				 titreRapport,
-                 (document.right() - document.left()) / 2 + document.leftMargin(),
-                 document.top() - 240, 0);
-		
-		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
-				date,
-                (document.right() - document.left()) / 2 + document.leftMargin(),
-                document.top() - 400, 0);
-		*/
-		
 		/*---------page 2, coordonnees client - redacteur-----------*/
 		
 		Paragraph para = new Paragraph();
 		
-		//nouvelle page
+		// Nouvelle page
 		
 		document.newPage();
 		para.add(Chunk.NEWLINE);
@@ -269,7 +319,7 @@ public class CustomerReport implements IWriteStrategie{
 		para.add(Chunk.NEWLINE);
 		para.add(Chunk.NEWLINE);
 		
-		//paragraphe contenant les donnees client 
+		// Paragraphe contenant les donnees client 
 		Paragraph paraClient = new Paragraph();
 		paraClient.add(nomClient);
 		paraClient.add(Chunk.NEWLINE);
@@ -288,7 +338,7 @@ public class CustomerReport implements IWriteStrategie{
 		paraClient.add(Chunk.NEWLINE);
 		paraClient.add(emailClient);
         
-		//paragraphe contenant les donnees redacteur
+		// Paragraphe contenant les donnees redacteur
 		Paragraph paraRedac = new Paragraph();
 		paraRedac.add(new Phrase ((String)datasIter.next(), boldBasicFont));
 		
@@ -313,9 +363,11 @@ public class CustomerReport implements IWriteStrategie{
 		
 		paraRedac.add(new Phrase((String)datasIter.next(), boldBasicFont));
 		
-		//tableau contenant les donnees client et redacteur
-		PdfPTable table = new PdfPTable(2); //tableau de deux colonnes
-		table.getDefaultCell().setBorder(0); //pas de bordure
+		// Tableau contenant les donnees client et redacteur
+		// Tableau de deux colonnes
+		PdfPTable table = new PdfPTable(2); 
+		// Pas de bordure
+		table.getDefaultCell().setBorder(0); 
 		
 		Paragraph titreClient = new Paragraph ("CLIENT", basicTitleFont);
 		titreClient.setAlignment(Element.ALIGN_CENTER);
@@ -344,6 +396,7 @@ public class CustomerReport implements IWriteStrategie{
 		cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		cell3.setBorder(0);
 		
+		// Redimension du logo de Vinci (ne fonctionne pas comme souhaite)
 		/*ImageIcon logoIcon = new ImageIcon(logoVinciPath);
 		logoIcon = new ImageIcon(logoIcon.getImage().
                 getScaledInstance(90, -1,
@@ -361,6 +414,7 @@ public class CustomerReport implements IWriteStrategie{
 		document.add(para);
 		
 		/*---------------------------------partie preventif-------------------------------------------*/
+		// Atteinte de la premiere partie preventive
 		counter = 0;
 		while (!(currentDataPart.getPartTitle().equals("Bons préventifs") ||
 				currentDataPart.getPartTitle().equals("Bons préventifs par domaines") ||
@@ -371,19 +425,25 @@ public class CustomerReport implements IWriteStrategie{
 			++counter;
 		}
 		
-		para = new Paragraph();
-		
-		document.newPage();
-		//nouvelle page, titre preventif
-		for(int i = 0; i < 12; ++i){
-			para.add(Chunk.NEWLINE);
+		// Si on a bien une partie preventive
+		if (currentDataPart.getPartTitle().equals("Bons préventifs") ||
+				currentDataPart.getPartTitle().equals("Bons préventifs par domaines") ||
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) {
+			para = new Paragraph();
+			
+			document.newPage();
+			// Nouvelle page, titre preventif
+			for(int i = 0; i < 12; ++i){
+				para.add(Chunk.NEWLINE);
+			}
+			Paragraph titrePreventif = new Paragraph("Préventif", mainTitleFont);
+			titrePreventif.setAlignment(Element.ALIGN_CENTER);
+			para.add(titrePreventif);
+			
+			document.add(para);
 		}
-		Paragraph titrePreventif = new Paragraph("Préventif", mainTitleFont);
-		titrePreventif.setAlignment(Element.ALIGN_CENTER);
-		para.add(titrePreventif);
 		
-		document.add(para);
-		
+		// Partie bon preventif
 		if (currentDataPart.getPartTitle().equals("Bons préventifs")) {
 		
 			currentPartIter = currentDataPart.getDataStorage().iterator();
@@ -392,16 +452,16 @@ public class CustomerReport implements IWriteStrategie{
 			
 			Paragraph preventivPar = new Paragraph();
 			preventivPar.add(Chunk.NEXTPAGE);
-			preventivPar.add(Chunk.NEWLINE);
-			preventivPar.add(Chunk.NEWLINE);
-			preventivPar.add(Chunk.NEWLINE);
-			preventivPar.add(Chunk.NEWLINE);
+			for(int i = 0; i < 4; ++i){
+				preventivPar.add(Chunk.NEWLINE);
+			}
 			
 			preventivPar.add(new Phrase("Préventif – Bilan maintenance préventive", boldTitleFont));
 			preventivPar.add(Chunk.NEWLINE);
 			preventivPar.add(Chunk.NEWLINE);
 			preventivPar.add(Chunk.NEWLINE);
 			
+			// Counter permettant de change de phrase si besoins
 			counter = 0;
 			
 			while (datasTypeIter.hasNext()) {
@@ -452,10 +512,15 @@ public class CustomerReport implements IWriteStrategie{
 						throw new Exception ("data type not handled");
 				}
 			}
+			// Ajout de la partie
 			document.add(preventivPar);
-			currentDataPart = datasIterator.next();
+			// Passage a la partie suivante si on peut
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
+		// Partie bon preventif par domaines
 		if (currentDataPart.getPartTitle().equals("Bons préventifs par domaines")) {
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -516,9 +581,12 @@ public class CustomerReport implements IWriteStrategie{
 			}
 			para.add(Chunk.NEXTPAGE);
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
+		// Partie arborescence libre 1
 		while (currentDataPart.getPartTitle().equals("Arborescence Libre")){
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -582,11 +650,17 @@ public class CustomerReport implements IWriteStrategie{
 				}
 			}
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
+			else {
+				break;
+			}
 		}
 		
 		/*---------------------------------partie correctif-------------------------------------------*/
 		
+		// Atteinte de la premiere partie corrective
 		counter = 0;
 		while (!(currentDataPart.getPartTitle().equals("Demandes d'intervention") ||
 				currentDataPart.getPartTitle().equals("Demandes d'intervention par états") ||
@@ -598,18 +672,24 @@ public class CustomerReport implements IWriteStrategie{
 			++counter;
 		}
 		
-		para = new Paragraph();
-		document.newPage();
-		//nouvelle page, titre correctif
-		for(int i = 0; i < 12; ++i){
-			para.add(Chunk.NEWLINE);
+		if (currentDataPart.getPartTitle().equals("Demandes d'intervention") ||
+				currentDataPart.getPartTitle().equals("Demandes d'intervention par états") ||
+				currentDataPart.getPartTitle().equals("Demandes d'intervention par domaines") ||
+				currentDataPart.getPartTitle().equals("Arborescence Libre")) {
+			para = new Paragraph();
+			document.newPage();
+			// Nouvelle page, titre correctif
+			for(int i = 0; i < 12; ++i){
+				para.add(Chunk.NEWLINE);
+			}
+			Paragraph correctiveTitle = new Paragraph("Correctif", mainTitleFont);
+			correctiveTitle.setAlignment(Element.ALIGN_CENTER);
+			para.add(correctiveTitle);
+			
+			document.add(para);
 		}
-		Paragraph correctiveTitle = new Paragraph("Correctif", mainTitleFont);
-		correctiveTitle.setAlignment(Element.ALIGN_CENTER);
-		para.add(correctiveTitle);
 		
-		document.add(para);
-		
+		// Partie demandes d'intervention
 		if (currentDataPart.getPartTitle().equals("Demandes d'intervention")) {
 		
 			currentPartIter = currentDataPart.getDataStorage().iterator();
@@ -677,9 +757,12 @@ public class CustomerReport implements IWriteStrategie{
 				}
 			}
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
+		// Partie demandes d'intervention par etats
 		if (currentDataPart.getPartTitle().equals("Demandes d'intervention par états")) {
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -739,9 +822,12 @@ public class CustomerReport implements IWriteStrategie{
 				}
 			}
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
+		// Partie demades d'intervention par domaines
 		if (currentDataPart.getPartTitle().equals("Demandes d'intervention par domaines")) {
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -816,9 +902,12 @@ public class CustomerReport implements IWriteStrategie{
 				}
 			}
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
 		}
 		
+		// Partie arborescence libre 2
 		while (currentDataPart.getPartTitle().equals("Arborescence Libre")){
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -882,11 +971,17 @@ public class CustomerReport implements IWriteStrategie{
 				}
 			}
 			document.add(para);
-			currentDataPart = datasIterator.next();
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
+			}
+			else {
+				break;
+			}
 		}
 		
 		/*------------------------------------------------partie compteurs-----------------------------------------------------------*/
 		
+		// Atteinte de la partie compteur
 		counter = 0;
 		while (!(currentDataPart.getPartTitle().equals("Compteurs")) &&
 				datasIterator.hasNext() && counter < 1) {
@@ -895,18 +990,22 @@ public class CustomerReport implements IWriteStrategie{
 			++counter;
 		}
 		
-		para = new Paragraph();
-		document.newPage();
-		//nouvelle page, titre compteur
-		for(int i = 0; i < 12; ++i){
-			para.add(Chunk.NEWLINE);
+		// Si on a une partie compteur
+		if (currentDataPart.getPartTitle().equals("Compteurs")) {
+			para = new Paragraph();
+			document.newPage();
+			//nouvelle page, titre compteur
+			for(int i = 0; i < 12; ++i){
+				para.add(Chunk.NEWLINE);
+			}
+			Paragraph meterTitle = new Paragraph("Fluides et énergies", mainTitleFont);
+			meterTitle.setAlignment(Element.ALIGN_CENTER);
+			para.add(meterTitle);
+			
+			document.add(para);
 		}
-		Paragraph meterTitle = new Paragraph("Fluides et énergies", mainTitleFont);
-		meterTitle.setAlignment(Element.ALIGN_CENTER);
-		para.add(meterTitle);
 		
-		document.add(para);
-		
+		// Partie compteurs
 		while (currentDataPart.getPartTitle().equals("Compteurs")){
 			currentPartIter = currentDataPart.getDataStorage().iterator();
 			datasTypeIter   = currentPartIter.next().iterator();
@@ -977,11 +1076,11 @@ public class CustomerReport implements IWriteStrategie{
 	
 			pBFrame.updateBar(finalCounter);
 			
-			if (!datasIterator.hasNext()) {
-				break;
+			if (datasIterator.hasNext()) {
+				currentDataPart = datasIterator.next();
 			}
 			else {
-				currentDataPart = datasIterator.next();
+				break;
 			}
 		}
 		

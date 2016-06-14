@@ -76,7 +76,7 @@ import utilities.chartGenerator.DefaultChartGenerator;
 import utilities.chartGenerator.IChartGenerator;
 
 /**
- * JFrame du formulaire
+ * {@link JFrame} du formulaire
  * @author Lucie PELLOTTIERO
  *
  */
@@ -199,6 +199,9 @@ public class Form extends JFrame{
 	 */
 	private final Collection<JTextComponent> datasToSerialize;
 	
+	/**
+	 * La mise en page selectionnee
+	 */
 	private IWriteStrategie selectedStrategie;
 	
 	/**
@@ -2639,7 +2642,7 @@ public class Form extends JFrame{
 				    		if (isElement) {
 					    		try {
 									final JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
-											"Element", "Nombre", barChartDatas, true, fontToFit);
+											"", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree1.addJFreeChart(barchart);
 								} 
@@ -2691,10 +2694,11 @@ public class Form extends JFrame{
 					    		return null;
 					    	}
 					    	else {
+					    		final Double interventionNumber = Double.parseDouble(currentInterventionNumber.getText());
 					    		//interventionDemand.addString(currentInterventionNumber.getText(), "Nombre d'interventions : ");
-					    		barChartDatas.addValue(Double.parseDouble(currentInterventionNumber.getText()), "Nombre", 
+					    		barChartDatas.addValue(interventionNumber, "Nombre", 
 					    				currentInterventionMonths.getSelectedItem().toString());
-					    		++nbInterventionDemand;
+					    		nbInterventionDemand += interventionNumber;
 					    	}	
 				    	}
 				    	
@@ -3063,7 +3067,7 @@ public class Form extends JFrame{
 				    		if (barChartDatas.getColumnCount() > 0) {
 					    		try {
 									JFreeChart barchart = chartGenerator.generateBarChart(currentTree.getTitleTextField().getText(),
-											"Element", "Nombre", barChartDatas, true, fontToFit);
+											"", "Nombre", barChartDatas, true, fontToFit);
 									
 									freeTree.addJFreeChart(barchart);
 								} 
@@ -3480,6 +3484,14 @@ public class Form extends JFrame{
 	    this.setVisible(true);  //visibilite  
 	}	
 
+	/**
+	 * Creer un JPanel de bon de mois preventif
+	 * @param preventivesVouchersMonths Les mois preventifs auxquels on ajoute celui de ce JPanel
+	 * @param nbPreventivesVouchersOpened Les nombres de bon ouverts auxquels on ajoute celui de ce JPanel
+	 * @param nbPreventivesVouchersClosed Les nombre de bon fermes auxquels on ajoute celui de ce JPanel
+	 * @param deleteButtonsPreventivesVouchers Les JButton de suppression auxquels on ajoute celui de ce JPanel
+	 * @return Le JPanel cree
+	 */
 	private JPanel createPreventiveVoucherMonth (
 			final Collection<JComboBox<String>> preventivesVouchersMonths, 
 			final Collection<JTextField> nbPreventivesVouchersOpened, 
@@ -3492,7 +3504,8 @@ public class Form extends JFrame{
 		
 		GridBagConstraints constraint = new GridBagConstraints();
 		
-		constraint.insets = new Insets(0, 0, 3, 0); //marges autour de l'element
+		// Marges autour de l'element
+		constraint.insets = new Insets(0, 0, 3, 0);
 		
 		constraint.gridx = 0;
 		constraint.gridy = preventiveVoucherMonthPosition;
@@ -3666,6 +3679,13 @@ public class Form extends JFrame{
 		return thisPreventiveVoucherMonthPanel;
 	}
 	
+	/**
+	 * Creer un JPanel de demande d'intervention
+	 * @param interventionMonths Les mois de demande d'intervention auxquels on ajoute celui de ce JPanel
+	 * @param interventionNumbers Les nombres d'intervention auxquels on ajoute celui de ce JPanel
+	 * @param deleteButtonsInterventionMonths Les JButton de suppression auxquels on ajoute celui de ce JPanel
+	 * @return Le JPanel de demande d'intervention
+	 */
 	private JPanel createInterventionDemand (final Collection<JComboBox<String>> interventionMonths, 
 			final Collection<JTextField> interventionNumbers,
 			final ArrayList<JButton> deleteButtonsInterventionMonths) {
@@ -3812,6 +3832,10 @@ public class Form extends JFrame{
 		return interventionDemand;
 	}
 	
+	/**
+	 * Appele lors de l'annulation ou la fin de la creation du pdf.
+	 * @param pBFrame La {@link ProgressBarFrame} correspondant a la creation du pdf
+	 */
 	private void stopPdfCreation(final ProgressBarFrame pBFrame) {
 		
 		this.setCursor(null);
@@ -3820,7 +3844,11 @@ public class Form extends JFrame{
 		pBFrame.dispose();
 	}
 	
-	private String xmlSerialization(final File fileToSaveInto) {
+	/**
+	 * Serialisation des donnes serialisables
+	 * @param fileToSaveInto Le {@link File} dans lequel on sauvegarde les donnees
+	 */
+	private void xmlSerialization(final File fileToSaveInto) {
 		try {
 			final XMLEncoder xmlEncoder = new XMLEncoder(new BufferedOutputStream(
 			        new FileOutputStream(fileToSaveInto)));
@@ -3835,10 +3863,13 @@ public class Form extends JFrame{
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", 
 					JOptionPane.WARNING_MESSAGE);
 		}
-		
-		return "";
 	}
 	
+	/**
+	 * Deserialisation des donnes
+	 * @param fileToLoadFrom le {@link File} a partir duquel on tente de charger les donnees.<br>
+	 * Ce fichier doit etre un .xml
+	 */
 	@SuppressWarnings("unchecked")
 	private void xmlUnserialization(final File fileToLoadFrom) {
 		try {
@@ -3858,6 +3889,10 @@ public class Form extends JFrame{
 		}
 	}
 	
+	/**
+	 * Application des donnees chargees
+	 * @param datasToSerialize Les donnees deserialisees par {@link Form.xmlUnserialization(final File)}}
+	 */
 	public void setUnserializedDatas (final Collection<JTextComponent> datasToSerialize) {
 		if (this.datasToSerialize.size() != datasToSerialize.size()) {
 			JOptionPane.showMessageDialog(this, "Impossible de charger ces données, versions incompatibles", "Erreur", 

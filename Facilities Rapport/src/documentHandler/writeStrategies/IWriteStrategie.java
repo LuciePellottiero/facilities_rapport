@@ -36,5 +36,10 @@ public interface IWriteStrategie {
 	public boolean writeDocument (final Collection<IDataHandler> datas, final Document document, final PdfWriter writer, 
 			ProgressBarFrame pBFrame) throws Exception;
 	
+	/**
+	 * Obtient un IDataHandler correspondant a cette strategie
+	 * @param partTitle Le titre du IDataHandler
+	 * @return un IDataHandler correspondant a cette strategie
+	 */
 	public IDataHandler getDataHandler(final String partTitle);
 }

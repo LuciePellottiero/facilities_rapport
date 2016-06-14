@@ -6,6 +6,11 @@ import java.util.Collection;
 
 import org.jfree.chart.JFreeChart;
 
+/**
+ * Classe de gestion des donnees pour la strategies de formulaire client
+ * @author Lucie PELLOTTIERO
+ *
+ */
 public class CustomerDataHandler implements IDataHandler {
 
 	/**

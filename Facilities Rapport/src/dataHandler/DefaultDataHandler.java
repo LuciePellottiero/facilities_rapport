@@ -7,9 +7,9 @@ import java.util.Collection;
 import org.jfree.chart.JFreeChart;
 
 /**
- * Cette classe permet de gerer les String, les Image et les JFreeChart lors de la creation du rapport PDF./n
+ * Cette classe permet de gerer les {@link String}, les {@link Image} et les {@link JFreeChart} lors de la creation du rapport pdf par defaut.<br>
  * Par défaut, un DefaultDataHandler représente une partie du rapport.
- * @author Lucie PELLOTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public class DefaultDataHandler implements IDataHandler {

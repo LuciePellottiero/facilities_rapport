@@ -15,23 +15,26 @@ import ihm.ProgressBarFrame;
 
 /**
  * Ceci est la classe permettant de creer les fichiers de rapport
- * @author Lucie PELLOTTIERRO
+ * @author Lucie PELLOTTIERO
  *
  */
 public class CreateReportDocument {
 	
 	/**
-	 * Cette String est le chemin par defaut vers lequel doit etre creer le rapport PDF
+	 * Chemin par defaut vers lequel doit etre creer le rapport PDF
 	 */
 	public final static String DEFAULT_REPORT_PATH = new File("").getAbsolutePath();
 	
+	/**
+	 * Nom par defaut du rapport
+	 */
 	public final static String DEFAULT_FILE_NAME = "PdfReport";
 	
 	/**
 	 * Creer le document PDF du rapport a l'emplacement precise.
-	 * @param datas La liste des donnees indexee par leur type (voir les constantes dans IDataHandler)
+	 * @param datas La liste des donnees indexee par leur type (voir les constantes dans {@link IDataHandler})
 	 * @param reportPathName Le nom complet du fichier (avec chemin absolue)
-	 * @param writeStrategieNumber Le numero de la strategie d'ecriture a appliquer (voir IWriteStrategie)
+	 * @param writeStrategieNumber Le type de la strategie d'ecriture a appliquer (voir {@link IWriteStrategie})
 	 * @param pBFrame La barre de progression a mettre a jour
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est attrapee

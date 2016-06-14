@@ -22,22 +22,22 @@ public interface IDataHandler {
 	}
 
 	/**
-	 * Ajouter une String au stockage des donnees.
-	 * @param strToAdd la String a ajouter aux donnees
+	 * Ajouter une {@link String} au stockage des donnees.
+	 * @param strToAdd la {@link String} a ajouter aux donnees
 	 * @param title le titre de la donnee
 	 */
 	public void addString (final String strToAdd, final String title);
 	
 	
 	/**
-	 * Ajouter un JFreeChart aux donnees
-	 * @param chartToAdd le JFreeChart a ajouter
+	 * Ajouter un {@link JFreeChart} aux donnees
+	 * @param chartToAdd le {@link JFreeChart} a ajouter
 	 */
 	public void addJFreeChart (final JFreeChart chartToAdd);
 	
 	/**
-	 * Ajouter une Image aux donnees
-	 * @param imageToAdd L'Image a ajouter aux donnees
+	 * Ajouter une {@link Image} aux donnees
+	 * @param imageToAdd L'{@link Image} a ajouter aux donnees
 	 */
 	public void addImage (final Image imageToAdd);
 	
@@ -48,7 +48,7 @@ public interface IDataHandler {
 	public String getPartTitle();
 	
 	/**
-	 * Obtenir le stockage de donnee.\n
+	 * Obtenir le stockage de donnee.<br>
 	 * Ne devrait etre utilise que pour la lecture de donnee.
 	 * @return Le stockage de donnee
 	 */
