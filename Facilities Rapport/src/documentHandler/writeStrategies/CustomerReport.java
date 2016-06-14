@@ -281,6 +281,7 @@ public class CustomerReport implements IWriteStrategie{
 		}
 		mainTitle.setAlignment(Element.ALIGN_CENTER);
 		
+		
 		// Donnees rapport
 		Phrase titrePrincipal = new Phrase(siteClient, mainTitleFont);
 		mainTitle.add(titrePrincipal);
@@ -441,6 +442,23 @@ public class CustomerReport implements IWriteStrategie{
 			Paragraph titrePreventif = new Paragraph("Préventif", mainTitleFont);
 			titrePreventif.setAlignment(Element.ALIGN_CENTER);
 			para.add(titrePreventif);
+			
+			String IMG_PREV_PATH = Form.ICONS_PATH + File.separator + "imagePreventif.jpg";
+			
+			Image imgPrev;
+		
+			imgPrev = Image.getInstance(IMG_PREV_PATH);
+			
+			imgPrev.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+										document.bottom() + 300);
+			
+            try {
+            	// Ajout du logo
+				writer.getDirectContent().addImage(imgPrev);
+			} 
+            catch (DocumentException e) {
+				e.printStackTrace();
+			}
 			
 			document.add(para);
 		}
@@ -688,6 +706,23 @@ public class CustomerReport implements IWriteStrategie{
 			correctiveTitle.setAlignment(Element.ALIGN_CENTER);
 			para.add(correctiveTitle);
 			
+			String IMG_CORRECT_PATH = Form.ICONS_PATH + File.separator + "imageCorrectif.jpg";
+			
+			Image imgCorrect;
+		
+			imgCorrect = Image.getInstance(IMG_CORRECT_PATH);
+			
+			imgCorrect.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+										document.bottom() + 300);
+			
+            try {
+            	// Ajout du logo
+				writer.getDirectContent().addImage(imgCorrect);
+			} 
+            catch (DocumentException e) {
+				e.printStackTrace();
+			}
+            
 			document.add(para);
 		}
 		
@@ -1004,6 +1039,23 @@ public class CustomerReport implements IWriteStrategie{
 			meterTitle.setAlignment(Element.ALIGN_CENTER);
 			para.add(meterTitle);
 			
+			String IMG_COMPTEUR_PATH = Form.ICONS_PATH + File.separator + "imageCompteur.jpg";
+			
+			Image imgCompteur;
+		
+			imgCompteur = Image.getInstance(IMG_COMPTEUR_PATH);
+			
+			imgCompteur.setAbsolutePosition(document.right() - document.left() / 2 - 300,
+										document.bottom() + 300);
+			
+            try {
+            	// Ajout du logo
+				writer.getDirectContent().addImage(imgCompteur);
+			} 
+            catch (DocumentException e) {
+				e.printStackTrace();
+			}
+            
 			document.add(para);
 		}
 		
