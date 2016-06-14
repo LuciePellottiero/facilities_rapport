@@ -146,9 +146,10 @@ public class CustomerReport implements IWriteStrategie{
 		// Creation de la font par defaut
 	    BaseFont basefont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
 		// Creation de la font concrete
+	    BaseColor vinciBlue = new BaseColor(10, 39, 117);
 	    Font basicFont = new Font (basefont, 12, Font.NORMAL);
 	    Font boldBasicFont = new Font (basefont, 12, Font.BOLD);
-	    Font boldTitleFont = new Font (basefont, 18, Font.BOLD);
+	    Font boldTitleFont = new Font (basefont, 18, Font.BOLD, vinciBlue);
 	    Font basicTitleFont = new Font (basefont, 18, Font.NORMAL);
 	    Font mainTitleFont = new Font (basefont, 35, Font.BOLD);
 	    Font firstPageFont = new Font (basefont, 26, Font.NORMAL);
@@ -900,7 +901,7 @@ public class CustomerReport implements IWriteStrategie{
 		for(int i = 0; i < 12; ++i){
 			para.add(Chunk.NEWLINE);
 		}
-		Paragraph meterTitle = new Paragraph("Compteur", mainTitleFont);
+		Paragraph meterTitle = new Paragraph("Fluides et énergies", mainTitleFont);
 		meterTitle.setAlignment(Element.ALIGN_CENTER);
 		para.add(meterTitle);
 		
@@ -923,7 +924,7 @@ public class CustomerReport implements IWriteStrategie{
 			final String title = (String) datasIter.next();
 			datasTypeIter.next();
 			
-			para.add(new Phrase(title, boldTitleFont));
+			para.add(new Phrase("Fluides et énergies - " + title, boldTitleFont));
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
 			para.add(Chunk.NEWLINE);
