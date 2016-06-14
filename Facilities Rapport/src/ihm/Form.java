@@ -99,8 +99,7 @@ public class Form extends JFrame{
 	/**
 	 * Le chemin relatif vers le repertoire des icons
 	 */
-	public final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
-			"Files" + File.separator + "Icons";
+	public final static String ICONS_PATH = "Files" + File.separator + "Icons";
 	
 	/**
 	 * Le nom des fichiers des icons
