@@ -61,7 +61,9 @@ public class CustomerReport implements IWriteStrategie{
 	private static Image logoVinci;
 	
 	/**
-	 * Constructeur
+	 * Le constructeur par defaut.<br>
+	 * {@link DefaultStrategie.chartWidth} = {@value 500}<br>
+	 * {@link DefaultStrategie.chartHeight} = {@value 400}
 	 */
 	public CustomerReport () {
 		chartWidth  = 500;
@@ -86,7 +88,7 @@ public class CustomerReport implements IWriteStrategie{
 		 */
         private final Font defaultFont;
         /**
-         * Font coloree utilisee dans le pied de page
+         * {@link Font} coloree utilisee dans le pied de page
          */
         private final Font coloredFooterFont;
         

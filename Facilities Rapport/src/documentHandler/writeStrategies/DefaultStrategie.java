@@ -40,8 +40,8 @@ public class DefaultStrategie implements IWriteStrategie{
 	
 	/**
 	 * Le constructeur par defaut.<br>
-	 * chartWidth = 500<br>
-	 * charHeight = 350
+	 * {@link DefaultStrategie.chartWidth} = {@value 500}<br>
+	 * {@link DefaultStrategie.chartHeight} = {@value 350}
 	 */
 	public DefaultStrategie () {
 		chartWidth  = 500;

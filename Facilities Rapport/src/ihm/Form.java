@@ -92,12 +92,12 @@ public class Form extends JFrame{
 	 */
 	private final JButton addPreventiveVoucherMonth;
 	/**
-	 * JButton d'ajout de mois de demande d'intervention
+	 * {@link JButton} d'ajout de mois de demande d'intervention
 	 */
 	private final JButton addInterventionDemandMonth;
 	
 	/**
-	 * Le chemin relatif vers le repertoir des icons
+	 * Le chemin relatif vers le repertoire des icons
 	 */
 	public final static String ICONS_PATH = "Facilities Rapport" + File.separator + 
 			"Files" + File.separator + "Icons";
@@ -109,21 +109,21 @@ public class Form extends JFrame{
 			"pdfIcon.png", "removeIcon.png", "folderIcon.png", "validateIcon.png"};
 	
 	/**
-	 * Collection des pourcentage des bons preventifs par domaine
+	 * {@link Collection} des pourcentage des bons preventifs par domaine
 	 */
 	private Collection<JFormattedTextField> preventiveVoucherPourcentageFields;
 	/**
-	 * Collection des JCheckBox des bons preventifs par domaine
+	 * {@link Collection} des {@link JCheckBox} des bons preventifs par domaine
 	 */
 	private Collection<JCheckBox> preventiveVoucherDomains;
 	
 	/**
-	 * L'ImageIcon du logo du client
+	 * L'{@link ImageIcon} du logo du client
 	 */
 	private ImageIcon logoIcon;
 	
 	/**
-	 * String utilisees pour chaque JLable de mois de bons preventifs
+	 * {@link String} utilisees pour chaque {@link JLabel} de mois de bons preventifs
 	 */
 	private final static String[] PREVENTIVE_VOUCHER_MONTH_LABELS = {"Mois : ", "Nombre de bons préventifs ouverts : ", 
 			"Nombre de bons préventifs fermés : ", "Commentaire : "};
@@ -135,19 +135,19 @@ public class Form extends JFrame{
 			"Août", "Septembre", "Octobre", "Novembre", "Décembre"}; 
 	
 	/**
-	 * Texts que peuvent prendre les JButton d'ajout de mois
+	 * Texts que peuvent prendre les {@link JButton} d'ajout de mois
 	 */
 	private final static String[] ADD_MONTH_BUTTON_TEXT = {"Ajouter un mois", "Impossible d'ajouter un mois supplémentaire",
 			"Remplissez les mois précedents"};
 	
 	/**
-	 * Texts que peuvent prendre les JButton d'ajour d'arborescence libre
+	 * Texts que peuvent prendre les {@link JButton} d'ajout de {@link FreeTree}
 	 */
 	private final static String[] ADD_FREE_TREE_TEXT = {"Ajouter arborescence libre", 
 			"Impossible d'ajouter une arborescence libre supplémentaire"};
 	
 	/**
-	 * Texts que peut prendre le JButton d'ajout de compteur
+	 * Texts que peut prendre le {@link JButton} d'ajout de {@link Meter}
 	 */
 	private final static String[] ADD_METER_TEXT = {"Ajouter un compteur", "Impossible d'ajouter un compteur supplémentaire"};
 	
@@ -172,7 +172,7 @@ public class Form extends JFrame{
 	private static final int NUMBER_INTERVENTION_DEMAND_MONTH_ALLOWED = Integer.MAX_VALUE;
 	
 	/**
-	 * La position vertical a laquelle on doit ajouter un Component au ContentPane
+	 * La position vertical a laquelle on doit ajouter un {@link Component} au {@link JFrame.ContentPane}
 	 */
 	private int positionCounter;
 	/**
@@ -184,7 +184,7 @@ public class Form extends JFrame{
 	 */
 	private int interventionDemandLastMonthPosition;
 	/**
-	 * La position verticale de la derniere arborescence libre 1
+	 * La position verticale du dernier {@link FreeTree} 1
 	 */
 	private int freeTrees1LastPosition;
 	
@@ -3485,12 +3485,12 @@ public class Form extends JFrame{
 	}	
 
 	/**
-	 * Creer un JPanel de bon de mois preventif
-	 * @param preventivesVouchersMonths Les mois preventifs auxquels on ajoute celui de ce JPanel
-	 * @param nbPreventivesVouchersOpened Les nombres de bon ouverts auxquels on ajoute celui de ce JPanel
-	 * @param nbPreventivesVouchersClosed Les nombre de bon fermes auxquels on ajoute celui de ce JPanel
-	 * @param deleteButtonsPreventivesVouchers Les JButton de suppression auxquels on ajoute celui de ce JPanel
-	 * @return Le JPanel cree
+	 * Creer un {@link JPanel} de bon de mois preventif
+	 * @param preventivesVouchersMonths Les mois preventifs auxquels on ajoute celui de ce {@link JPanel}
+	 * @param nbPreventivesVouchersOpened Les nombres de bon ouverts auxquels on ajoute celui de ce {@link JPanel}
+	 * @param nbPreventivesVouchersClosed Les nombre de bon fermes auxquels on ajoute celui de ce {@link JPanel}
+	 * @param deleteButtonsPreventivesVouchers Les {@link JButton} de suppression auxquels on ajoute celui de ce {@link JPanel}
+	 * @return Le {@link JPanel} cree
 	 */
 	private JPanel createPreventiveVoucherMonth (
 			final Collection<JComboBox<String>> preventivesVouchersMonths, 
@@ -3680,11 +3680,11 @@ public class Form extends JFrame{
 	}
 	
 	/**
-	 * Creer un JPanel de demande d'intervention
-	 * @param interventionMonths Les mois de demande d'intervention auxquels on ajoute celui de ce JPanel
-	 * @param interventionNumbers Les nombres d'intervention auxquels on ajoute celui de ce JPanel
-	 * @param deleteButtonsInterventionMonths Les JButton de suppression auxquels on ajoute celui de ce JPanel
-	 * @return Le JPanel de demande d'intervention
+	 * Creer un {@link JPanel} de demande d'intervention
+	 * @param interventionMonths Les mois de demande d'intervention auxquels on ajoute celui de ce {@link JPanel}
+	 * @param interventionNumbers Les nombres d'intervention auxquels on ajoute celui de ce {@link JPanel}
+	 * @param deleteButtonsInterventionMonths Les {@link JButton} de suppression auxquels on ajoute celui de ce {@link JPanel}
+	 * @return Le {@link JPanel} de demande d'intervention
 	 */
 	private JPanel createInterventionDemand (final Collection<JComboBox<String>> interventionMonths, 
 			final Collection<JTextField> interventionNumbers,

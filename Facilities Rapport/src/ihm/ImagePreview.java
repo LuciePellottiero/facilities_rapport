@@ -14,9 +14,9 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
 /**
- * JComponent a ajouter a un JFileChooser en tant qu'Accessory pour obtenir
- *  un apercu d'une image lorsqu'elle est selectionnee dans le JFileChoose.
- * @author Lucie PELLOTTERIO
+ * {@link JComponent} a ajouter a un {@link JFileChooser} en tant qu'{@link JFileChooser.accessory} pour obtenir
+ *  un apercu d'une {@link Image} lorsqu'elle est selectionnee dans le {@link JFileChooser}.
+ * @author Lucie PELLOTTIERO
  *
  */
 public class ImagePreview extends JComponent implements PropertyChangeListener{
@@ -27,7 +27,7 @@ public class ImagePreview extends JComponent implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Le fichier selectionne dans le JFileChooser
+	 * Le fichier selectionne dans le {@link JFileChooser}
 	 */
 	private File file;
 	/**
@@ -36,8 +36,8 @@ public class ImagePreview extends JComponent implements PropertyChangeListener{
 	private ImageIcon thumbnail;
 	
 	/**
-	 * Constructeur de l'IpmagePreview. Il faut ensute l'ajouter aux Accessory du JFileChooser.
-	 * @param fileChooser Le JFileChooser auquel on ajoute cet ImagePreview
+	 * Constructeur de l'{@link ImagePreview}. Il faut ensute l'ajouter aux {@link JFileChooser.accessory} du {@link JFileChooser}.
+	 * @param fileChooser Le {@link JFileChooser} auquel on ajoute cet {@link ImagePreview}
 	 */
 	public ImagePreview(final JFileChooser fileChooser) {
 		// Definition de la taille de cet ImagePreview

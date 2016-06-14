@@ -25,11 +25,11 @@ public interface IWriteStrategie {
 	}
 
 	/**
-	 * Edite le Document avec les donnees en se servant du PdfWriter tout en mettant a jour la ProgressBar
+	 * Edite le Document avec les donnees en se servant du {@link PdfWriter} tout en mettant a jour la {@link ProgressBarFrame}
 	 * @param datas Les donnees a mettre dans le Document
-	 * @param document Le Document a editer
-	 * @param writer Le PdfWriter que l'on doit utiliser
-	 * @param pBFrame La ProgressBar que l'on doit mettre a jour
+	 * @param document Le {@link Document} a editer
+	 * @param writer Le {@link PdfWriter} que l'on doit utiliser
+	 * @param pBFrame La {@link ProgressBarFrame} que l'on doit mettre a jour
 	 * @return true si reussi, false sinon
 	 * @throws Exception Aucune Exception n'est pas attrapee
 	 */
@@ -37,9 +37,9 @@ public interface IWriteStrategie {
 			ProgressBarFrame pBFrame) throws Exception;
 	
 	/**
-	 * Obtient un IDataHandler correspondant a cette strategie
-	 * @param partTitle Le titre du IDataHandler
-	 * @return un IDataHandler correspondant a cette strategie
+	 * Obtient un {@link IDataHandler} correspondant a cette strategie
+	 * @param partTitle Le titre du {@link IDataHandler}
+	 * @return un {@link IDataHandler} correspondant a cette strategie
 	 */
 	public IDataHandler getDataHandler(final String partTitle);
 }

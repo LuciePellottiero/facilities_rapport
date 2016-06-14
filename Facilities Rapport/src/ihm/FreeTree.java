@@ -27,7 +27,7 @@ import javax.swing.event.DocumentEvent;
 import utilities.OperationUtilities;
 
 /**
- * JPanel d'arborescence libre.
+ * {@link JPanel} d'arborescence libre.
  * @author Lucie PELLOTTIERO
  *
  */
@@ -40,56 +40,56 @@ public class FreeTree extends JPanel{
 	
 	/**
 	 * Nombre maximum d'element que l'on peut ajouter.<br>
-	 * Grace au JPanel des elements, ce nombre est theoriquement infinie
+	 * Grace au {@link JPanel} des elements, ce nombre est theoriquement infinie
 	 */
 	private static final int NUMBER_ELEMENT_ALLOWED = Integer.MAX_VALUE;
 	
 	/**
-	 * Les String qui peuvent etres affichees sur le bouton d'ajout d'element selon le contexte
+	 * Les String qui peuvent etres affichees sur le {@link JButton} d'ajout d'element selon le contexte
 	 */
 	private static final String[] ADD_ELEMENT_TEXT = {"Ajouter un élément", "Remplissez la partie Titre", 
 			"Remplissez tous les éléments" , "Limite d'élément atteinte"};
 	
 	/**
-	 * Le GridBagConstraints de ce FreeTree.
+	 * Le {@link GridBagConstraints} de ce {@link FreeTree}.
 	 */
 	private final GridBagConstraints constraint;
 	
 	/**
-	 * Les JTextField des elements. On pourra ensuite les recuperer pour la generation de document
+	 * Les {@link JTextField} des elements. On pourra ensuite les recuperer pour la generation de document
 	 */
 	private final Collection<JTextField> elements;
 	/**
-	 * Les JTextField du nombre associe a un element. On pourra ensuite les recuperer pour la generation de document
+	 * Les {@link JTextField} du nombre associe a un element. On pourra ensuite les recuperer pour la generation de document
 	 */
 	private final Collection<JTextField> elementNumbers;
 	/**
-	 * Le JTextField du titre de ce FreeTree.<br>
-	 * Le modifier modifie aussi la TitleBorder de ce FreeTree
+	 * Le {@link JTextField} du titre de ce {@link FreeTree}.<br>
+	 * Le modifier modifie aussi la {@link TitledBorder} de ce {@link FreeTree}
 	 */
 	private final JTextField titleTextField;
 	/**
-	 * Le JTextArea du commentaire de ce FreeTree
+	 * Le {@link JTextArea} du commentaire de ce {@link FreeTree}
 	 */
 	private final JTextArea textAreaComment;
 	
 	/**
-	 * Le JButton d'ajout d'element. Il peut etre modifier dans la fonction d'ajout d'element
+	 * Le {@link JButton} d'ajout d'element. Il peut etre modifier dans la fonction d'ajout d'element
 	 */
 	private final JButton addElement;
 	/**
-	 * L'ImageIcon representant un "+" pour eviter d'avoir a le reconstruir a chaque ajout d'element.<br>
-	 * En effet, lorsque le JBouton addElement est modifier, on moodifie aussi son ImageIcon.
+	 * L'{@link ImageIcon} representant un "+" pour eviter d'avoir a le reconstruir a chaque ajout d'element.<br>
+	 * En effet, lorsque le {@link JButton} addElement est modifier, on moodifie aussi son {@link ImageIcon}.
 	 */
 	private final ImageIcon addElementIcon;
 	
 	/**
-	 * La position du dernier element. Elle peut etre modifier dans l'ActionListener du JButton addElement.
+	 * La position du dernier element. Elle peut etre modifier dans l'{@link ActionListener} du {@link JButton} {@link FreeTree.addElement}.
 	 */
 	private int lastElementPosition;
 
 	/**
-	 * Construit un FreeTree qui est un JPanel.
+	 * Construit un {@link FreeTree} qui est un {@link JPanel}.
 	 */
 	public FreeTree(){
 
@@ -270,8 +270,8 @@ public class FreeTree extends JPanel{
 	}
 	
 	/**
-	 * Ajout d'un element sous la forme d'un JPanel
-	 * @return le JPanel contenant l'element
+	 * Ajout d'un element sous la forme d'un {@link JPanel}
+	 * @return le {@link JPanel} contenant l'element
 	 */
 	public JPanel addElement() {
 		
@@ -450,41 +450,41 @@ public class FreeTree extends JPanel{
 	
 	
 	/**
-	 * Obtient la Collection des noms des elements
-	 * @return La Collection des noms des elements
+	 * Obtient la {@link Collection} des noms des elements
+	 * @return La {@link Collection} des noms des elements
 	 */
 	public Collection<JTextField> getElements() {
 		return elements;
 	}
 	
 	/**
-	 * Obtient la Collection des nombres lies aux elements
-	 * @return La Collection des nombres lies aux elements
+	 * Obtient la {@link Collection} des nombres lies aux elements
+	 * @return La {@link Collection} des nombres lies aux elements
 	 */
 	public Collection<JTextField> getElementNumbers() {
 		return elementNumbers;
 	}
 	
 	/**
-	 * Obtient le JTextField du titre de ce FreeTree
-	 * @return Le JTextField du titre de ce FreeTree
+	 * Obtient le {@link JTextField} du titre de ce {@link FreeTree}
+	 * @return Le {@link JTextField} du titre de ce {@link FreeTree}
 	 */
 	public JTextField getTitleTextField() {
 		return titleTextField;
 	}
 	
 	/**
-	 * Obtient la JTextArea du commentaire de ce FreeTree
-	 * @return La JTextArea du commentaire de ce FreeTree
+	 * Obtient la {@link JTextArea} du commentaire de ce {@link FreeTree}
+	 * @return La {@link JTextArea} du commentaire de ce {@link FreeTree}
 	 */
 	public JTextArea getTextAreaComment() {
 		return textAreaComment;
 	}
 	
 	/**
-	 * Obtient le GridBagConstraints de ce FreeTree.<br>
-	 * Utilise pour ajouter de nouveaux Component a la fin de ce FreeTree.
-	 * @return Le GridBagConstraints de ce FreeTree
+	 * Obtient le {@link GridBagConstraints} de ce {@link FreeTree}.<br>
+	 * Utilise pour ajouter de nouveaux {@link Component} a la fin de ce {@link FreeTree}.
+	 * @return Le {@link GridBagConstraints} de ce {@link FreeTree}
 	 */
 	public GridBagConstraints getConstraint() {
 		return constraint;
